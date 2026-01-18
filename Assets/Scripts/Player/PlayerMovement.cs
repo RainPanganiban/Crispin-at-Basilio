@@ -1,48 +1,80 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using Unity.Netcode;
+using Mirror;
 
+[RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : NetworkBehaviour
 {
-    public float speed = 5f;
+    [Header("Movement Settings")]
+    public float moveSpeed = 5f;
+    public float rotationSpeed = 10f;
     public float gravity = -9.81f;
 
     private CharacterController controller;
-    private Vector2 moveInput;
-    private float verticalVelocity;
+    private Vector3 velocity;
 
-    private void Awake()
+    [Header("References")]
+    public Transform cameraPivot;
+
+    void Start()
     {
         controller = GetComponent<CharacterController>();
-    }
 
-    void OnMove(InputValue value)
-    {
-        if (!IsOwner) return;
-        moveInput = value.Get<Vector2>();
-    }
-
-    private void Update()
-    {
-        if (!IsOwner) return;
-
-        if (controller.isGrounded && verticalVelocity < 0)
+        if (!isLocalPlayer)
         {
-            verticalVelocity = -2f; // keeps player grounded
+            // Disable camera for remote players
+            cameraPivot.gameObject.SetActive(false);
+        }
+    }
+
+    void Update()
+    {
+        if (!isLocalPlayer) return;
+
+        HandleInput();
+    }
+
+    void HandleInput()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        Vector3 inputDir = new Vector3(horizontal, 0f, vertical);
+
+        CmdMove(inputDir);
+    }
+
+    [Command]
+    void CmdMove(Vector3 inputDir)
+    {
+        // Camera-relative movement
+        Vector3 camForward = cameraPivot.forward;
+        camForward.y = 0;
+        camForward.Normalize();
+
+        Vector3 camRight = cameraPivot.right;
+        camRight.y = 0;
+        camRight.Normalize();
+
+        Vector3 moveDir = camForward * inputDir.z + camRight * inputDir.x;
+
+        if (moveDir.magnitude > 0.1f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(moveDir);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRotation,
+                rotationSpeed * Time.deltaTime
+            );
         }
 
-        verticalVelocity += gravity * Time.deltaTime;
+        if (controller.isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
 
-        Vector3 moveDirection =
-            transform.right * moveInput.x +
-            transform.forward * moveInput.y;
+        velocity.y += gravity * Time.deltaTime;
 
-        if (moveDirection.magnitude > 1f)
-            moveDirection.Normalize();
-
-        Vector3 velocity = moveDirection * speed;
-        velocity.y = verticalVelocity;
-
-        controller.Move(velocity * Time.deltaTime);
+        Vector3 finalMove = moveDir * moveSpeed + velocity;
+        controller.Move(finalMove * Time.deltaTime);
     }
 }
