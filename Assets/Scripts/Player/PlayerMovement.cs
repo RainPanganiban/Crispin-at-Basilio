@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
     public float speed = 5f;
     public float gravity = -9.81f;
@@ -17,11 +18,14 @@ public class PlayerMovement : MonoBehaviour
 
     void OnMove(InputValue value)
     {
+        if (!IsOwner) return;
         moveInput = value.Get<Vector2>();
     }
 
     private void Update()
     {
+        if (!IsOwner) return;
+
         if (controller.isGrounded && verticalVelocity < 0)
         {
             verticalVelocity = -2f; // keeps player grounded
