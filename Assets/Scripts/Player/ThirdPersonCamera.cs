@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Mirror;
 
 public class ThirdPersonCamera : MonoBehaviour
 {
@@ -25,7 +26,7 @@ public class ThirdPersonCamera : MonoBehaviour
     }
 
     void LateUpdate()
-    {
+    {        
         yaw += lookInput.x * sensitivity * Time.deltaTime;
         pitch -= lookInput.y * sensitivity * Time.deltaTime;
         pitch = Mathf.Clamp(pitch, minY, maxY);

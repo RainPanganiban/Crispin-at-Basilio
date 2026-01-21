@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Beta Testing (2).unity
-    guid: d2a178a18a6a4644b9195b4e702fc177
+    path: Assets/Scenes/Mirror Networking.unity
+    guid: 3cc2201ec561c274ab2b1aa7ee430674
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
