@@ -1,22 +1,36 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ThirdPersonCamera : MonoBehaviour
 {
     public Transform target;
-    public Vector3 offset = new Vector3(0, 3, -6);
-    public float smoothSpeed = 10f;
+    public float sensitivity = 120f;
+    public float minY = -30f;
+    public float maxY = 60f;
+    public float distance = 3f;
+
+    private Vector2 lookInput;
+    private float yaw;
+    private float pitch;
+
+    void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    public void OnLook(InputAction.CallbackContext context)
+    {
+        lookInput = context.ReadValue<Vector2>();
+    }
 
     void LateUpdate()
     {
-        if (!target) return;
+        yaw += lookInput.x * sensitivity * Time.deltaTime;
+        pitch -= lookInput.y * sensitivity * Time.deltaTime;
+        pitch = Mathf.Clamp(pitch, minY, maxY);
 
-        Vector3 desiredPos = target.position + offset;
-        transform.position = Vector3.Lerp(
-            transform.position,
-            desiredPos,
-            smoothSpeed * Time.deltaTime
-        );
-
-        transform.LookAt(target.position + Vector3.up * 1.5f);
+        transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
+        transform.position = target.position + transform.rotation * new Vector3(0, 0, -distance);
     }
 }
