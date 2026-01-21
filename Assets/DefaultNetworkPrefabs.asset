@@ -13,14 +13,4 @@ MonoBehaviour:
   m_Name: DefaultNetworkPrefabs
   m_EditorClassIdentifier: 
   IsDefault: 1
-  List:
-  - Override: 0
-    Prefab: {fileID: 2280914980677775712, guid: de105e0a8ef527d4db91ca7eb9824d2e, type: 3}
-    SourcePrefabToOverride: {fileID: 0}
-    SourceHashToOverride: 0
-    OverridingTargetPrefab: {fileID: 0}
-  - Override: 0
-    Prefab: {fileID: 6285348271091552581, guid: de105e0a8ef527d4db91ca7eb9824d2e, type: 3}
-    SourcePrefabToOverride: {fileID: 0}
-    SourceHashToOverride: 0
-    OverridingTargetPrefab: {fileID: 0}
+  List: []
