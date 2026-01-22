@@ -22,6 +22,8 @@ public class LobbyUIManager : MonoBehaviour
     public TMP_Text rightClassText;
     public TMP_Text rightReadyText;
 
+    public GameObject gameplayPlayerPrefab;
+
     void Start()
     {
         StartCoroutine(WaitForLocalPlayer());
@@ -30,6 +32,16 @@ public class LobbyUIManager : MonoBehaviour
         crispinButton.interactable = false;
         basilioButton.interactable = false;
         readyButton.interactable = false;
+    }
+
+    public void StartGame()
+    {
+        if (!NetworkServer.active) return;
+
+        // Set the prefab for the gameplay scene
+        NetworkManager.singleton.playerPrefab = gameplayPlayerPrefab; // assign via Inspector
+
+        NetworkManager.singleton.ServerChangeScene("Mirror Networking");
     }
 
     IEnumerator WaitForLocalPlayer()
@@ -48,10 +60,7 @@ public class LobbyUIManager : MonoBehaviour
         if (NetworkServer.active)
         {
             startGameButton.gameObject.SetActive(true);
-            startGameButton.onClick.AddListener(() =>
-            {
-                NetworkManager.singleton.ServerChangeScene("Gameplay");
-            });
+            startGameButton.onClick.AddListener(StartGame);
         }
         else
         {

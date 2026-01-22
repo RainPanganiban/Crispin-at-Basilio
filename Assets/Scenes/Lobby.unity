@@ -1513,6 +1513,7 @@ MonoBehaviour:
   rightNameText: {fileID: 1407859354}
   rightClassText: {fileID: 516924229}
   rightReadyText: {fileID: 894243989}
+  gameplayPlayerPrefab: {fileID: 6827224680543321162, guid: de105e0a8ef527d4db91ca7eb9824d2e, type: 3}
 --- !u!1 &839315210
 GameObject:
   m_ObjectHideFlags: 0
