@@ -23,6 +23,7 @@ public class LobbyUIManager : MonoBehaviour
     public TMP_Text rightReadyText;
 
     public GameObject gameplayPlayerPrefab;
+    public GameObject lobbyPlayerPrefab;
 
     void Start()
     {
@@ -36,11 +37,7 @@ public class LobbyUIManager : MonoBehaviour
 
     public void StartGame()
     {
-        if (!NetworkServer.active) return;
-
-        // Set the prefab for the gameplay scene
-        NetworkManager.singleton.playerPrefab = gameplayPlayerPrefab; // assign via Inspector
-
+        if (!NetworkServer.active) return; // only host can start
         NetworkManager.singleton.ServerChangeScene("Mirror Networking");
     }
 
@@ -118,5 +115,14 @@ public class LobbyUIManager : MonoBehaviour
         }
 
         startGameButton.interactable = true;
+    }
+
+    void OnDestroy()
+    {
+        // This ensures when scene changes, the UI is cleaned up
+        if (localPlayer != null)
+        {
+            localPlayer.AssignCard(null, null, null);
+        }
     }
 }

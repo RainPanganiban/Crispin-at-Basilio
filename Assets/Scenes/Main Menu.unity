@@ -3624,8 +3624,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2125539685}
-  - component: {fileID: 2125539684}
   - component: {fileID: 2125539683}
+  - component: {fileID: 2125539686}
   m_Layer: 0
   m_Name: Network Manager
   m_TagString: Untagged
@@ -3657,7 +3657,22 @@ MonoBehaviour:
   clientMaxReceivesPerTick: 1000
   clientSendQueueLimit: 10000
   clientReceiveQueueLimit: 10000
---- !u!114 &2125539684
+--- !u!4 &2125539685
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2125539682}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 916.4004, y: 529.03253, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2125539686
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3666,7 +3681,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2125539682}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aab4c8111b7c411b9b92cf3dbc5bd4e, type: 3}
+  m_Script: {fileID: 11500000, guid: 5c40483d37e59db4ca550141980a2c74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
@@ -3686,7 +3701,9 @@ MonoBehaviour:
   playerPrefab: {fileID: 245869777292482264, guid: dfd8927f1daaeb344922f11e9bec71cf, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 2198622737784291076, guid: 6ad6cc28b1fafff4ca04f500b471dee7, type: 3}
+  - {fileID: 6827224680543321162, guid: de105e0a8ef527d4db91ca7eb9824d2e, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -3702,21 +3719,8 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
---- !u!4 &2125539685
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2125539682}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 916.4004, y: 529.03253, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  lobbyPlayerPrefab: {fileID: 245869777292482264, guid: dfd8927f1daaeb344922f11e9bec71cf, type: 3}
+  gameplayPlayerPrefab: {fileID: 6827224680543321162, guid: de105e0a8ef527d4db91ca7eb9824d2e, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
