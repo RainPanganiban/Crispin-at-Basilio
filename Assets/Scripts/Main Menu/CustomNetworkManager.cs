@@ -1,54 +1,125 @@
 using UnityEngine;
 using Mirror;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class CustomNetworkManager : NetworkManager
 {
     [Header("Prefabs")]
     public GameObject lobbyPlayerPrefab;      // Lobby player prefab
-    public GameObject gameplayPlayerPrefab;   // Actual controllable player prefab
+    
+    [Header("Gameplay Prefabs")]
+    public GameObject crispinGameplayPrefab;
+    public GameObject basilioGameplayPrefab;
 
-    // Called when a client connects to the server
-    public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+    // Cache lobby players before scene change
+    private readonly Dictionary<NetworkConnectionToClient, string> playerClasses
+        = new Dictionary<NetworkConnectionToClient, string>();
+    
+    public override void Awake()
     {
-        // Decide which prefab to spawn based on the current scene
-        GameObject prefabToSpawn = null;
+        base.Awake();
+        autoCreatePlayer = false;
+        Debug.Log("[NM] Awake");
 
-        if (SceneManager.GetActiveScene().name == "Lobby")
+        Debug.Log("[NM] Registered spawnable prefabs:");
+        foreach (var p in spawnPrefabs)
         {
-            prefabToSpawn = lobbyPlayerPrefab;
+            Debug.Log(" - " + p.name);
         }
-        else
-        {
-            prefabToSpawn = gameplayPlayerPrefab;
-        }
-
-        // Instantiate and add player
-        GameObject player = Instantiate(prefabToSpawn, Vector3.zero, Quaternion.identity);
-        NetworkServer.AddPlayerForConnection(conn, player);
     }
 
-    // Called when the server changes scenes
-    public override void OnServerSceneChanged(string sceneName)
+    public override void OnStartServer()
     {
-        if (sceneName == "Mirror Networking") // Replace with your gameplay scene name
+        Debug.Log("[NM] OnStartServer");
+    }
+
+    public override void OnStartClient()
+    {
+        Debug.Log("[NM] OnStartClient");
+    }
+    
+    // Called when client requests a player (Lobby only)
+    public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+    {
+        Debug.Log($"[NM] OnServerAddPlayer | Scene={SceneManager.GetActiveScene().name}");
+        if (SceneManager.GetActiveScene().name != "Lobby")
+        return;
+
+        if (lobbyPlayerPrefab == null)
         {
+            Debug.LogError("[NM] lobbyPlayerPrefab is NULL in inspector!");
+            return;
+        }
+
+        GameObject lobbyPlayer = Instantiate(lobbyPlayerPrefab);
+        Debug.Log("[NM] Instantiated LobbyPlayer prefab");
+        NetworkServer.AddPlayerForConnection(conn, lobbyPlayer);
+        Debug.Log("[NM] Added LobbyPlayer to connection");
+
+        NetworkIdentity ni = lobbyPlayer.GetComponent<NetworkIdentity>();
+        Debug.Log($"[NM] NetworkIdentity present = {ni != null}");
+    }
+
+    public override void OnServerChangeScene(string newSceneName)
+    {
+        if (newSceneName == "Mirror Networking")
+        {
+            Debug.Log("[NM] Caching lobby player classes");
+
+            playerClasses.Clear();
+
             foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
             {
-                if (conn.identity != null)
+                if (conn.identity == null)
                 {
-                    // Store position of lobby player
-                    GameObject lobbyPlayer = conn.identity.gameObject;
-                    Vector3 spawnPos = lobbyPlayer.transform.position;
-
-                    // Destroy the lobby player
-                    NetworkServer.Destroy(lobbyPlayer);
-
-                    // Spawn the gameplay player prefab
-                    GameObject gameplayPlayer = Instantiate(gameplayPlayerPrefab, spawnPos, Quaternion.identity);
-                    NetworkServer.AddPlayerForConnection(conn, gameplayPlayer);
+                    Debug.Log("[NM] conn.identity NULL while caching");
+                    continue;
                 }
+
+                LobbyPlayer lobbyPlayer = conn.identity.GetComponent<LobbyPlayer>();
+                if (lobbyPlayer == null)
+                {
+                    Debug.Log("[NM] LobbyPlayer component missing");
+                    continue;
+                }
+
+                Debug.Log($"[NM] Cached class {lobbyPlayer.playerClass}");
+                playerClasses[conn] = lobbyPlayer.playerClass;
             }
         }
+
+        base.OnServerChangeScene(newSceneName);
+    }
+
+    // Called AFTER scene has fully loaded
+    public override void OnServerSceneChanged(string sceneName)
+    {
+        if (sceneName != "Mirror Networking")
+            return;
+
+        foreach (var entry in playerClasses)
+        {
+            NetworkConnectionToClient conn = entry.Key;
+            string playerClass = entry.Value;
+
+            GameObject prefabToSpawn = null;
+
+            if (playerClass == "Crispin")
+                prefabToSpawn = crispinGameplayPrefab;
+            else if (playerClass == "Basilio")
+                prefabToSpawn = basilioGameplayPrefab;
+
+            if (prefabToSpawn == null)
+            {
+                Debug.LogError("Missing gameplay prefab for class: " + playerClass);
+                continue;
+            }
+
+            GameObject gameplayPlayer = Instantiate(prefabToSpawn);
+            NetworkServer.ReplacePlayerForConnection(conn, gameplayPlayer, true);
+        }
+
+        playerClasses.Clear();
     }
 }

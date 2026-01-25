@@ -3704,6 +3704,7 @@ MonoBehaviour:
   spawnPrefabs:
   - {fileID: 2198622737784291076, guid: 6ad6cc28b1fafff4ca04f500b471dee7, type: 3}
   - {fileID: 6827224680543321162, guid: de105e0a8ef527d4db91ca7eb9824d2e, type: 3}
+  - {fileID: 6827224680543321162, guid: 4e494e4601d8f86479927e3efd133015, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -3720,7 +3721,8 @@ MonoBehaviour:
   evaluationInterval: 3
   timeInterpolationGui: 0
   lobbyPlayerPrefab: {fileID: 245869777292482264, guid: dfd8927f1daaeb344922f11e9bec71cf, type: 3}
-  gameplayPlayerPrefab: {fileID: 6827224680543321162, guid: de105e0a8ef527d4db91ca7eb9824d2e, type: 3}
+  crispinGameplayPrefab: {fileID: 6827224680543321162, guid: 4e494e4601d8f86479927e3efd133015, type: 3}
+  basilioGameplayPrefab: {fileID: 6827224680543321162, guid: de105e0a8ef527d4db91ca7eb9824d2e, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

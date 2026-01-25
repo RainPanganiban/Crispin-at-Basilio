@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 2228540795863336039}
   - component: {fileID: 3510090575469456342}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Basilio
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
