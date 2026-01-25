@@ -47,7 +47,7 @@ public class CustomNetworkManager : NetworkManager
 
     public override void OnServerChangeScene(string newSceneName)
     {
-        if (newSceneName == "Mirror Networking")
+        if (newSceneName == "Level 1")
         {
 
             playerClasses.Clear();
@@ -75,7 +75,7 @@ public class CustomNetworkManager : NetworkManager
     // Called AFTER scene has fully loaded
     public override void OnServerSceneChanged(string sceneName)
     {
-        if (sceneName != "Mirror Networking")
+        if (sceneName != "Level 1")
             return;
 
         foreach (var entry in playerClasses)
