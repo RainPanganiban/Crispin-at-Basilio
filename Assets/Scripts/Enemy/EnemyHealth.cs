@@ -1,22 +1,38 @@
 using UnityEngine;
 using Mirror;
+using System;
 
 public class EnemyHealth : NetworkBehaviour
 {
-    [SyncVar(hook = nameof(OnHealthChanged))]
-    public int health = 100;
+    [Header("Health")]
+    [SerializeField] private int maxHealth = 100;
 
+    [SyncVar(hook = nameof(OnHealthChanged))]
+    private int currentHealth;
+
+    public int CurrentHealth => currentHealth;
+    public int MaxHealth => maxHealth;
+
+    public event Action<float, float> OnHealthChangedUI;
+    public event Action OnDamaged;
+
+    public override void OnStartServer()
+    {
+        currentHealth = maxHealth;
+    }
+
+    [Server]
     public void TakeDamage(int damage, Transform attacker)
     {
-        if (!isServer) return;
+        currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        health -= damage;
-
-        // switch aggro to attacker
         EnemyAI ai = GetComponent<EnemyAI>();
         if (ai != null) ai.SetAggroTarget(attacker);
 
-        if (health <= 0)
+        OnDamaged?.Invoke();
+
+        if (currentHealth <= 0)
         {
             NetworkServer.Destroy(gameObject);
         }
@@ -24,6 +40,6 @@ public class EnemyHealth : NetworkBehaviour
 
     void OnHealthChanged(int oldValue, int newValue)
     {
-        Debug.Log($"{gameObject.name} Health: {newValue}");
+        OnHealthChangedUI?.Invoke(newValue, maxHealth);
     }
 }

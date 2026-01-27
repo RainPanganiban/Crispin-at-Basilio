@@ -57,6 +57,7 @@ public class EnemyAI : NetworkBehaviour
     [Server]
     public void SetAggroTarget(Transform target)
     {
-        currentTarget = target; // Called when player attacks
+        if (target != null)
+            currentTarget = target;
     }
 }
