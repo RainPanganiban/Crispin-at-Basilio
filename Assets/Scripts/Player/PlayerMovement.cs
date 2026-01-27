@@ -24,9 +24,16 @@ public class PlayerMovement : NetworkBehaviour
     private bool isRunning = false;
     private bool isRolling = false;
 
+    [Header("Stamina Settings")]
+    public float staminaCostPerSecondRunning = 15f;
+    public float rollStaminaCost = 25f;
+
+    private PlayerStatsManager statsManager;
+
     void Awake()
     {
         controller = GetComponent<CharacterController>();
+        statsManager = GetComponent<PlayerStatsManager>();
     }
 
     public override void OnStartLocalPlayer()
@@ -46,8 +53,15 @@ public class PlayerMovement : NetworkBehaviour
     public void OnRun(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
-        isRunning = context.ReadValueAsButton();
-        // Later: check stamina before allowing run
+        
+        if (statsManager.stamina.currentValue > 0f)
+        {
+            isRunning = context.ReadValueAsButton();
+        }
+        else
+        {
+            isRunning = false;
+        }
     }
 
     public void OnJump(InputAction.CallbackContext context)
@@ -62,8 +76,10 @@ public class PlayerMovement : NetworkBehaviour
     public void OnRoll(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
-        if (context.performed && !isRolling)
+        
+        if (context.performed && !isRolling && statsManager.stamina.currentValue >= rollStaminaCost)
         {
+            statsManager.UseStamina(rollStaminaCost);
             StartCoroutine(Roll());
         }
     }
@@ -91,7 +107,7 @@ public class PlayerMovement : NetworkBehaviour
     void Update()
     {
         if (!isLocalPlayer) return;
-        if (isRolling) return; // disable normal movement during roll
+        if (isRolling) return;
 
         // Movement input
         if (moveInput.sqrMagnitude > 0.01f)
@@ -102,7 +118,19 @@ public class PlayerMovement : NetworkBehaviour
             camRight.y = 0;
             Vector3 moveDir = camForward.normalized * moveInput.y + camRight.normalized * moveInput.x;
 
-            float speed = isRunning ? runSpeed : moveSpeed;
+            float speed = moveSpeed;
+
+            if (isRunning && statsManager.stamina.currentValue > 0f)
+            {
+                speed = runSpeed;
+                // Drain stamina while running
+                statsManager.UseStamina(staminaCostPerSecondRunning * Time.deltaTime);
+
+                // Stop running if out of stamina
+                if (statsManager.stamina.currentValue <= 0f)
+                    isRunning = false;
+            }
+
             controller.Move(moveDir * speed * Time.deltaTime);
 
             // Smooth rotation
@@ -119,14 +147,16 @@ public class PlayerMovement : NetworkBehaviour
     private System.Collections.IEnumerator Roll()
     {
         isRolling = true;
-        Vector3 rollDir = transform.forward; // roll in movement direction
+        Vector3 rollDir = transform.forward;
         float elapsed = 0f;
+
         while (elapsed < rollDuration)
         {
             controller.Move(rollDir * rollDistance / rollDuration * Time.deltaTime);
             elapsed += Time.deltaTime;
             yield return null;
         }
+
         isRolling = false;
     }
 }
