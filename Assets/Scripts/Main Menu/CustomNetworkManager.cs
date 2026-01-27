@@ -13,8 +13,8 @@ public class CustomNetworkManager : NetworkManager
     public GameObject basilioGameplayPrefab;
 
     // Cache lobby players before scene change
-    private readonly Dictionary<NetworkConnectionToClient, string> playerClasses
-        = new Dictionary<NetworkConnectionToClient, string>();
+    private readonly Dictionary<NetworkConnectionToClient, (string playerClass, string playerName)>
+    playerData = new Dictionary<NetworkConnectionToClient, (string, string)>();
     
     public override void Awake()
     {
@@ -49,23 +49,19 @@ public class CustomNetworkManager : NetworkManager
     {
         if (newSceneName == "Mirror Networking")
         {
-
-            playerClasses.Clear();
+            playerData.Clear();
 
             foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
             {
-                if (conn.identity == null)
-                {
-                    continue;
-                }
+                if (conn.identity == null) continue;
 
                 LobbyPlayer lobbyPlayer = conn.identity.GetComponent<LobbyPlayer>();
-                if (lobbyPlayer == null)
-                {
-                    continue;
-                }
+                if (lobbyPlayer == null) continue;
 
-                playerClasses[conn] = lobbyPlayer.playerClass;
+                playerData[conn] = (
+                    lobbyPlayer.playerClass,
+                    lobbyPlayer.playerName
+                );
             }
         }
 
@@ -78,10 +74,11 @@ public class CustomNetworkManager : NetworkManager
         if (sceneName != "Mirror Networking")
             return;
 
-        foreach (var entry in playerClasses)
+        foreach (var entry in playerData)
         {
             NetworkConnectionToClient conn = entry.Key;
-            string playerClass = entry.Value;
+            string playerClass = entry.Value.playerClass;
+            string playerName = entry.Value.playerName;
 
             GameObject prefabToSpawn = null;
 
@@ -90,15 +87,16 @@ public class CustomNetworkManager : NetworkManager
             else if (playerClass == "Basilio")
                 prefabToSpawn = basilioGameplayPrefab;
 
-            if (prefabToSpawn == null)
-            {
-                continue;
-            }
+            if (prefabToSpawn == null) continue;
 
             GameObject gameplayPlayer = Instantiate(prefabToSpawn);
+
+            PlayerIdentity identity = gameplayPlayer.GetComponent<PlayerIdentity>();
+            identity.playerName = playerName;
+
             NetworkServer.ReplacePlayerForConnection(conn, gameplayPlayer, true);
         }
 
-        playerClasses.Clear();
+        playerData.Clear();
     }
 }
