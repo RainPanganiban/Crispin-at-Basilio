@@ -29,19 +29,20 @@ public class PlayerMovement : NetworkBehaviour
     public float rollStaminaCost = 25f;
 
     private PlayerStatsManager statsManager;
-    private MeleeCombat meleeCombat;
+    private ICombatHandler combatHandler;
 
     void Awake()
     {
         controller = GetComponent<CharacterController>();
         statsManager = GetComponent<PlayerStatsManager>();
-        meleeCombat = GetComponent<MeleeCombat>();
     }
 
     public override void OnStartLocalPlayer()
     {
         cam = cameraTransform;
         cam.gameObject.SetActive(true);
+
+        combatHandler = GetComponent<ICombatHandler>();
     }
 
     #region Input Callbacks
@@ -89,9 +90,8 @@ public class PlayerMovement : NetworkBehaviour
     public void OnLightAttack(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
-        if (!context.performed) return;
 
-        meleeCombat.LightAttack();
+        combatHandler?.OnLightAttack(context);
     }
 
     public void OnHeavyAttack(InputAction.CallbackContext context)

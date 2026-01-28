@@ -1,9 +1,9 @@
 ﻿<Solution>
   <Project Path="Edgegap.csproj" />
   <Project Path="Mirror.Transports.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Mirror.Examples.csproj" />
   <Project Path="Mirror.Components.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Unity.Mirror.CodeGen.csproj" />
   <Project Path="Mirror.csproj" />
   <Project Path="kcp2k.csproj" />

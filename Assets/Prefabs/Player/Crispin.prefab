@@ -327,6 +327,37 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 24}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &3539721811757293989
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 520903555011623949}
+  m_Layer: 0
+  m_Name: Fire Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &520903555011623949
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3539721811757293989}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.69, z: 0.9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1285947279903484966}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3975372999097138699
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,6 +716,7 @@ GameObject:
   - component: {fileID: 3510090575469456342}
   - component: {fileID: 6123383524392973386}
   - component: {fileID: 4563231154752745374}
+  - component: {fileID: 6217625082249385771}
   m_Layer: 0
   m_Name: Crispin
   m_TagString: Player
@@ -709,6 +741,7 @@ Transform:
   - {fileID: 2129530739469720887}
   - {fileID: 6446466337835670857}
   - {fileID: 5248985087661796149}
+  - {fileID: 520903555011623949}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &5042737004278132815
@@ -969,10 +1002,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  playerUICanvas: {fileID: 7445983177485313122}
   crosshair: {fileID: 8239181553946708516}
   healthBar: {fileID: 13001435051897821}
   staminaBar: {fileID: 5671908465450860101}
-  playerUICanvas: {fileID: 7445983177485313122}
 --- !u!114 &3510090575469456342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1029,6 +1062,29 @@ MonoBehaviour:
     currentValue: 100
   staminaRegenRate: 10
   healthRegenRate: 0
+--- !u!114 &6217625082249385771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6827224680543321162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd322910b8bdc640ad42fb5556be0de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  projectilePrefab: {fileID: 4164222620869133773, guid: a479284caa825284c8656eed0523b6c2, type: 3}
+  firePoint: {fileID: 520903555011623949}
+  maxChargeTime: 2
+  minDamage: 10
+  maxDamage: 40
+  minSpeed: 10
+  maxSpeed: 30
+  maxLifetime: 5
 --- !u!1 &7118688840455285916
 GameObject:
   m_ObjectHideFlags: 0

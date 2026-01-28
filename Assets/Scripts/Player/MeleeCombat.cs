@@ -1,7 +1,8 @@
 using UnityEngine;
 using Mirror;
+using UnityEngine.InputSystem;
 
-public class MeleeCombat : NetworkBehaviour
+public class MeleeCombat : NetworkBehaviour, ICombatHandler
 {
     [Header("Attack Settings")]
     public float lightDamage = 10f;
@@ -20,13 +21,20 @@ public class MeleeCombat : NetworkBehaviour
     [Header("References")]
     public Transform attackPoint;
 
+    public void OnLightAttack(InputAction.CallbackContext context)
+    {
+        if (!isLocalPlayer) return; // Make sure only local player triggers it
+        if (!context.performed) return;
+
+        // Call your existing LightAttack logic
+        LightAttack();
+    }
+
     // ===============================
     // INPUT ENTRY POINT (CLIENT)
     // ===============================
     public void LightAttack()
     {
-        if (!isLocalPlayer) return;
-
         CmdPerformLightAttack();
     }
 
