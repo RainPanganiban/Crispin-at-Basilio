@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6502845825914641912}
   - component: {fileID: 5923511194164932685}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,7 +99,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 366751679216269180}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Handle Slide Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 1153456306115411533}
   - component: {fileID: 1500356253503606066}
   - component: {fileID: 3004938141214097212}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -212,7 +212,7 @@ GameObject:
   - component: {fileID: 1588488176506359898}
   - component: {fileID: 1078806962693396577}
   - component: {fileID: 5567748993318622407}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -291,9 +291,9 @@ GameObject:
   - component: {fileID: 5232476960561395905}
   - component: {fileID: 3704399691477867013}
   - component: {fileID: 4280115923434790929}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -408,7 +408,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  currentHealth: 0
   maxHealth: 100
 --- !u!114 &4280115923434790929
 MonoBehaviour:
@@ -436,7 +435,7 @@ GameObject:
   - component: {fileID: 6097500982010854480}
   - component: {fileID: 295544418891853145}
   - component: {fileID: 7366764737138727252}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -509,7 +508,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4675670186839453106}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -547,7 +546,7 @@ GameObject:
   - component: {fileID: 6927379907491814305}
   - component: {fileID: 7543333973704795765}
   - component: {fileID: 1432388575305366367}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -635,7 +634,7 @@ GameObject:
   - component: {fileID: 4863037442805300016}
   - component: {fileID: 7874457237259058487}
   - component: {fileID: 2854517765968779980}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy Health UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -740,6 +739,7 @@ MonoBehaviour:
   healthBar: {fileID: 5923511194164932685}
   canvas: {fileID: 7948038791375097579}
   visibleDuration: 3
+  alwaysVisibleForDebug: 1
 --- !u!1 &7904429286206116421
 GameObject:
   m_ObjectHideFlags: 0
@@ -749,7 +749,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9098915379306177523}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Health Bar Anchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}

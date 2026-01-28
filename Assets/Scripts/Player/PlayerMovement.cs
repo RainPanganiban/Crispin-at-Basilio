@@ -29,11 +29,13 @@ public class PlayerMovement : NetworkBehaviour
     public float rollStaminaCost = 25f;
 
     private PlayerStatsManager statsManager;
+    private MeleeCombat meleeCombat;
 
     void Awake()
     {
         controller = GetComponent<CharacterController>();
         statsManager = GetComponent<PlayerStatsManager>();
+        meleeCombat = GetComponent<MeleeCombat>();
     }
 
     public override void OnStartLocalPlayer()
@@ -87,10 +89,9 @@ public class PlayerMovement : NetworkBehaviour
     public void OnLightAttack(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
-        if (context.performed)
-        {
-            // TODO: Call server RPC for light attack
-        }
+        if (!context.performed) return;
+
+        meleeCombat.LightAttack();
     }
 
     public void OnHeavyAttack(InputAction.CallbackContext context)

@@ -2,7 +2,7 @@ using UnityEngine;
 using Mirror;
 using System;
 
-public class EnemyHealth : NetworkBehaviour
+public class EnemyHealth : NetworkBehaviour , IDamageable
 {
     [Header("Health")]
     [SerializeField] private int maxHealth = 100;
@@ -21,14 +21,33 @@ public class EnemyHealth : NetworkBehaviour
         currentHealth = maxHealth;
     }
 
+    // REQUIRED by IDamageable
+    public void TakeDamage(float damage)
+    {
+        if (!isServer) return;
+
+        ApplyDamage(Mathf.RoundToInt(damage), null);
+    }
+
+    // Your existing version (used by melee / ranged)
     [Server]
     public void TakeDamage(int damage, Transform attacker)
+    {
+        ApplyDamage(damage, attacker);
+    }
+
+    // Single source of truth
+    [Server]
+    private void ApplyDamage(int damage, Transform attacker)
     {
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        EnemyAI ai = GetComponent<EnemyAI>();
-        if (ai != null) ai.SetAggroTarget(attacker);
+        if (attacker != null)
+        {
+            EnemyAI ai = GetComponent<EnemyAI>();
+            if (ai != null) ai.SetAggroTarget(attacker);
+        }
 
         OnDamaged?.Invoke();
 
