@@ -1079,6 +1079,11 @@ MonoBehaviour:
   syncInterval: 0
   projectilePrefab: {fileID: 4164222620869133773, guid: a479284caa825284c8656eed0523b6c2, type: 3}
   firePoint: {fileID: 520903555011623949}
+  playerCamera: {fileID: 7685593625054093113}
+  aimMaxDistance: 100
+  normalFOV: 60
+  chargedFOV: 40
+  zoomSpeed: 8
   maxChargeTime: 2
   minDamage: 10
   maxDamage: 40

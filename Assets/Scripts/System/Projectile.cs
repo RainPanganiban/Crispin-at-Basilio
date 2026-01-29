@@ -10,17 +10,16 @@ public class Projectile : NetworkBehaviour
 
     private float lifetime;
     private NetworkIdentity owner;
+    private Vector3 moveDirection;
 
-    /// <summary>
-    /// Initialize projectile values dynamically (call this before NetworkServer.Spawn)
-    /// </summary>
     [Server]
-    public void Initialize(int dmg, float spd, float life, NetworkIdentity ownerIdentity = null)
+    public void Initialize(int dmg, float spd, float life, Vector3 direction, NetworkIdentity ownerIdentity = null)
     {
-        damage = dmg;                 // now int
+        damage = dmg;
         speed = spd;
         maxLifetime = life;
-        owner = ownerIdentity;        // optional, can track who fired
+        moveDirection = direction.normalized;
+        owner = ownerIdentity; // store the owner if needed
         lifetime = 0f;
     }
 
@@ -32,10 +31,9 @@ public class Projectile : NetworkBehaviour
     [ServerCallback]
     void Update()
     {
-        // Move forward
-        transform.position += transform.forward * speed * Time.deltaTime;
+        // Move using the precomputed direction
+        transform.position += moveDirection * speed * Time.deltaTime;
 
-        // Lifetime check
         lifetime += Time.deltaTime;
         if (lifetime >= maxLifetime)
         {

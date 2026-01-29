@@ -8,6 +8,14 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform firePoint;
 
+    [SerializeField] private Camera playerCamera;
+    [SerializeField] private float aimMaxDistance = 100f;
+
+    [Header("Charge Zoom")]
+    [SerializeField] private float normalFOV = 60f;
+    [SerializeField] private float chargedFOV = 45f;
+    [SerializeField] private float zoomSpeed = 8f;
+
     [Header("Charge Settings")]
     [SerializeField] private float maxChargeTime = 2f;
     [SerializeField] private float minDamage = 10f;
@@ -28,6 +36,26 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
             currentCharge += Time.deltaTime;
             currentCharge = Mathf.Clamp(currentCharge, 0f, maxChargeTime);
         }
+
+        float targetFOV = isCharging ? chargedFOV : normalFOV;
+        playerCamera.fieldOfView = Mathf.Lerp(
+            playerCamera.fieldOfView,
+            targetFOV,
+            Time.deltaTime * zoomSpeed
+        );
+    }
+
+    Vector3 GetAimDirection()
+    {
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, aimMaxDistance))
+        {
+            return (hit.point - firePoint.position).normalized;
+        }
+
+        // Fallback: shoot straight
+        return playerCamera.transform.forward;
     }
 
     public void OnLightAttack(InputAction.CallbackContext context)
@@ -50,25 +78,35 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
 
     void ReleaseCharge()
     {
+        if (!isLocalPlayer) return;
+
         isCharging = false;
 
-        float chargePercent = currentCharge / maxChargeTime;
+        float chargePercent = Mathf.Clamp01(currentCharge / maxChargeTime);
 
         float damage = Mathf.Lerp(minDamage, maxDamage, chargePercent);
         float speed = Mathf.Lerp(minSpeed, maxSpeed, chargePercent);
         float lifetime = Mathf.Lerp(1.5f, maxLifetime, chargePercent);
 
-        CmdFireProjectile(damage, speed, lifetime);
+        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        Vector3 direction = ray.direction.normalized;
+
+        CmdFireProjectile(
+            Mathf.RoundToInt(damage),
+            speed,
+            lifetime,
+            direction
+        );
     }
 
     [Command]
-    void CmdFireProjectile(float damage, float speed, float lifetime)
+    void CmdFireProjectile(int damage, float speed, float lifetime, Vector3 direction)
     {
-        GameObject proj = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+        GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.LookRotation(direction));
         Projectile projectile = proj.GetComponent<Projectile>();
 
-        // Use int damage for the Projectile class
-        projectile.Initialize((int)damage, speed, lifetime, netIdentity);
+        // Pass the direction to Initialize
+        projectile.Initialize(damage, speed, lifetime, direction, netIdentity);
 
         NetworkServer.Spawn(proj);
     }
