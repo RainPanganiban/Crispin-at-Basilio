@@ -294,7 +294,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  enemyPrefab: {fileID: 2198622737784291076, guid: 6ad6cc28b1fafff4ca04f500b471dee7, type: 3}
+  enemyPrefab: {fileID: 2198622737784291076, guid: 660446a8f8b4e3d4292e0ce122fd209e, type: 3}
   spawnPoint: {fileID: 1374948774}
 --- !u!114 &1374948773
 MonoBehaviour:

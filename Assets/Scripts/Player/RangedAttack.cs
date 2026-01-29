@@ -15,6 +15,7 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
     [SerializeField] private float normalFOV = 60f;
     [SerializeField] private float chargedFOV = 45f;
     [SerializeField] private float zoomSpeed = 8f;
+    [SerializeField] private Transform playerModel;
 
     [Header("Charge Settings")]
     [SerializeField] private float maxChargeTime = 2f;
@@ -35,6 +36,8 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
         {
             currentCharge += Time.deltaTime;
             currentCharge = Mathf.Clamp(currentCharge, 0f, maxChargeTime);
+
+            RotatePlayerTowardsAim();
         }
 
         float targetFOV = isCharging ? chargedFOV : normalFOV;
@@ -43,6 +46,20 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
             targetFOV,
             Time.deltaTime * zoomSpeed
         );
+    }
+
+    void RotatePlayerTowardsAim()
+    {
+        if (playerModel == null || playerCamera == null) return;
+
+        Vector3 aimDirection = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)).direction;
+        aimDirection.y = 0f; // horizontal rotation only
+
+        if (aimDirection.sqrMagnitude > 0.001f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(aimDirection);
+            playerModel.rotation = Quaternion.Slerp(playerModel.rotation, targetRot, 10f * Time.deltaTime);
+        }
     }
 
     Vector3 GetAimDirection()
