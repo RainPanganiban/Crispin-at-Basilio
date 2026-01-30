@@ -11,15 +11,16 @@ public class Projectile : NetworkBehaviour
     private float lifetime;
     private NetworkIdentity owner;
     private Vector3 moveDirection;
+    private Collider ownerCollider;
 
     [Server]
-    public void Initialize(int dmg, float spd, float life, Vector3 direction, NetworkIdentity ownerIdentity = null)
+    public void Initialize(int dmg, float spd, float life, Vector3 direction, Collider ownerCol)
     {
         damage = dmg;
         speed = spd;
         maxLifetime = life;
         moveDirection = direction.normalized;
-        owner = ownerIdentity; // store the owner if needed
+        ownerCollider = ownerCol;
         lifetime = 0f;
     }
 
@@ -44,6 +45,8 @@ public class Projectile : NetworkBehaviour
     [ServerCallback]
     private void OnTriggerEnter(Collider other)
     {
+        if (other == ownerCollider) return;
+        
         if (other.TryGetComponent<IDamageable>(out var target))
         {
             target.TakeDamage(damage);

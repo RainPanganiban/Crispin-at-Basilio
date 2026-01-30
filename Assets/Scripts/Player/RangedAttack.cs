@@ -8,14 +8,10 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform firePoint;
 
-    [SerializeField] private Camera playerCamera;
-    [SerializeField] private float aimMaxDistance = 100f;
-
     [Header("Charge Zoom")]
     [SerializeField] private float normalFOV = 60f;
     [SerializeField] private float chargedFOV = 45f;
     [SerializeField] private float zoomSpeed = 8f;
-    [SerializeField] private Transform playerModel;
 
     [Header("Charge Settings")]
     [SerializeField] private float maxChargeTime = 2f;
@@ -28,76 +24,69 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
     private float currentCharge;
     private bool isCharging;
 
+    private PlayerMovement movement;
+    private Camera playerCamera;
+
+    public override void OnStartLocalPlayer()
+    {
+        movement = GetComponent<PlayerMovement>();
+        playerCamera = GetComponentInChildren<Camera>();
+    }
+
     void Update()
     {
         if (!isLocalPlayer) return;
 
-        if (isCharging)
-        {
-            currentCharge += Time.deltaTime;
-            currentCharge = Mathf.Clamp(currentCharge, 0f, maxChargeTime);
-
-            RotatePlayerTowardsAim();
-        }
-
+        // Camera zoom
         float targetFOV = isCharging ? chargedFOV : normalFOV;
         playerCamera.fieldOfView = Mathf.Lerp(
             playerCamera.fieldOfView,
             targetFOV,
-            Time.deltaTime * zoomSpeed
+            zoomSpeed * Time.deltaTime
         );
-    }
 
-    void RotatePlayerTowardsAim()
-    {
-        if (playerModel == null || playerCamera == null) return;
+        if (!isCharging) return;
 
-        Vector3 aimDirection = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)).direction;
-        aimDirection.y = 0f; // horizontal rotation only
+        currentCharge += Time.deltaTime;
+        currentCharge = Mathf.Clamp(currentCharge, 0f, maxChargeTime);
 
-        if (aimDirection.sqrMagnitude > 0.001f)
+        // Rotate player to camera forward
+        Vector3 aimDir = playerCamera.transform.forward;
+        aimDir.y = 0f;
+
+        if (aimDir.sqrMagnitude > 0.01f)
         {
-            Quaternion targetRot = Quaternion.LookRotation(aimDirection);
-            playerModel.rotation = Quaternion.Slerp(playerModel.rotation, targetRot, 10f * Time.deltaTime);
+            Quaternion targetRot = Quaternion.LookRotation(aimDir);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRot,
+                12f * Time.deltaTime
+            );
         }
-    }
-
-    Vector3 GetAimDirection()
-    {
-        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-
-        if (Physics.Raycast(ray, out RaycastHit hit, aimMaxDistance))
-        {
-            return (hit.point - firePoint.position).normalized;
-        }
-
-        // Fallback: shoot straight
-        return playerCamera.transform.forward;
     }
 
     public void OnLightAttack(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
 
-        if (!isLocalPlayer) return;
-
-            if (context.started)
-                StartCharge();
-            else if (context.canceled)
-                ReleaseCharge();
+        if (context.started)
+            StartCharge();
+        else if (context.canceled)
+            ReleaseCharge();
     }
 
     void StartCharge()
     {
         isCharging = true;
         currentCharge = 0f;
+
+        movement.isAiming = true;
     }
 
     void ReleaseCharge()
     {
-        if (!isLocalPlayer) return;
-
         isCharging = false;
+        movement.isAiming = false;
 
         float chargePercent = Mathf.Clamp01(currentCharge / maxChargeTime);
 
@@ -119,11 +108,22 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
     [Command]
     void CmdFireProjectile(int damage, float speed, float lifetime, Vector3 direction)
     {
-        GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.LookRotation(direction));
-        Projectile projectile = proj.GetComponent<Projectile>();
+        GameObject proj = Instantiate(
+            projectilePrefab,
+            firePoint.position,
+            Quaternion.LookRotation(direction)
+        );
 
-        // Pass the direction to Initialize
-        projectile.Initialize(damage, speed, lifetime, direction, netIdentity);
+        Projectile projectile = proj.GetComponent<Projectile>();
+        Collider ownerCollider = GetComponent<Collider>();
+
+        projectile.Initialize(
+            damage,
+            speed,
+            lifetime,
+            direction,
+            ownerCollider
+        );
 
         NetworkServer.Spawn(proj);
     }

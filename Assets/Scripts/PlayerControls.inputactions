@@ -150,8 +150,30 @@
                 },
                 {
                     "name": "",
+                    "id": "ef8066e7-8673-4b9d-9de8-db6a75e028f7",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "a9daa0d6-f46f-4e88-8d31-f4cd46140052",
                     "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Run",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7f14037f-d1a9-445e-9aa9-95f217136af9",
+                    "path": "<DualShockGamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -172,6 +194,17 @@
                 },
                 {
                     "name": "",
+                    "id": "7a9157ee-bc13-450f-b33b-a04a40d71fd7",
+                    "path": "<DualShockGamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "e99c1149-52c6-4d1b-af3e-9e17f4390968",
                     "path": "<Keyboard>/ctrl",
                     "interactions": "",
@@ -183,8 +216,30 @@
                 },
                 {
                     "name": "",
+                    "id": "66731854-69a1-4d6a-b3f1-871e23bc1ce9",
+                    "path": "<DualShockGamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Roll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "df2612c8-5bae-40ad-b0ec-1a4ff4a63661",
                     "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LightAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "698d09b7-6f7f-4225-ae61-c8f2d5db41de",
+                    "path": "<DualShockGamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

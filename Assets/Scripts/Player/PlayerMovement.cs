@@ -13,6 +13,9 @@ public class PlayerMovement : NetworkBehaviour
     public float jumpHeight = 2f;
     public float rollDistance = 5f;
     public float rollDuration = 0.3f;
+
+    [Header("Combat Rotation")]
+    public bool isAiming;
     
     [SerializeField] private Transform cameraTransform;
 
@@ -135,8 +138,15 @@ public class PlayerMovement : NetworkBehaviour
             controller.Move(moveDir * speed * Time.deltaTime);
 
             // Smooth rotation
-            Quaternion targetRot = Quaternion.LookRotation(moveDir);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
+            if (!isAiming)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(moveDir);
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    targetRot,
+                    rotationSpeed * Time.deltaTime
+                );
+            }
         }
 
         // Gravity

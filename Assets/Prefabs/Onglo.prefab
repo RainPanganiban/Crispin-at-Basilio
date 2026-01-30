@@ -653,7 +653,7 @@ MonoBehaviour:
   healthBar: {fileID: 5923511194164932685}
   canvas: {fileID: 7948038791375097579}
   visibleDuration: 3
-  alwaysVisibleForDebug: 1
+  alwaysVisibleForDebug: 0
 --- !u!1 &7904429286206116421
 GameObject:
   m_ObjectHideFlags: 0
