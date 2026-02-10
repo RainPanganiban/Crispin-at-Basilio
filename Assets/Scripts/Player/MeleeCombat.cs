@@ -20,6 +20,12 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
 
     [Header("References")]
     public Transform attackPoint;
+    private BasilioAnimation basilioAnimation;
+
+    void Awake()
+    {
+        basilioAnimation = GetComponent<BasilioAnimation>();
+    }
 
     public void OnLightAttack(InputAction.CallbackContext context)
     {
@@ -27,6 +33,7 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
         if (!context.performed) return;
 
         // Call your existing LightAttack logic
+        basilioAnimation.PlayAttack();
         LightAttack();
     }
 
