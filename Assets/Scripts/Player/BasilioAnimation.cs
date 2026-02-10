@@ -19,6 +19,14 @@ public class BasilioAnimation : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
 
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+
+        bool inAction =
+            state.IsTag("Action") ||
+            state.IsName("Jump");
+
+        isLocked = inAction;
+
         UpdateLocomotion();
     }
 
@@ -26,10 +34,21 @@ public class BasilioAnimation : NetworkBehaviour
     {
         if (isLocked) return;
 
-        float speed = movementVelocityMagnitude();
-        animator.SetFloat("Speed", speed);
-        animator.SetFloat("Direction", 0f); // forward only (for now)
-        animator.SetBool("IsGrounded", movementIsGrounded());
+        Vector2 input = movement.MoveInput;
+
+        float speed = input.magnitude;
+
+        // Normalize speed for blend tree
+        if (movement.IsRunning)
+            speed = Mathf.Clamp01(speed);
+        else
+            speed *= 0.5f; // walk range
+
+        animator.SetFloat("Speed", speed, 0.1f, Time.deltaTime);
+        animator.SetFloat("Direction", 0f); // forward-only
+        animator.SetBool("IsGrounded", movement.IsGrounded);
+
+        Debug.Log($"Input: {movement.MoveInput} SpeedParam: {animator.GetFloat("Speed")}");
     }
 
     float movementVelocityMagnitude()
@@ -54,21 +73,19 @@ public class BasilioAnimation : NetworkBehaviour
     // Public animation triggers
     // -------------------------
 
-    public void PlayJump()
+    public void PlayAttack()
     {
-        animator.SetTrigger("Jump");
+        animator.SetTrigger("Attack");
     }
 
     public void PlayRoll()
     {
         animator.SetTrigger("Roll");
-        LockMovement();
     }
 
-    public void PlayAttack()
+    public void PlayJump()
     {
-        animator.SetTrigger("Attack");
-        LockMovement();
+        animator.SetTrigger("Jump");
     }
 
     // -------------------------

@@ -37,8 +37,8 @@ public class PlayerMovement : NetworkBehaviour
     [Header("Animation Parameters")]
     public Vector2 MoveInput => moveInput;
     public bool IsRunning => isRunning;
-    public bool IsRolling => isRolling;
     public bool IsGrounded => controller.isGrounded;
+    public bool IsRolling => isRolling;
 
     void Awake()
     {
