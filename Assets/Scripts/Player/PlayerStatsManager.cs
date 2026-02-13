@@ -1,7 +1,8 @@
 using UnityEngine;
 using System;
+using Mirror;
 
-public class PlayerStatsManager : MonoBehaviour
+public class PlayerStatsManager : NetworkBehaviour, IDamageable
 {
     [Header("Stats")]
     public Stat health = new Stat("Health", 100f);
@@ -34,9 +35,17 @@ public class PlayerStatsManager : MonoBehaviour
     }
 
     // Public methods
+    [Server]
     public void TakeDamage(float amount)
     {
         health.ChangeValue(-amount);
+
+        Debug.Log("Player took damage: " + amount);
+
+        if (health.currentValue <= 0)
+        {
+            Die();
+        }
     }
 
     public void UseStamina(float amount)
@@ -52,5 +61,14 @@ public class PlayerStatsManager : MonoBehaviour
     public void RestoreStamina(float amount)
     {
         stamina.ChangeValue(amount);
+    }
+
+    [Server]
+    void Die()
+    {
+        Debug.Log("Player died");
+
+        // For now just log
+        // Later we add respawn logic
     }
 }
