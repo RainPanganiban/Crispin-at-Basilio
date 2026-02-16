@@ -35,14 +35,10 @@ public class EnemyAttackController : NetworkBehaviour
         int index = Random.Range(0, available.Count);
         EnemyAttack selected = available[index];
 
+        // Execute the attack
         selected.Execute();
 
-        Invoke(nameof(FinishAttack), selected.duration);
-    }
-
-    [Server]
-    void FinishAttack()
-    {
-        brain.OnAttackFinished();
+        // No callback to brain needed; the brain handles strafing automatically
+        // You can optionally set a cooldown inside EnemyAttack itself
     }
 }

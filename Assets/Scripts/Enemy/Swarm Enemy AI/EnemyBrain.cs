@@ -10,60 +10,52 @@ public class EnemyBrain : NetworkBehaviour
         Chasing,
         Attacking,
         Repositioning,
-        Dead,
-        Combat
+        Dead
+    }
+
+    private enum CombatPhase
+    {
+        Positioning,
+        Attacking,
+        Strafing
     }
 
     [Header("References")]
     public NavMeshAgent agent;
-    public Animator animator;
     public EnemyAggro aggroSystem;
     public EnemyAttackController attackController;
 
     [Header("Distance Settings")]
-    public float attackRange = 2f;
-    public float repositionDistance = 1.5f;
+    public float attackRange = 2f;        // distance to start attack
+    public float combatDistance = 2.5f;   // distance to start combat phase
+    public float backOffDistance = 3f;    // distance to step back after attack
 
-    [Header("Combat Settings")]
-    public float combatDistance = 2.5f;
-    public float strafeSpeed = 2f;
-    public float strafeDuration = 1.5f;
-    public float backOffDistance = 3f;
-
-    float strafeTimer;
-    int strafeDirection;
+    [Header("Strafing Settings")]
+    public float strafeDurationMin = 1f;
+    public float strafeDurationMax = 2f;
+    public float strafeDistance = 2f;
 
     [Header("Attack Settings")]
-    int consecutiveAttacks = 0;
     public int attacksBeforeReposition = 2;
 
-    public EnemyState currentState;
+    private EnemyState currentState;
+    private CombatPhase combatPhase;
 
     private Transform currentTarget;
-    private bool isRepositioning = false;
+    private int consecutiveAttacks;
+
+    private Vector3 strafeDirection;
+    private float strafeTimer;
 
     void Start()
     {
         if (!isServer) return;
-
         currentState = EnemyState.Idle;
     }
 
     void Update()
     {
-        if (!isServer) return;
-        if (currentState == EnemyState.Dead) return;
-        if (currentState == EnemyState.Attacking && !agent.isStopped)
-        {
-            currentState = EnemyState.Chasing;
-        }
-
-        Debug.Log("Stopped: " + agent.isStopped +
-          " | HasPath: " + agent.hasPath +
-          " | Velocity: " + agent.velocity +
-          " | Remaining: " + agent.remainingDistance);
-
-        Debug.Log("Current State: " + currentState);
+        if (!isServer || currentState == EnemyState.Dead) return;
 
         UpdateTarget();
         HandleState();
@@ -72,16 +64,16 @@ public class EnemyBrain : NetworkBehaviour
     void UpdateTarget()
     {
         currentTarget = aggroSystem.GetCurrentTarget();
-    }
-
-    void HandleState()
-    {
         if (currentTarget == null)
         {
             currentState = EnemyState.Idle;
             agent.ResetPath();
-            return;
         }
+    }
+
+    void HandleState()
+    {
+        if (currentTarget == null) return;
 
         float distance = Vector3.Distance(transform.position, currentTarget.position);
 
@@ -96,12 +88,23 @@ public class EnemyBrain : NetworkBehaviour
                 break;
 
             case EnemyState.Attacking:
+                // Agent is stopped during attack; handled in HandleCombat
                 break;
 
             case EnemyState.Repositioning:
                 HandleReposition();
                 break;
         }
+
+        // Combat logic triggers automatically when within combatDistance
+        if (currentState == EnemyState.Chasing && distance <= combatDistance)
+        {
+            currentState = EnemyState.Attacking;
+            combatPhase = CombatPhase.Positioning;
+        }
+
+        if (currentState == EnemyState.Attacking)
+            HandleCombat();
     }
 
     void HandleChase(float distance)
@@ -116,10 +119,97 @@ public class EnemyBrain : NetworkBehaviour
         else
         {
             agent.ResetPath();
-            StartAttack();
+            currentState = EnemyState.Attacking;
+            combatPhase = CombatPhase.Positioning;
         }
     }
 
+    void HandleCombat()
+    {
+        FaceTarget();
+        float distance = Vector3.Distance(transform.position, currentTarget.position);
+
+        // Too far → go back to chasing
+        if (distance > combatDistance)
+        {
+            currentState = EnemyState.Chasing;
+            return;
+        }
+
+        switch (combatPhase)
+        {
+            case CombatPhase.Positioning:
+                HandlePositioning(distance);
+                break;
+
+            case CombatPhase.Attacking:
+                HandleAttacking();
+                break;
+
+            case CombatPhase.Strafing:
+                HandleStrafing();
+                break;
+        }
+    }
+
+    void HandlePositioning(float distance)
+    {
+        if (distance > attackRange)
+        {
+            Vector3 toPlayer = (currentTarget.position - transform.position).normalized;
+            Vector3 desiredPos = currentTarget.position - toPlayer * attackRange;
+
+            agent.isStopped = false;
+            agent.SetDestination(desiredPos);
+        }
+        else
+        {
+            agent.ResetPath();
+            combatPhase = CombatPhase.Attacking;
+        }
+    }
+
+    void HandleAttacking()
+    {
+        agent.ResetPath();
+
+        if (attackController.CanAttack())
+        {
+            StartAttack();
+            return;
+        }
+
+        // If attack is on cooldown → begin strafing
+        if (combatPhase != CombatPhase.Strafing)
+        {
+            BeginStrafe();
+            combatPhase = CombatPhase.Strafing;
+        }
+    }
+
+    void BeginStrafe()
+    {
+        Vector3 toPlayer = (currentTarget.position - transform.position).normalized;
+        strafeDirection = Vector3.Cross(Vector3.up, toPlayer).normalized;
+
+        if (Random.value > 0.5f)
+            strafeDirection *= -1f;
+
+        strafeTimer = Random.Range(strafeDurationMin, strafeDurationMax);
+    }
+
+    void HandleStrafing()
+    {
+        strafeTimer -= Time.deltaTime;
+
+        agent.isStopped = false;
+        agent.SetDestination(transform.position + strafeDirection * strafeDistance);
+
+        if (strafeTimer <= 0f)
+        {
+            combatPhase = CombatPhase.Positioning;
+        }
+    }
 
     void HandleReposition()
     {
@@ -129,69 +219,30 @@ public class EnemyBrain : NetworkBehaviour
         }
     }
 
-    void HandleCombat()
-    {
-        if (currentTarget == null)
-            return;
-
-        FaceTarget();
-
-        float distance = Vector3.Distance(transform.position, currentTarget.position);
-        Debug.Log("Distance: " + distance);
-
-        // Too far → chase
-        if (distance > combatDistance)
-        {
-            currentState = EnemyState.Chasing;
-            return;
-        }
-
-        // Slightly outside attack range → step inward
-        if (distance > attackRange)
-        {
-            Vector3 dir = (transform.position - currentTarget.position).normalized;
-            Vector3 attackPoint = currentTarget.position + dir * attackRange;
-
-            agent.SetDestination(attackPoint);
-            return;
-        }
-
-        // Inside attack range
-        agent.ResetPath();
-
-        if (attackController.CanAttack())
-        {
-            StartAttack();
-            return;
-        }
-
-        // After attacking cooldown → strafe
-        if (!agent.hasPath)
-        {
-            Vector3 strafeDir = (Random.value > 0.5f ? transform.right : -transform.right);
-            Vector3 strafeTarget = transform.position + strafeDir * 2f;
-
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(strafeTarget, out hit, 2f, NavMesh.AllAreas))
-            {
-                agent.SetDestination(hit.position);
-            }
-        }
-    }
-
-
     void StartAttack()
     {
         Debug.Log("Starting Attack");
-        
         currentState = EnemyState.Attacking;
-
         agent.isStopped = true;
         agent.ResetPath();
-
         FaceTarget();
-
         attackController.ExecuteRandomAttack();
+    }
+
+    [Server]
+    public void OnAttackFinished()
+    {
+        consecutiveAttacks++;
+
+        if (consecutiveAttacks >= attacksBeforeReposition)
+        {
+            consecutiveAttacks = 0;
+            StartBackOff();
+        }
+        else
+        {
+            combatPhase = CombatPhase.Strafing;
+        }
     }
 
     void StartBackOff()
@@ -199,7 +250,7 @@ public class EnemyBrain : NetworkBehaviour
         currentState = EnemyState.Repositioning;
 
         Vector3 dirAway = (transform.position - currentTarget.position).normalized;
-        Vector3 backPoint = transform.position + dirAway * 2.5f;
+        Vector3 backPoint = transform.position + dirAway * backOffDistance;
 
         agent.isStopped = false;
         agent.SetDestination(backPoint);
@@ -213,48 +264,7 @@ public class EnemyBrain : NetworkBehaviour
         if (direction != Vector3.zero)
         {
             Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                lookRotation,
-                Time.deltaTime * 10f
-            );
-        }
-    }
-
-    [Server]
-    public void OnAttackFinished()
-    {
-        StartBackOff();
-    }
-
-    [Server]
-    void StartReposition()
-    {
-        if (currentTarget == null)
-        {
-            currentState = EnemyState.Chasing;
-            return;
-        }
-
-        currentState = EnemyState.Repositioning;
-
-        agent.isStopped = false;
-        agent.ResetPath();
-
-        Vector3 directionAway = (transform.position - currentTarget.position).normalized;
-        Vector3 rawPoint = transform.position + directionAway * repositionDistance;
-
-        NavMeshHit hit;
-
-        if (NavMesh.SamplePosition(rawPoint, out hit, 2f, NavMesh.AllAreas))
-        {
-            agent.SetDestination(hit.position);
-            Debug.Log("Valid NavMesh reposition set.");
-        }
-        else
-        {
-            Debug.Log("No valid NavMesh point found. Switching to chase.");
-            currentState = EnemyState.Chasing;
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f);
         }
     }
 
