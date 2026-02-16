@@ -114,7 +114,8 @@ public class EnemyBrain : NetworkBehaviour
         if (distance > attackRange)
         {
             agent.isStopped = false;
-            agent.SetDestination(currentTarget.position);
+            Vector3 surroundPos = aggroSystem.GetSurroundPosition();
+            agent.SetDestination(surroundPos);
         }
         else
         {
@@ -156,11 +157,9 @@ public class EnemyBrain : NetworkBehaviour
     {
         if (distance > attackRange)
         {
-            Vector3 toPlayer = (currentTarget.position - transform.position).normalized;
-            Vector3 desiredPos = currentTarget.position - toPlayer * attackRange;
-
+            Vector3 surroundPos = aggroSystem.GetSurroundPosition();
             agent.isStopped = false;
-            agent.SetDestination(desiredPos);
+            agent.SetDestination(surroundPos);
         }
         else
         {
@@ -203,7 +202,8 @@ public class EnemyBrain : NetworkBehaviour
         strafeTimer -= Time.deltaTime;
 
         agent.isStopped = false;
-        agent.SetDestination(transform.position + strafeDirection * strafeDistance);
+        Vector3 targetPos = transform.position + strafeDirection * strafeDistance;
+        agent.SetDestination(targetPos);
 
         if (strafeTimer <= 0f)
         {
