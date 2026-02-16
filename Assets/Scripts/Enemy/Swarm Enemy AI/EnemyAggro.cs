@@ -154,6 +154,8 @@ public class EnemyAggro : NetworkBehaviour
     [Server]
     public void ForceTarget(Transform attacker)
     {
+        Debug.Log($"{name} forced to target {attacker.name}");
+        
         if (aggroType == AggroType.ClosestOnly)
             return;
 

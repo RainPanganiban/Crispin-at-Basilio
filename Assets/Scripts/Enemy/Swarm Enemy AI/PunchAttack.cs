@@ -24,7 +24,7 @@ public class PunchAttack : EnemyAttack
 
             if (damageable != null)
             {
-                damageable.TakeDamage(damage);
+                damageable.TakeDamage(damage, transform);
             }
         }
     }

@@ -116,13 +116,15 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
 
         Projectile projectile = proj.GetComponent<Projectile>();
         Collider ownerCollider = GetComponent<Collider>();
+        NetworkIdentity ownerId = netIdentity; // add this
 
         projectile.Initialize(
             damage,
             speed,
             lifetime,
             direction,
-            ownerCollider
+            ownerCollider,
+            ownerId // pass the owner
         );
 
         NetworkServer.Spawn(proj);

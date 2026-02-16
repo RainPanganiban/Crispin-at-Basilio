@@ -34,20 +34,26 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
             health.ChangeValue(healthRegenRate * Time.deltaTime);
     }
 
-    // Public methods
+    // ===============================
+    // IDamageable implementation
+    // ===============================
     [Server]
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, Transform attacker)
     {
-        health.ChangeValue(-amount);
+        if (health.currentValue <= 0) return;
 
-        Debug.Log("Player took damage: " + amount);
+        health.ChangeValue(-amount);
 
         if (health.currentValue <= 0)
         {
+            health.SetValue(0);
             Die();
         }
     }
 
+    // ===============================
+    // Other methods
+    // ===============================
     public void UseStamina(float amount)
     {
         stamina.ChangeValue(-amount);
@@ -67,8 +73,6 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     void Die()
     {
         Debug.Log("Player died");
-
-        // For now just log
-        // Later we add respawn logic
+        // Add respawn or death logic later
     }
 }

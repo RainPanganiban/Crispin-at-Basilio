@@ -10,7 +10,6 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
 
     public float attackRadius = 1.5f;
     public float attackRange = 1.5f;
-    public LayerMask hitLayers;
 
     [Header("Combo Settings")]
     public float comboResetTime = 1.2f;
@@ -21,58 +20,60 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
     [Header("References")]
     public Transform attackPoint;
 
+    // Called by input system
     public void OnLightAttack(InputAction.CallbackContext context)
     {
-        if (!isLocalPlayer) return; // Make sure only local player triggers it
-        if (!context.performed) return;
-
-        // Call your existing LightAttack logic
+        if (!isLocalPlayer || !context.performed) return;
         LightAttack();
     }
 
     // ===============================
-    // INPUT ENTRY POINT (CLIENT)
+    // CLIENT -> SERVER
     // ===============================
     public void LightAttack()
     {
         CmdPerformLightAttack();
     }
 
-    // ===============================
-    // SERVER AUTHORITATIVE ATTACK
-    // ===============================
     [Command]
-    void CmdPerformLightAttack()
+    private void CmdPerformLightAttack()
     {
         HandleCombo();
 
         float damage = (comboStep == 3) ? heavyDamage : lightDamage;
 
-        Vector3 center =
-            attackPoint.position +
-            attackPoint.forward * attackRange;
+        Vector3 center = attackPoint.position + attackPoint.forward * attackRange;
 
-        Collider[] hits = Physics.OverlapSphere(
-            center,
-            attackRadius,
-            hitLayers
-        );
+        // OverlapSphere without layers → hits everything
+        Collider[] hits = Physics.OverlapSphere(center, attackRadius);
+
+        int hitCount = 0;
 
         foreach (Collider hit in hits)
         {
             if (hit.TryGetComponent(out IDamageable damageable))
             {
-                damageable.TakeDamage(damage);
+                damageable.TakeDamage(damage, transform); // Pass this player as attacker
+
+                // If enemy has aggro, force target on this player
+                if (hit.TryGetComponent(out EnemyAggro aggro))
+                {
+                    aggro.ForceTarget(transform);
+                }
+
+                hitCount++;
             }
         }
 
-        RpcOnAttack(comboStep);
+        Debug.Log($"Melee Attack Step {comboStep} hit {hitCount} targets.");
+
+        RpcOnAttack(comboStep, hitCount);
     }
 
     // ===============================
-    // COMBO LOGIC (SERVER)
+    // COMBO LOGIC
     // ===============================
-    void HandleCombo()
+    private void HandleCombo()
     {
         if (Time.time - lastAttackTime > comboResetTime)
             comboStep = 0;
@@ -87,23 +88,20 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
     // VISUAL FEEDBACK (ALL CLIENTS)
     // ===============================
     [ClientRpc]
-    void RpcOnAttack(int step)
+    private void RpcOnAttack(int step, int hitCount)
     {
-        // Hook animations, VFX, sound later
-        Debug.Log($"Melee Attack Step: {step}");
+        // TODO: Play animation, VFX, sound here
+        Debug.Log($"Melee Attack Step: {step}, hit {hitCount} enemies");
     }
 
     // ===============================
     // DEBUG GIZMOS
     // ===============================
-    void OnDrawGizmosSelected()
+    private void OnDrawGizmosSelected()
     {
         if (attackPoint == null) return;
 
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(
-            attackPoint.position + attackPoint.forward * attackRange,
-            attackRadius
-        );
+        Gizmos.DrawWireSphere(attackPoint.position + attackPoint.forward * attackRange, attackRadius);
     }
 }

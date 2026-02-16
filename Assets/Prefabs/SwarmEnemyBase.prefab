@@ -674,7 +674,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   aggroType: 1
-  surroundRadius: 3
+  surroundRadius: 1.8
   surroundJitter: 0.5
   aggroRadius: 15
   aggroSwitchDistance: 1
