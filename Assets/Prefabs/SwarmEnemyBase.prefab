@@ -189,7 +189,7 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.3
   m_Speed: 4
-  m_Acceleration: 20
+  m_Acceleration: 10
   avoidancePriority: 50
   m_AngularSpeed: 720
   m_StoppingDistance: 0
@@ -219,9 +219,13 @@ MonoBehaviour:
   animator: {fileID: 0}
   aggroSystem: {fileID: 6553800672820830491}
   attackController: {fileID: 7895675846689042582}
-  attackRange: 1.5
+  attackRange: 2.2
   repositionDistance: 3
-  attacksBeforeReposition: 2
+  combatDistance: 2.5
+  strafeSpeed: 2
+  strafeDuration: 2
+  backOffDistance: 5
+  attacksBeforeReposition: 1
   currentState: 0
 --- !u!114 &6553800672820830491
 MonoBehaviour:
@@ -271,8 +275,8 @@ MonoBehaviour:
   syncInterval: 0
   cooldown: 1
   duration: 1
-  damage: 10
-  hitRadius: 2.11
+  damage: 50
+  hitRadius: 3
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
