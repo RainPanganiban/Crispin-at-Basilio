@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Crispin-at-Basilio.slnx"
+    "dotnet.defaultSolution": "Crispin-at-Basilio.sln"
 }

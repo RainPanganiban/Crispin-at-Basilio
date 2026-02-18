@@ -14,28 +14,43 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
 
     public event Action OnStatsReady;
 
+    // SyncVars for multiplayer UI syncing
+    [SyncVar(hook = nameof(OnHealthChanged))] private float syncedHealth;
+    [SyncVar(hook = nameof(OnStaminaChanged))] private float syncedStamina;
+
     private void Start()
     {
-        // Initialize current values
+        // Initialize stats
         health.SetValue(health.maxValue);
         stamina.SetValue(stamina.maxValue);
+
+        syncedHealth = health.currentValue;
+        syncedStamina = stamina.currentValue;
 
         OnStatsReady?.Invoke();
     }
 
     private void Update()
     {
-        // Regenerate stamina over time
+        if (!isServer) return; // Only server modifies values
+
+        // Regenerate stamina
         if (stamina.currentValue < stamina.maxValue)
+        {
             stamina.ChangeValue(staminaRegenRate * Time.deltaTime);
+            syncedStamina = stamina.currentValue; // Sync
+        }
 
         // Optional health regen
         if (health.currentValue < health.maxValue)
+        {
             health.ChangeValue(healthRegenRate * Time.deltaTime);
+            syncedHealth = health.currentValue; // Sync
+        }
     }
 
     // ===============================
-    // IDamageable implementation
+    // IDamageable Implementation
     // ===============================
     [Server]
     public void TakeDamage(float amount, Transform attacker)
@@ -43,36 +58,62 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         if (health.currentValue <= 0) return;
 
         health.ChangeValue(-amount);
+        syncedHealth = health.currentValue; // sync with clients
 
         if (health.currentValue <= 0)
         {
             health.SetValue(0);
+            syncedHealth = 0;
             Die();
         }
     }
 
     // ===============================
-    // Other methods
+    // SyncVar Hooks
+    // These are called on all clients when the server updates the SyncVar
     // ===============================
-    public void UseStamina(float amount)
+    void OnHealthChanged(float oldValue, float newValue)
     {
-        stamina.ChangeValue(-amount);
+        health.SetValue(newValue); // updates UI via Stat events
     }
 
+    void OnStaminaChanged(float oldValue, float newValue)
+    {
+        // Fix: Update the Stat AND trigger OnValueChanged
+        float previous = stamina.currentValue;
+        stamina.SetValue(newValue); // fires OnValueChanged
+    }
+
+    // ===============================
+    // Other Methods
+    // ===============================
+    [Server]
+    public void UseStamina(float amount)
+    {
+        if (stamina.currentValue <= 0) return;
+
+        stamina.ChangeValue(-amount);
+        syncedStamina = stamina.currentValue; // sync
+    }
+
+    [Server]
     public void RestoreHealth(float amount)
     {
         health.ChangeValue(amount);
+        syncedHealth = health.currentValue; // sync
     }
 
+    [Server]
     public void RestoreStamina(float amount)
     {
         stamina.ChangeValue(amount);
+        syncedStamina = stamina.currentValue; // sync
     }
 
     [Server]
     void Die()
     {
         Debug.Log("Player died");
-        // Add respawn or death logic later
+        // Add respawn or death logic here
     }
 }

@@ -85,7 +85,7 @@ public class PlayerMovement : NetworkBehaviour
         
         if (context.performed && !isRolling && statsManager.stamina.currentValue >= rollStaminaCost)
         {
-            statsManager.UseStamina(rollStaminaCost);
+            CmdUseStamina(rollStaminaCost);
             StartCoroutine(Roll());
         }
     }
@@ -128,7 +128,7 @@ public class PlayerMovement : NetworkBehaviour
             {
                 speed = runSpeed;
                 // Drain stamina while running
-                statsManager.UseStamina(staminaCostPerSecondRunning * Time.deltaTime);
+                CmdUseStamina(staminaCostPerSecondRunning * Time.deltaTime);
 
                 // Stop running if out of stamina
                 if (statsManager.stamina.currentValue <= 0f)
@@ -153,6 +153,13 @@ public class PlayerMovement : NetworkBehaviour
         if (controller.isGrounded && velocity.y < 0) velocity.y = -2f;
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    [Command]
+    private void CmdUseStamina(float amount)
+    {
+        if (statsManager == null) return;
+        statsManager.UseStamina(amount);
     }
 
     private System.Collections.IEnumerator Roll()
