@@ -1,7 +1,7 @@
 using UnityEngine;
 using Mirror;
 
-public class Projectile : NetworkBehaviour
+public class EnemyProjectile : NetworkBehaviour
 {
     [Header("Projectile Settings")]
     [SyncVar] public float speed = 15f;
@@ -45,16 +45,20 @@ public class Projectile : NetworkBehaviour
     {
         if (other == ownerCollider) return;
 
+        // Do not damage other enemies
+        if (other.GetComponent<EnemyHealth>() != null)
+        {
+            NetworkServer.Destroy(gameObject);
+            return;
+        }
+
         if (other.TryGetComponent<IDamageable>(out var target))
         {
-            // Player projectiles should only damage enemies
-            if (target is EnemyHealth enemy)
-            {
-                Transform attackerTransform = ownerIdentity != null ? ownerIdentity.transform : null;
-                enemy.TakeDamage(damage, attackerTransform);
-            }
+            Transform attackerTransform = ownerIdentity != null ? ownerIdentity.transform : null;
+            target.TakeDamage(damage, attackerTransform);
         }
 
         NetworkServer.Destroy(gameObject);
     }
 }
+
