@@ -116,4 +116,12 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         Debug.Log("Player died");
         // Add respawn or death logic here
     }
+
+    // Applied when spawning a player from persistent session data.
+    [Server]
+    public void ServerApplyPersistentData(int coins, System.Collections.Generic.List<string> purchasedUpgrades)
+    {
+        // Hook for persistent stats/upgrades if needed.
+        // For now, health/stamina already start at max on spawn.
+    }
 }

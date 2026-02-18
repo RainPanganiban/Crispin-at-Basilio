@@ -14,6 +14,24 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Mirror Networking.unity
     guid: 3cc2201ec561c274ab2b1aa7ee430674
+  - enabled: 1
+    path: Assets/Scenes/Level 1.unity
+    guid: c927b3035fd87f04695f39767b25d3b0
+  - enabled: 1
+    path: Assets/Scenes/Level 2.unity
+    guid: cb7b01a82551e0e4ab1f312c63364881
+  - enabled: 1
+    path: Assets/Scenes/Level 3.unity
+    guid: 60096f5d075c59f44a89a1fdc83f6a5d
+  - enabled: 1
+    path: Assets/Scenes/Optional 1.unity
+    guid: 629ca3b3d52db8d469041193ee86cd5e
+  - enabled: 1
+    path: Assets/Scenes/Optional 2.unity
+    guid: 11dd7fd99a2e02f44b24ed2f1da52319
+  - enabled: 1
+    path: Assets/Scenes/Optional 3.unity
+    guid: 2e332d76e7631df4395138d05647de0a
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

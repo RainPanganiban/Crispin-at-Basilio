@@ -5,8 +5,8 @@
 - Mirror multiplayer integration
 - CustomNetworkManager
 - Lobby system
-- Scene transitions (Lobby → Gameplay)
-- Player spawning
+- Scene transitions (Lobby → Overworld → Gameplay)
+- Player spawning with character persistence across scenes
 - PlayerMovement
 - ThirdPersonCamera
 - MeleeCombat
@@ -24,6 +24,15 @@
     - PunchAttack
 - Enemy health system
 - Enemy health UI
+- **Overworld Hub System**
+    - Cuphead-inspired explorable overworld
+    - Level nodes with cooperative countdown (both players required)
+    - Server-authoritative level progression and unlock system
+    - Shop system with server-validated purchases
+    - Character persistence across all scenes (Lobby → Overworld → Gameplay)
+    - Currency system (PlayerCurrency component)
+    - Countdown UI with billboarding
+    - Shop UI with cursor unlock/lock management
 
 ---
 
@@ -56,8 +65,7 @@
 - Running stamina drain system
 - Boss system implementation
 - Multi-phase boss AI
-- Currency system
-- Overworld Hub for level selection and player shop 
+- Overworld Hub enhancements (visual polish, more shop items, optional levels)
 - Player class specialization
 - Animation polish
 - Sound manager system

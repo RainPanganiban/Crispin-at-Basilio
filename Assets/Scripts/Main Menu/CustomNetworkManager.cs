@@ -5,6 +5,17 @@ using System.Collections.Generic;
 
 public class CustomNetworkManager : NetworkManager
 {
+    [System.Serializable]
+    public class PlayerSessionData
+    {
+        public string playerClass;
+        public string playerName;
+
+        // Session-long progression values
+        public int coins;
+        public List<string> purchasedUpgrades = new List<string>();
+    }
+
     [Header("Prefabs")]
     public GameObject lobbyPlayerPrefab;      // Lobby player prefab
     
@@ -12,56 +23,59 @@ public class CustomNetworkManager : NetworkManager
     public GameObject crispinGameplayPrefab;
     public GameObject basilioGameplayPrefab;
 
-    // Cache lobby players before scene change
-    private readonly Dictionary<NetworkConnectionToClient, (string playerClass, string playerName)>
-    playerData = new Dictionary<NetworkConnectionToClient, (string, string)>();
+    // Session data keyed by connectionId so it survives scene changes
+    private readonly Dictionary<int, PlayerSessionData> sessionDataByConnection =
+        new Dictionary<int, PlayerSessionData>();
+
+    public static CustomNetworkManager Instance => (CustomNetworkManager)singleton;
     
     public override void Awake()
     {
         base.Awake();
         autoCreatePlayer = false;
-
-        foreach (var p in spawnPrefabs)
-        {
-            Debug.Log(" - " + p.name);
-        }
     }
     
     // Called when client requests a player (Lobby only)
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
+        // In this project, we only add players explicitly in the Lobby.
         if (SceneManager.GetActiveScene().name != "Lobby")
-        return;
+            return;
 
         if (lobbyPlayerPrefab == null)
         {
+            Debug.LogWarning("[CustomNetworkManager] Lobby player prefab is not assigned.");
             return;
         }
 
         GameObject lobbyPlayer = Instantiate(lobbyPlayerPrefab);
         NetworkServer.AddPlayerForConnection(conn, lobbyPlayer);
-
-
-        NetworkIdentity ni = lobbyPlayer.GetComponent<NetworkIdentity>();
     }
 
     public override void OnServerChangeScene(string newSceneName)
     {
-        if (newSceneName == "Mirror Networking")
-        {
-            playerData.Clear();
+        // When leaving the Lobby, cache player selection into session data
+        string currentSceneName = SceneManager.GetActiveScene().name;
 
+        if (currentSceneName == "Lobby")
+        {
             foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
             {
-                if (conn.identity == null) continue;
+                if (conn.identity == null)
+                    continue;
 
                 LobbyPlayer lobbyPlayer = conn.identity.GetComponent<LobbyPlayer>();
-                if (lobbyPlayer == null) continue;
+                if (lobbyPlayer == null)
+                    continue;
 
-                playerData[conn] = (
-                    lobbyPlayer.playerClass,
-                    lobbyPlayer.playerName
-                );
+                if (!sessionDataByConnection.TryGetValue(conn.connectionId, out PlayerSessionData data))
+                {
+                    data = new PlayerSessionData();
+                    sessionDataByConnection[conn.connectionId] = data;
+                }
+
+                data.playerClass = lobbyPlayer.playerClass;
+                data.playerName = lobbyPlayer.playerName;
             }
         }
 
@@ -71,32 +85,87 @@ public class CustomNetworkManager : NetworkManager
     // Called AFTER scene has fully loaded
     public override void OnServerSceneChanged(string sceneName)
     {
-        if (sceneName != "Mirror Networking")
+        // Handle all gameplay scenes (not just overworld)
+        // Skip Lobby scene (players are already spawned there)
+        if (sceneName == "Lobby")
             return;
 
-        foreach (var entry in playerData)
+        foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
         {
-            NetworkConnectionToClient conn = entry.Key;
-            string playerClass = entry.Value.playerClass;
-            string playerName = entry.Value.playerName;
+            if (!sessionDataByConnection.TryGetValue(conn.connectionId, out PlayerSessionData data))
+            {
+                continue;
+            }
 
-            GameObject prefabToSpawn = null;
+            GameObject prefabToSpawn = GetGameplayPrefabForClass(data.playerClass);
+            if (prefabToSpawn == null)
+            {
+                continue;
+            }
 
-            if (playerClass == "Crispin")
-                prefabToSpawn = crispinGameplayPrefab;
-            else if (playerClass == "Basilio")
-                prefabToSpawn = basilioGameplayPrefab;
+            Transform startPos = GetStartPosition();
+            Vector3 spawnPos = startPos ? startPos.position : Vector3.zero;
+            Quaternion spawnRot = startPos ? startPos.rotation : Quaternion.identity;
 
-            if (prefabToSpawn == null) continue;
-
-            GameObject gameplayPlayer = Instantiate(prefabToSpawn);
+            GameObject gameplayPlayer = Instantiate(prefabToSpawn, spawnPos, spawnRot);
 
             PlayerIdentity identity = gameplayPlayer.GetComponent<PlayerIdentity>();
-            identity.playerName = playerName;
+            if (identity != null)
+            {
+                identity.playerName = data.playerName;
+            }
 
             NetworkServer.ReplacePlayerForConnection(conn, gameplayPlayer, true);
+
+            ApplySessionDataToPlayer(gameplayPlayer, conn);
+        }
+    }
+
+    GameObject GetGameplayPrefabForClass(string playerClass)
+    {
+        if (playerClass == "Crispin")
+            return crispinGameplayPrefab;
+        if (playerClass == "Basilio")
+            return basilioGameplayPrefab;
+
+        return null;
+    }
+
+    void ApplySessionDataToPlayer(GameObject player, NetworkConnectionToClient conn)
+    {
+        if (!sessionDataByConnection.TryGetValue(conn.connectionId, out PlayerSessionData data))
+            return;
+
+        PlayerStatsManager stats = player.GetComponent<PlayerStatsManager>();
+        if (stats != null)
+        {
+            stats.ServerApplyPersistentData(data.coins, data.purchasedUpgrades);
         }
 
-        playerData.Clear();
+        // Sync coins to PlayerCurrency component if it exists
+        PlayerCurrency currency = player.GetComponent<PlayerCurrency>();
+        if (currency != null)
+        {
+            currency.SetCoins(data.coins);
+        }
+    }
+
+    // Example hook to record rewards after a completed level.
+    [Server]
+    public void ServerRecordLevelRewards(NetworkConnectionToClient conn, int coinsEarned)
+    {
+        if (!sessionDataByConnection.TryGetValue(conn.connectionId, out PlayerSessionData data))
+        {
+            data = new PlayerSessionData();
+            sessionDataByConnection[conn.connectionId] = data;
+        }
+
+        data.coins += coinsEarned;
+    }
+
+    [Server]
+    public bool TryGetSessionData(NetworkConnectionToClient conn, out PlayerSessionData data)
+    {
+        return sessionDataByConnection.TryGetValue(conn.connectionId, out data);
     }
 }

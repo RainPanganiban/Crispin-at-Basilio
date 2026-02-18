@@ -40,7 +40,7 @@
 |-------|------|
 | Main Menu | `Assets/Scenes/Main Menu.unity` |
 | Lobby | `Assets/Scenes/Lobby.unity` |
-| Mirror Networking (gameplay) | `Assets/Scenes/Mirror Networking.unity` |
+| Mirror Networking (Overworld Hub) | `Assets/Scenes/Mirror Networking.unity` |
 
 Subfolder: `Assets/Scenes/Mirror Networking/` (e.g. NavMesh assets).
 
@@ -94,12 +94,25 @@ Scripts under `Assets/Scripts/` that are **not** under `Network/Mirror/` are gam
 
 | Script | Role |
 |--------|------|
-| `CustomNetworkManager.cs` | Custom Mirror NetworkManager |
+| `CustomNetworkManager.cs` | Custom Mirror NetworkManager with character persistence across scenes |
 | `LobbyUIManager.cs` | Lobby UI |
 | `LobbyAutoAddPlayers.cs` | Auto-add players in lobby |
 | `LobbyPlayer.cs` | Lobby player representation |
 | `MenuUIManager.cs` | Main menu UI |
 | `NetworkDebugClient.cs` | Debug networking client |
+
+### Overworld Hub — `Assets/Scripts/Overworld/`
+
+| Script | Role |
+|--------|------|
+| `OverworldManager.cs` | Manages overworld scene and level transitions |
+| `LevelProgressionManager.cs` | Server-authoritative level unlock/completion tracking |
+| `LevelNode.cs` | Physical level node trigger with cooperative countdown system |
+| `LevelNodeUI.cs` | Client-side UI for countdown and unlock visuals |
+| `ShopManager.cs` | Server-authoritative shop zone and purchase validation |
+| `OverworldShopUI.cs` | Shop UI controller (open/close with cursor management) |
+| `OverworldShopClient.cs` | Client-side shop interactions and currency display |
+| `PlayerCurrency.cs` | Syncs player currency (coins) via SyncVar |
 
 ### System / shared — `Assets/Scripts/System/`
 
@@ -135,8 +148,8 @@ Game networking entry points: `CustomNetworkManager.cs`, `NetworkDebugClient.cs`
 
 ## Script count (approx.)
 
-- **Total .cs under Assets:** ~594
-- **Game-specific (non-Mirror):** ~25 scripts in Player, Player UI, Enemy, Main Menu, System
+- **Total .cs under Assets:** ~602
+- **Game-specific (non-Mirror):** ~33 scripts in Player, Player UI, Enemy, Main Menu, Overworld, System
 
 ---
 
