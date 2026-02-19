@@ -28,7 +28,8 @@ public class EnemyBrain : NetworkBehaviour
     [Header("Distance Settings")]
     public float attackRange = 2f;        // distance to start attack
     public float combatDistance = 2.5f;   // distance to start combat phase
-    public float backOffDistance = 3f;    // distance to step back after attack
+    public float backOffDistance = 3f;     // distance to step back after attack
+    public float repositionTimeout = 2f;  // max time in Repositioning before giving up
 
     [Header("Strafing Settings")]
     public float strafeDurationMin = 1f;
@@ -46,11 +47,16 @@ public class EnemyBrain : NetworkBehaviour
 
     private Vector3 strafeDirection;
     private float strafeTimer;
+    private float repositionStartTime;
 
     void Start()
     {
         if (!isServer) return;
         currentState = EnemyState.Idle;
+
+        // Sync stopping distance with attack range so we don't overshoot when closing in
+        if (agent != null)
+            agent.stoppingDistance = Mathf.Min(attackRange * 0.4f, 0.6f);
     }
 
     void Update()
@@ -114,7 +120,7 @@ public class EnemyBrain : NetworkBehaviour
         if (distance > attackRange)
         {
             agent.isStopped = false;
-            Vector3 surroundPos = aggroSystem.GetSurroundPosition();
+            Vector3 surroundPos = aggroSystem.GetSurroundPosition(attackRange);
             agent.SetDestination(surroundPos);
         }
         else
@@ -157,7 +163,7 @@ public class EnemyBrain : NetworkBehaviour
     {
         if (distance > attackRange)
         {
-            Vector3 surroundPos = aggroSystem.GetSurroundPosition();
+            Vector3 surroundPos = aggroSystem.GetSurroundPosition(attackRange);
             agent.isStopped = false;
             agent.SetDestination(surroundPos);
         }
@@ -213,7 +219,10 @@ public class EnemyBrain : NetworkBehaviour
 
     void HandleReposition()
     {
-        if (!agent.pathPending && agent.remainingDistance <= 0.2f)
+        bool arrived = !agent.pathPending && agent.remainingDistance <= 0.2f;
+        bool timeout = Time.time >= repositionStartTime + repositionTimeout;
+
+        if (arrived || timeout)
         {
             currentState = EnemyState.Chasing;
         }
@@ -248,9 +257,25 @@ public class EnemyBrain : NetworkBehaviour
     void StartBackOff()
     {
         currentState = EnemyState.Repositioning;
+        repositionStartTime = Time.time;
 
         Vector3 dirAway = (transform.position - currentTarget.position).normalized;
-        Vector3 backPoint = transform.position + dirAway * backOffDistance;
+        dirAway.y = 0;
+        if (dirAway.sqrMagnitude < 0.001f)
+            dirAway = -transform.forward;
+
+        // Add slight perpendicular offset so swarm doesn't all back off in same line
+        Vector3 perp = Vector3.Cross(Vector3.up, dirAway).normalized;
+        perp *= (Random.value - 0.5f) * 1.5f;
+        Vector3 dirWithJitter = (dirAway + perp).normalized;
+
+        Vector3 idealBackPoint = transform.position + dirWithJitter * backOffDistance;
+
+        // Find valid NavMesh position (avoids backing through walls / off mesh)
+        NavMeshHit hit;
+        Vector3 backPoint = idealBackPoint;
+        if (NavMesh.SamplePosition(idealBackPoint, out hit, backOffDistance * 0.5f, NavMesh.AllAreas))
+            backPoint = hit.position;
 
         agent.isStopped = false;
         agent.SetDestination(backPoint);
