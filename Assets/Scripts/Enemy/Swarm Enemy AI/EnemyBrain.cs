@@ -239,7 +239,7 @@ public class EnemyBrain : NetworkBehaviour
     }
 
     [Server]
-    public void OnAttackFinished()
+    public virtual void OnAttackFinished()
     {
         consecutiveAttacks++;
 
@@ -294,7 +294,7 @@ public class EnemyBrain : NetworkBehaviour
     }
 
     [Server]
-    public void Die()
+    public virtual void Die()
     {
         currentState = EnemyState.Dead;
         agent.isStopped = true;

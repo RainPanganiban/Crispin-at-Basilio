@@ -38,12 +38,15 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
         if (!isLocalPlayer) return;
 
         // Camera zoom
+        if (playerCamera == null)
+        {
+            playerCamera = GetComponentInChildren<Camera>();
+            if (playerCamera == null)
+                return;
+        }
+
         float targetFOV = isCharging ? chargedFOV : normalFOV;
-        playerCamera.fieldOfView = Mathf.Lerp(
-            playerCamera.fieldOfView,
-            targetFOV,
-            zoomSpeed * Time.deltaTime
-        );
+        playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFOV, zoomSpeed * Time.deltaTime);
 
         if (!isCharging) return;
 
@@ -80,13 +83,19 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
         isCharging = true;
         currentCharge = 0f;
 
-        movement.isAiming = true;
+        if (movement == null)
+            movement = GetComponent<PlayerMovement>();
+        if (movement != null)
+            movement.isAiming = true;
     }
 
     void ReleaseCharge()
     {
         isCharging = false;
-        movement.isAiming = false;
+        if (movement == null)
+            movement = GetComponent<PlayerMovement>();
+        if (movement != null)
+            movement.isAiming = false;
 
         float chargePercent = Mathf.Clamp01(currentCharge / maxChargeTime);
 
