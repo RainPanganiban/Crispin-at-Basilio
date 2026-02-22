@@ -69,7 +69,7 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
         {
             if (hit.TryGetComponent(out IDamageable damageable))
             {
-                damageable.TakeDamage(damage);
+                damageable.TakeDamage(damage, transform);
             }
         }
 
