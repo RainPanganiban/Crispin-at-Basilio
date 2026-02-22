@@ -34,6 +34,12 @@ public class PlayerMovement : NetworkBehaviour
     private PlayerStatsManager statsManager;
     private ICombatHandler combatHandler;
 
+    [Header("Animation Parameters")]
+    public Vector2 MoveInput => moveInput;
+    public bool IsRunning => isRunning;
+    public bool IsGrounded => controller.isGrounded;
+    public bool IsRolling => isRolling;
+
     void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -76,6 +82,7 @@ public class PlayerMovement : NetworkBehaviour
         if (context.performed && controller.isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            GetComponent<CharacterAnimationController>()?.PlayJump();
         }
     }
 
@@ -85,7 +92,8 @@ public class PlayerMovement : NetworkBehaviour
         
         if (context.performed && !isRolling && statsManager.stamina.currentValue >= rollStaminaCost)
         {
-            CmdUseStamina(rollStaminaCost);
+            statsManager.UseStamina(rollStaminaCost);
+            GetComponent<CharacterAnimationController>()?.PlayRoll();
             StartCoroutine(Roll());
         }
     }
@@ -128,7 +136,7 @@ public class PlayerMovement : NetworkBehaviour
             {
                 speed = runSpeed;
                 // Drain stamina while running
-                CmdUseStamina(staminaCostPerSecondRunning * Time.deltaTime);
+                statsManager.UseStamina(staminaCostPerSecondRunning * Time.deltaTime);
 
                 // Stop running if out of stamina
                 if (statsManager.stamina.currentValue <= 0f)
@@ -153,13 +161,6 @@ public class PlayerMovement : NetworkBehaviour
         if (controller.isGrounded && velocity.y < 0) velocity.y = -2f;
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
-    }
-
-    [Command]
-    private void CmdUseStamina(float amount)
-    {
-        if (statsManager == null) return;
-        statsManager.UseStamina(amount);
     }
 
     private System.Collections.IEnumerator Roll()

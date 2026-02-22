@@ -229,7 +229,7 @@
                     "name": "",
                     "id": "df2612c8-5bae-40ad-b0ec-1a4ff4a63661",
                     "path": "<Mouse>/leftButton",
-                    "interactions": "",
+                    "interactions": "Hold",
                     "processors": "",
                     "groups": "",
                     "action": "LightAttack",
