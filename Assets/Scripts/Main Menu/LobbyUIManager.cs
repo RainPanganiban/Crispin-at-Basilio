@@ -38,7 +38,7 @@ public class LobbyUIManager : MonoBehaviour
     public void StartGame()
     {
         if (!NetworkServer.active) return; // only host can start
-        NetworkManager.singleton.ServerChangeScene("Mirror Networking");
+        NetworkManager.singleton.ServerChangeScene("Level 1");
     }
 
     IEnumerator WaitForLocalPlayer()
