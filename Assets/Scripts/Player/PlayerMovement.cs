@@ -82,7 +82,7 @@ public class PlayerMovement : NetworkBehaviour
         if (context.performed && controller.isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            GetComponent<BasilioAnimation>()?.PlayJump();
+            GetComponent<CharacterAnimationController>()?.PlayJump();
         }
     }
 
@@ -93,7 +93,7 @@ public class PlayerMovement : NetworkBehaviour
         if (context.performed && !isRolling && statsManager.stamina.currentValue >= rollStaminaCost)
         {
             statsManager.UseStamina(rollStaminaCost);
-            GetComponent<BasilioAnimation>()?.PlayRoll();
+            GetComponent<CharacterAnimationController>()?.PlayRoll();
             StartCoroutine(Roll());
         }
     }

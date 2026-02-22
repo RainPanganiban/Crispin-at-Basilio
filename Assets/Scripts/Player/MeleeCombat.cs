@@ -33,7 +33,7 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
         if (!context.performed) return;
 
         // Call your existing LightAttack logic
-        basilioAnimation.PlayAttack();
+        GetComponent<CharacterAnimationController>()?.PlayAttack();
         LightAttack();
     }
 

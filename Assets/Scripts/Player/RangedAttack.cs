@@ -14,7 +14,7 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
     [SerializeField] private float zoomSpeed = 8f;
 
     [Header("Charge Settings")]
-    [SerializeField] private float maxChargeTime = 2f;
+    [SerializeField] public float maxChargeTime = 2f;
     [SerializeField] private float minDamage = 10f;
     [SerializeField] private float maxDamage = 40f;
     [SerializeField] private float minSpeed = 10f;
@@ -26,11 +26,13 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
 
     private PlayerMovement movement;
     private Camera playerCamera;
+    private CrispinAnimation crispinAnimation; // Reference to the animation script
 
     public override void OnStartLocalPlayer()
     {
         movement = GetComponent<PlayerMovement>();
         playerCamera = GetComponentInChildren<Camera>();
+        crispinAnimation = GetComponent<CrispinAnimation>(); // Get the animation component
     }
 
     void Update()
@@ -69,6 +71,7 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
     {
         if (!isLocalPlayer) return;
 
+        // The PlayerControls asset should have the "Attack" action's Interactions set to "Hold"
         if (context.started)
             StartCharge();
         else if (context.canceled)
@@ -81,12 +84,27 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
         currentCharge = 0f;
 
         movement.isAiming = true;
+
+        // Tell the animation controller to start the wind-up animation
+        if (crispinAnimation != null)
+        {
+            crispinAnimation.OnAttackStarted();
+        }
     }
 
     void ReleaseCharge()
     {
+        // Don't release if we weren't charging in the first place
+        if (!isCharging) return;
+
         isCharging = false;
         movement.isAiming = false;
+
+        // Tell the animation controller to play the release animation
+        if (crispinAnimation != null)
+        {
+            crispinAnimation.OnAttackReleased();
+        }
 
         float chargePercent = Mathf.Clamp01(currentCharge / maxChargeTime);
 
