@@ -21,15 +21,16 @@ public class EnemyAggro : NetworkBehaviour
 
     [Header("Distance Settings")]
     [SerializeField] private float aggroRadius = 15f;
-    [SerializeField] private float aggroSwitchDistance = 2f;
+    [SerializeField] private float aggroSwitchDistance = 1.5f;  // How much closer new target must be to switch
+    [SerializeField] private float similarDistanceThreshold = 0.2f; // Only chaos-switch when distances within this ratio
 
     [Header("Timing")]
     [SerializeField] private float aggroUpdateInterval = 0.6f;
-    [SerializeField] private float minimumLockTime = 2f;
+    [SerializeField] private float minimumLockTime = 1.5f;
 
     [Header("Chaos Settings")]
     [Range(0f, 1f)]
-    [SerializeField] private float chaosChance = 0.25f; // Chance to behave unpredictably
+    [SerializeField] private float chaosChance = 0.15f; // Chance to switch when targets are similarly distant
 
     [Header("Swarm Settings")]
     [SerializeField] private float swarmShareRadius = 8f;
@@ -84,6 +85,8 @@ public class EnemyAggro : NetworkBehaviour
 
         foreach (GameObject player in players)
         {
+            if (player == null) continue;
+
             float distance = Vector3.Distance(transform.position, player.transform.position);
 
             if (distance > aggroRadius)
@@ -91,9 +94,9 @@ public class EnemyAggro : NetworkBehaviour
 
             float score = distance;
 
-            // Chaos: randomly bias score
+            // Chaos: randomly bias score only when comparing similar distances
             if (Random.value < chaosChance)
-                score *= Random.Range(0.8f, 1.3f);
+                score *= Random.Range(0.9f, 1.15f);
 
             if (score < bestScore)
             {
@@ -101,6 +104,13 @@ public class EnemyAggro : NetworkBehaviour
                 bestTarget = player.transform;
             }
         }
+
+        // Clear target if current is invalid (destroyed, left radius) or no valid targets
+        if (currentTarget != null && (currentTarget.gameObject == null || !currentTarget.CompareTag("Player")))
+            currentTarget = null;
+
+        if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.position) > aggroRadius)
+            currentTarget = null;
 
         if (bestTarget == null)
             return;
@@ -121,6 +131,9 @@ public class EnemyAggro : NetworkBehaviour
             return;
         }
 
+        if (newTarget == currentTarget)
+            return;
+
         if (Time.time < lastSwitchTime + minimumLockTime)
             return;
 
@@ -129,7 +142,11 @@ public class EnemyAggro : NetworkBehaviour
 
         bool significantlyCloser = newDistance + aggroSwitchDistance < currentDistance;
 
-        if (significantlyCloser || Random.value < chaosChance)
+        // Chaos: only switch when distances are similar (avoid erratic long-range switches)
+        bool distancesSimilar = Mathf.Abs(currentDistance - newDistance) / (currentDistance + 0.01f) < similarDistanceThreshold;
+        bool chaosSwitch = distancesSimilar && Random.value < chaosChance;
+
+        if (significantlyCloser || chaosSwitch)
         {
             SetTarget(newTarget);
         }
@@ -195,10 +212,18 @@ public class EnemyAggro : NetworkBehaviour
         }
     }
 
-    public Vector3 GetSurroundPosition()
+    /// <summary>
+    /// Get a surround position around the current target. Use maxRadius to ensure
+    /// slots are within attack range (e.g. pass EnemyBrain.attackRange).
+    /// </summary>
+    public Vector3 GetSurroundPosition(float maxRadius = -1f)
     {
         if (currentTarget == null)
             return transform.position;
+
+        float radius = surroundRadius;
+        if (maxRadius > 0f)
+            radius = Mathf.Min(radius, maxRadius);
 
         // Get only enemies attacking same target
         List<EnemyAggro> sameTarget = new List<EnemyAggro>();
@@ -213,7 +238,7 @@ public class EnemyAggro : NetworkBehaviour
         int count = sameTarget.Count;
 
         if (count == 0)
-            return currentTarget.position;
+            return currentTarget.position + (transform.position - currentTarget.position).normalized * Mathf.Min(radius, 1f);
 
         float angleStep = 360f / count;
         float angle = angleStep * index;
@@ -226,7 +251,7 @@ public class EnemyAggro : NetworkBehaviour
             Mathf.Cos(radians),
             0,
             Mathf.Sin(radians)
-        ) * surroundRadius;
+        ) * radius;
 
         offset += Random.insideUnitSphere * surroundJitter;
         offset.y = 0;

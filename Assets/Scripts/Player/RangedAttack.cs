@@ -40,12 +40,15 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
         if (!isLocalPlayer) return;
 
         // Camera zoom
+        if (playerCamera == null)
+        {
+            playerCamera = GetComponentInChildren<Camera>();
+            if (playerCamera == null)
+                return;
+        }
+
         float targetFOV = isCharging ? chargedFOV : normalFOV;
-        playerCamera.fieldOfView = Mathf.Lerp(
-            playerCamera.fieldOfView,
-            targetFOV,
-            zoomSpeed * Time.deltaTime
-        );
+        playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFOV, zoomSpeed * Time.deltaTime);
 
         if (!isCharging) return;
 
@@ -90,6 +93,10 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
         {
             crispinAnimation.OnAttackStarted();
         }
+        if (movement == null)
+            movement = GetComponent<PlayerMovement>();
+        if (movement != null)
+            movement.isAiming = true;
     }
 
     void ReleaseCharge()
@@ -98,7 +105,10 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
         if (!isCharging) return;
 
         isCharging = false;
-        movement.isAiming = false;
+        if (movement == null)
+            movement = GetComponent<PlayerMovement>();
+        if (movement != null)
+            movement.isAiming = false;
 
         // Tell the animation controller to play the release animation
         if (crispinAnimation != null)

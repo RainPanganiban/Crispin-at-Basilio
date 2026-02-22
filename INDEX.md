@@ -6,6 +6,16 @@
 
 ---
 
+## Docs
+
+| Doc | Purpose |
+|-----|---------|
+| `DESIGN.MD` | High-level game design + networking rules |
+| `ROADMAP.md` | Development roadmap (what’s done / next / later) |
+| `Docs/BossSystem.md` | Boss System architecture + setup guide |
+
+---
+
 ## Root structure
 
 | Path | Purpose |

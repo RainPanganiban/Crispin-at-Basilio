@@ -33,8 +33,9 @@ public abstract class EnemyAttack : NetworkBehaviour
     {
         yield return new WaitForSeconds(duration);
 
-        // After attack finishes, the EnemyBrain will automatically handle strafing
-        // No need to call OnAttackFinished() here
+        EnemyBrain brain = GetComponent<EnemyBrain>();
+        if (brain != null)
+            brain.OnAttackFinished();
     }
 
     // Implement your specific attack logic in subclasses

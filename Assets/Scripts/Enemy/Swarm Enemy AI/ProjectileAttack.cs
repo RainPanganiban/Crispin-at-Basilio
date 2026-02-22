@@ -32,14 +32,13 @@ public class ProjectileAttack : EnemyAttack
         // Default direction is forward from firePoint
         Vector3 direction = firePoint.forward;
 
-        // If we have an aggro target, aim directly at it
+        // If we have an aggro target, aim directly at it (including vertical offset)
         if (aggroSystem != null)
         {
             Transform target = aggroSystem.GetCurrentTarget();
             if (target != null)
             {
                 Vector3 toTarget = (target.position - firePoint.position);
-                toTarget.y = 0f; // keep shots level; remove this line if you want full 3D aiming
                 if (toTarget.sqrMagnitude > 0.001f)
                 {
                     direction = toTarget.normalized;
