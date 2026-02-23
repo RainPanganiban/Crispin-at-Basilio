@@ -112,7 +112,11 @@ Scripts under `Assets/Scripts/` that are **not** under `Network/Mirror/` are pro
 | `EnemyAggro.cs` | Aggro / target selection |
 | `EnemyAttack.cs` | Attack behavior |
 | `EnemyAttackController.cs` | Coordinates attacks |
-| `PunchAttack.cs` | Punch attack implementation |
+| `PunchAttack.cs` | Basic melee punch attack |
+| `ChargePunchAttack.cs` | Charge-in variant of the punch attack |
+| `ProjectileAttack.cs` | Ranged projectile attack behavior |
+| `EnemyProjectile.cs` | Projectile logic and hit resolution |
+| `TiktikBrain.cs` | Specialized brain for Tiktik enemy variant |
 | `EnemyHealth.cs` | Enemy health |
 | `EnemyHealthUI.cs` | Enemy health bar / UI |
 
@@ -163,6 +167,18 @@ The Boss System is a modular, server-authoritative arena boss framework. Core co
 - `BossAnimationRelay`
 
 See `Docs/BossSystem.md` for full architecture details and setup rules.
+
+### Onglo Boss — `Assets/Scripts/Boss/Bosses/Onglo/`
+
+| Script | Role |
+|--------|------|
+| `OngloMovement.cs` | Controls Onglo’s arena movement and facing |
+| `BoulderBarrageAttack.cs` | Multi-projectile boulder barrage attack |
+| `EarthshakerStompAttack.cs` | Close-range stomp that sends shockwaves |
+| `GroundSplitAttack.cs` | Creates fissures along the arena ground |
+| `OngloBoulder.cs` | Boulder projectile behavior and collisions |
+| `OngloFissure.cs` | Fissure hazard spawned by ground-split attacks |
+| `OngloShockwaveRing.cs` | Expanding shockwave ring visual and damage logic |
 
 ---
 
