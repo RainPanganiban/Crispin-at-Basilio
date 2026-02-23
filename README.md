@@ -1,2 +1,0 @@
-# Crispin-at-Basilio
-

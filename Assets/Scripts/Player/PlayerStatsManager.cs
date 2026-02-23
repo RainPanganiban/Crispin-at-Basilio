@@ -18,6 +18,8 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     [SyncVar(hook = nameof(OnHealthChanged))] private float syncedHealth;
     [SyncVar(hook = nameof(OnStaminaChanged))] private float syncedStamina;
 
+    private PlayerMovement playerMovement;
+
     private void Start()
     {
         // Initialize stats
@@ -27,6 +29,8 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         syncedHealth = health.currentValue;
         syncedStamina = stamina.currentValue;
 
+        playerMovement = GetComponent<PlayerMovement>();
+
         OnStatsReady?.Invoke();
     }
 
@@ -34,8 +38,17 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     {
         if (!isServer) return; // Only server modifies values
 
-        // Regenerate stamina
-        if (stamina.currentValue < stamina.maxValue)
+        bool running = playerMovement != null && playerMovement.IsRunning;
+
+        // Drain stamina on server while running (authoritative drain)
+        if (running && stamina.currentValue > 0f)
+        {
+            float drainRate = playerMovement != null ? playerMovement.staminaCostPerSecondRunning : staminaRegenRate;
+            stamina.ChangeValue(-drainRate * Time.deltaTime);
+            syncedStamina = stamina.currentValue;
+        }
+        // Only regen when NOT running
+        else if (!running && stamina.currentValue < stamina.maxValue)
         {
             stamina.ChangeValue(staminaRegenRate * Time.deltaTime);
             syncedStamina = stamina.currentValue; // Sync
@@ -87,27 +100,44 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     // ===============================
     // Other Methods
     // ===============================
-    [Server]
     public void UseStamina(float amount)
     {
-        if (stamina.currentValue <= 0) return;
-
         stamina.ChangeValue(-amount);
-        syncedStamina = stamina.currentValue; // sync
+
+        if (isServer)
+        {
+            syncedStamina = stamina.currentValue; // sync to all clients
+        }
     }
 
-    [Server]
     public void RestoreHealth(float amount)
     {
         health.ChangeValue(amount);
-        syncedHealth = health.currentValue; // sync
+        if (isServer) syncedHealth = health.currentValue;
     }
 
-    [Server]
     public void RestoreStamina(float amount)
     {
         stamina.ChangeValue(amount);
-        syncedStamina = stamina.currentValue; // sync
+        if (isServer) syncedStamina = stamina.currentValue;
+    }
+
+    [Command]
+    public void CmdUseStamina(float amount)
+    {
+        UseStamina(amount);
+    }
+
+    [Command]
+    public void CmdRestoreHealth(float amount)
+    {
+        RestoreHealth(amount);
+    }
+
+    [Command]
+    public void CmdRestoreStamina(float amount)
+    {
+        RestoreStamina(amount);
     }
 
     [Server]

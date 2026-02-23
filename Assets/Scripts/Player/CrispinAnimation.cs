@@ -42,9 +42,8 @@ public class CrispinAnimation : CharacterAnimationController
 
         isHoldingAttack = false;
         
-        // We trigger the release animation. The current wind-up value on the animator
-        // will determine the "power" or look of the attack if you use it in the release animation.
-        animator.SetTrigger("ReleaseAttack");
+        // We trigger the release animation via the networked Trigger method.
+        Trigger("ReleaseAttack");
 
         // After triggering the release, we set IsWindingUp to false.
         // This will allow the animator to transition from AttackRelease back to Locomotion,

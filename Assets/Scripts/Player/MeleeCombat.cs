@@ -30,7 +30,7 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
     public void OnLightAttack(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return; // Make sure only local player triggers it
-        if (!context.performed) return;
+        if (!context.started) return;
 
         // Call your existing LightAttack logic
         GetComponent<CharacterAnimationController>()?.PlayAttack();

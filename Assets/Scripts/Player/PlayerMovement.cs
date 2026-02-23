@@ -24,7 +24,7 @@ public class PlayerMovement : NetworkBehaviour
     private Vector3 velocity;
     private Transform cam;
 
-    private bool isRunning = false;
+    [SyncVar] private bool isRunning = false;
     private bool isRolling = false;
 
     [Header("Stamina Settings")]
@@ -66,14 +66,23 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
         
+        bool runInput = context.ReadValueAsButton();
         if (statsManager.stamina.currentValue > 0f)
         {
-            isRunning = context.ReadValueAsButton();
+            isRunning = runInput;
+            CmdSetRunning(runInput);
         }
         else
         {
             isRunning = false;
+            CmdSetRunning(false);
         }
+    }
+
+    [Command]
+    void CmdSetRunning(bool state)
+    {
+        isRunning = state;
     }
 
     public void OnJump(InputAction.CallbackContext context)
@@ -92,7 +101,7 @@ public class PlayerMovement : NetworkBehaviour
         
         if (context.performed && !isRolling && statsManager.stamina.currentValue >= rollStaminaCost)
         {
-            statsManager.UseStamina(rollStaminaCost);
+            statsManager.CmdUseStamina(rollStaminaCost);
             GetComponent<CharacterAnimationController>()?.PlayRoll();
             StartCoroutine(Roll());
         }
@@ -135,12 +144,16 @@ public class PlayerMovement : NetworkBehaviour
             if (isRunning && statsManager.stamina.currentValue > 0f)
             {
                 speed = runSpeed;
-                // Drain stamina while running
+                // Drain stamina while running (only if server to update SyncVar,
+                // client also calls it for smooth local UI update)
                 statsManager.UseStamina(staminaCostPerSecondRunning * Time.deltaTime);
 
                 // Stop running if out of stamina
                 if (statsManager.stamina.currentValue <= 0f)
+                {
                     isRunning = false;
+                    CmdSetRunning(false);
+                }
             }
 
             controller.Move(moveDir * speed * Time.deltaTime);
