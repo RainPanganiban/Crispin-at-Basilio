@@ -451,6 +451,7 @@ GameObject:
   - component: {fileID: 2296910401929181882}
   - component: {fileID: 2982564930930664331}
   - component: {fileID: 3416735622254214932}
+  - component: {fileID: 663002815195305105}
   m_Layer: 0
   m_Name: Duwende
   m_TagString: Untagged
@@ -569,6 +570,7 @@ MonoBehaviour:
   attackRange: 2
   combatDistance: 2.5
   backOffDistance: 3
+  repositionTimeout: 2
   strafeDurationMin: 1
   strafeDurationMax: 2
   strafeDistance: 3
@@ -593,6 +595,7 @@ MonoBehaviour:
   surroundJitter: 0.5
   aggroRadius: 15
   aggroSwitchDistance: 1
+  similarDistanceThreshold: 0.2
   aggroUpdateInterval: 0.6
   minimumLockTime: 2
   chaosChance: 0.25
@@ -714,6 +717,25 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
+--- !u!114 &663002815195305105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7329386342253342632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d58df23526db510449f30b8668ae1af1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  coinPrefab: {fileID: 8805015260375165595, guid: b2c7eb0b090457142b40d43133ef839f, type: 3}
+  minCoins: 1
+  maxCoins: 2
+  scatterRadius: 3
 --- !u!1 &7648058361784440064
 GameObject:
   m_ObjectHideFlags: 0

@@ -67,6 +67,10 @@ public class EnemyHealth : NetworkBehaviour, IDamageable
     void Die()
     {
         brain.Die();
+
+        // Drop coins before the object is destroyed
+        GetComponent<EnemyCoinDrop>()?.DropCoins();
+
         NetworkServer.Destroy(gameObject);
     }
 

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
 using System;
+using TMPro;
 
 public class PlayerUI : NetworkBehaviour
 {
@@ -10,8 +11,10 @@ public class PlayerUI : NetworkBehaviour
     [SerializeField] private GameObject crosshair;
     [SerializeField] private Slider healthBar;
     [SerializeField] private Slider staminaBar;
+    [SerializeField] private TMP_Text coinCountText;
 
     private PlayerStatsManager statsManager;
+    private PlayerCurrencyManager currencyManager;
     private bool isHooked = false;
 
     private void Awake()
@@ -30,6 +33,12 @@ public class PlayerUI : NetworkBehaviour
         {
             Debug.LogError("[PlayerUI] PlayerStatsManager missing!");
             return;
+        }
+
+        currencyManager = GetComponent<PlayerCurrencyManager>();
+        if (currencyManager == null)
+        {
+            Debug.LogWarning("[PlayerUI] PlayerCurrencyManager missing — coin display disabled.");
         }
 
         statsManager.OnStatsReady += HookSliders;
@@ -62,7 +71,20 @@ public class PlayerUI : NetworkBehaviour
             };
         }
 
+        // Coins
+        if (coinCountText != null && currencyManager != null)
+        {
+            UpdateCoinDisplay(currencyManager.GetCoins());
+            currencyManager.OnCoinsUpdated += UpdateCoinDisplay;
+        }
+
         isHooked = true;
+    }
+
+    private void UpdateCoinDisplay(int amount)
+    {
+        if (coinCountText != null)
+            coinCountText.text = $"Coins: {amount}";
     }
 
     public override void OnStopLocalPlayer()
@@ -72,5 +94,9 @@ public class PlayerUI : NetworkBehaviour
 
         if (statsManager != null)
             statsManager.OnStatsReady -= HookSliders;
+
+        if (currencyManager != null)
+            currencyManager.OnCoinsUpdated -= UpdateCoinDisplay;
     }
 }
+
