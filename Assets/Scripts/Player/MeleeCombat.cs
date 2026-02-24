@@ -21,10 +21,12 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
     [Header("References")]
     public Transform attackPoint;
     private BasilioAnimation basilioAnimation;
+    private PlayerStatsManager statsManager;
 
     void Awake()
     {
         basilioAnimation = GetComponent<BasilioAnimation>();
+        statsManager = GetComponent<PlayerStatsManager>();
     }
 
     public void OnLightAttack(InputAction.CallbackContext context)
@@ -53,7 +55,8 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
     {
         HandleCombo();
 
-        float damage = (comboStep == 3) ? heavyDamage : lightDamage;
+        float bonus = statsManager != null ? statsManager.BonusAttackDamage : 0f;
+        float damage = ((comboStep == 3) ? heavyDamage : lightDamage) + bonus;
 
         Vector3 center =
             attackPoint.position +

@@ -28,6 +28,30 @@ public class PlayerCurrencyManager : NetworkBehaviour
         coins += amount;
     }
 
+    /// <summary>
+    /// Sets the coin count directly. Used by CustomNetworkManager
+    /// to restore coins from session data after a scene change.
+    /// </summary>
+    [Server]
+    public void ServerSetCoins(int amount)
+    {
+        coins = Mathf.Max(0, amount);
+    }
+
+    /// <summary>
+    /// Try to spend coins. Returns true if successful.
+    /// </summary>
+    [Server]
+    public bool TrySpendCoins(int amount)
+    {
+        if (coins >= amount)
+        {
+            coins -= amount;
+            return true;
+        }
+        return false;
+    }
+
     // =========================================================
     // Client → Server Request
     // =========================================================

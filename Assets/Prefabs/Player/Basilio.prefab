@@ -1083,6 +1083,7 @@ GameObject:
   - component: {fileID: 1964418824019641932}
   - component: {fileID: 4406393203481131743}
   - component: {fileID: 1564830389230270293}
+  - component: {fileID: 1235246060560929250}
   m_Layer: 0
   m_Name: Basilio
   m_TagString: Player
@@ -1522,6 +1523,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e2ef5978d1516ce418a4adbcb9a4d3e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+--- !u!114 &1235246060560929250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6827224680543321162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 398779801d369aa4eb41fb10a9296f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0

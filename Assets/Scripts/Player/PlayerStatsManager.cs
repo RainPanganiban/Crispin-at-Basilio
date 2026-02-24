@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using Mirror;
 
 public class PlayerStatsManager : NetworkBehaviour, IDamageable
@@ -17,6 +18,17 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     // SyncVars for multiplayer UI syncing
     [SyncVar(hook = nameof(OnHealthChanged))] private float syncedHealth;
     [SyncVar(hook = nameof(OnStaminaChanged))] private float syncedStamina;
+
+    // Death & Revive
+    [SyncVar(hook = nameof(OnDeadChanged))]
+    private bool isDead = false;
+    public bool IsDead => isDead;
+    public event Action<bool> OnDeadStateChanged;
+
+    // Bonus damage from upgrades (synced so combat scripts can read it)
+    [SyncVar]
+    private float bonusAttackDamage = 0f;
+    public float BonusAttackDamage => bonusAttackDamage;
 
     private PlayerMovement playerMovement;
 
@@ -37,6 +49,7 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     private void Update()
     {
         if (!isServer) return; // Only server modifies values
+        if (isDead) return;    // No regen while dead
 
         bool running = playerMovement != null && playerMovement.IsRunning;
 
@@ -68,6 +81,7 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     [Server]
     public void TakeDamage(float amount, Transform attacker)
     {
+        if (isDead) return;
         if (health.currentValue <= 0) return;
 
         health.ChangeValue(-amount);
@@ -83,7 +97,6 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
 
     // ===============================
     // SyncVar Hooks
-    // These are called on all clients when the server updates the SyncVar
     // ===============================
     void OnHealthChanged(float oldValue, float newValue)
     {
@@ -92,13 +105,17 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
 
     void OnStaminaChanged(float oldValue, float newValue)
     {
-        // Fix: Update the Stat AND trigger OnValueChanged
         float previous = stamina.currentValue;
         stamina.SetValue(newValue); // fires OnValueChanged
     }
 
+    void OnDeadChanged(bool oldValue, bool newValue)
+    {
+        OnDeadStateChanged?.Invoke(newValue);
+    }
+
     // ===============================
-    // Other Methods
+    // Stamina Methods
     // ===============================
     public void UseStamina(float amount)
     {
@@ -140,18 +157,114 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         RestoreStamina(amount);
     }
 
+    // ===============================
+    // Death & Revive
+    // ===============================
     [Server]
     void Die()
     {
-        Debug.Log("Player died");
-        // Add respawn or death logic here
+        isDead = true;
+        Debug.Log($"Player {gameObject.name} died.");
+        RpcOnPlayerDied();
     }
 
-    // Applied when spawning a player from persistent session data.
-    [Server]
-    public void ServerApplyPersistentData(int coins, System.Collections.Generic.List<string> purchasedUpgrades)
+    [ClientRpc]
+    void RpcOnPlayerDied()
     {
-        // Hook for persistent stats/upgrades if needed.
-        // For now, health/stamina already start at max on spawn.
+        // Disable movement and combat on all clients
+        PlayerMovement movement = GetComponent<PlayerMovement>();
+        if (movement != null) movement.enabled = false;
+
+        // Disable combat handlers
+        MeleeCombat melee = GetComponent<MeleeCombat>();
+        if (melee != null) melee.enabled = false;
+
+        RangedAttack ranged = GetComponent<RangedAttack>();
+        if (ranged != null) ranged.enabled = false;
+    }
+
+    [Server]
+    public void ServerRevive()
+    {
+        if (!isDead) return;
+
+        isDead = false;
+        health.SetValue(health.maxValue);
+        syncedHealth = health.currentValue;
+
+        Debug.Log($"Player {gameObject.name} revived.");
+        RpcOnPlayerRevived();
+    }
+
+    [ClientRpc]
+    void RpcOnPlayerRevived()
+    {
+        // Re-enable movement and combat on all clients
+        PlayerMovement movement = GetComponent<PlayerMovement>();
+        if (movement != null) movement.enabled = true;
+
+        MeleeCombat melee = GetComponent<MeleeCombat>();
+        if (melee != null) melee.enabled = true;
+
+        RangedAttack ranged = GetComponent<RangedAttack>();
+        if (ranged != null) ranged.enabled = true;
+    }
+
+    // ===============================
+    // Upgrades
+    // ===============================
+
+    /// <summary>
+    /// Apply a single upgrade by stat name.
+    /// Called by ShopManager when purchasing an upgrade.
+    /// </summary>
+    [Server]
+    public void ServerApplyUpgrade(string statName, float amount)
+    {
+        switch (statName)
+        {
+            case "MaxHealth":
+                health.maxValue += amount;
+                health.SetValue(health.currentValue); // re-clamp
+                syncedHealth = health.currentValue;
+                break;
+
+            case "MaxStamina":
+                stamina.maxValue += amount;
+                stamina.SetValue(stamina.currentValue); // re-clamp
+                syncedStamina = stamina.currentValue;
+                break;
+
+            case "AttackDamage":
+                bonusAttackDamage += amount;
+                break;
+
+            default:
+                Debug.LogWarning($"[PlayerStatsManager] Unknown upgrade stat: {statName}");
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Applied when spawning a player from persistent session data.
+    /// Re-applies all previously purchased upgrades.
+    /// </summary>
+    [Server]
+    public void ServerApplyPersistentData(int coins, List<string> purchasedUpgrades)
+    {
+        if (purchasedUpgrades == null) return;
+
+        // Find the shop manager to look up upgrade values
+        ShopManager shop = ShopManager.Instance;
+        if (shop == null) return;
+
+        foreach (string upgradeId in purchasedUpgrades)
+        {
+            ShopItemData item = shop.GetItemById(upgradeId);
+            if (item != null && item.type == ShopItemType.Upgrade)
+            {
+                ServerApplyUpgrade(item.statToUpgrade, item.upgradeAmount);
+            }
+        }
     }
 }

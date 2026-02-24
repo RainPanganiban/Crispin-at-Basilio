@@ -1,4 +1,5 @@
 using UnityEngine;
+using Mirror;
 
 public class OverworldShopUI : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class OverworldShopUI : MonoBehaviour
         // Unlock cursor for shop interaction
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        // Hide the player HUD so it doesn't overlap the shop
+        SetPlayerUIVisible(false);
     }
 
     public void Close()
@@ -22,6 +26,21 @@ public class OverworldShopUI : MonoBehaviour
         // Lock cursor again for gameplay
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        // Show the player HUD again
+        SetPlayerUIVisible(true);
+    }
+
+    void SetPlayerUIVisible(bool visible)
+    {
+        if (NetworkClient.localPlayer == null) return;
+
+        PlayerUI playerUI = NetworkClient.localPlayer.GetComponent<PlayerUI>();
+        if (playerUI != null)
+        {
+            Canvas canvas = playerUI.GetComponentInChildren<Canvas>();
+            if (canvas != null)
+                canvas.enabled = visible;
+        }
     }
 }
-

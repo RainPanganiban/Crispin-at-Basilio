@@ -2,29 +2,26 @@ using UnityEngine;
 using Mirror;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 /// <summary>
 /// Client-side script for shop UI interactions.
-/// Handles purchase requests and displays currency.
+/// Dynamically creates item buttons from ShopManager's item list.
 /// </summary>
 public class OverworldShopClient : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI coinsText;
-    [SerializeField] private Button healthRefillButton;
-    [SerializeField] private TextMeshProUGUI healthRefillCostText;
+    [SerializeField] private Transform itemListParent;   // Parent container for shop item buttons
+    [SerializeField] private GameObject shopItemPrefab;   // Prefab with ShopItemButton component
 
     private NetworkIdentity localPlayerIdentity;
+    private List<ShopItemButton> spawnedButtons = new List<ShopItemButton>();
+    private bool itemsPopulated = false;
 
     void Start()
     {
-        // Find local player when it spawns
         InvokeRepeating(nameof(FindLocalPlayer), 0.5f, 1f);
-
-        if (healthRefillButton != null)
-        {
-            healthRefillButton.onClick.AddListener(BuyHealthRefill);
-        }
     }
 
     void FindLocalPlayer()
@@ -39,54 +36,103 @@ public class OverworldShopClient : MonoBehaviour
         }
     }
 
+    void OnEnable()
+    {
+        // Rebuild items when shop opens
+        itemsPopulated = false;
+    }
+
     void Update()
     {
         UpdateCurrencyDisplay();
+
+        if (!itemsPopulated && ShopManager.Instance != null && ShopManager.Instance.shopItems != null)
+        {
+            PopulateItems();
+            itemsPopulated = true;
+        }
+
         UpdateButtonStates();
     }
 
     void UpdateCurrencyDisplay()
     {
         if (coinsText == null) return;
+        coinsText.text = $"Coins: {GetLocalPlayerCoins()}";
+    }
+
+    void PopulateItems()
+    {
+        // Clear old buttons
+        foreach (ShopItemButton btn in spawnedButtons)
+        {
+            if (btn != null) Destroy(btn.gameObject);
+        }
+        spawnedButtons.Clear();
+
+        if (shopItemPrefab == null || itemListParent == null) return;
 
         int coins = GetLocalPlayerCoins();
-        coinsText.text = $"Coins: {coins}";
+
+        foreach (ShopItemData item in ShopManager.Instance.shopItems)
+        {
+            if (item == null) continue;
+
+            GameObject go = Instantiate(shopItemPrefab, itemListParent);
+            ShopItemButton btn = go.GetComponent<ShopItemButton>();
+
+            if (btn != null)
+            {
+                int level = GetLocalUpgradeLevel(item.id);
+                btn.Setup(item, level, coins, OnPurchaseClicked);
+                spawnedButtons.Add(btn);
+            }
+        }
     }
 
     void UpdateButtonStates()
     {
-        if (healthRefillButton == null || ShopManager.Instance == null) return;
+        if (ShopManager.Instance == null) return;
 
         int coins = GetLocalPlayerCoins();
-        int cost = ShopManager.Instance.healthRefillCost;
 
-        healthRefillButton.interactable = coins >= cost;
-
-        if (healthRefillCostText != null)
+        for (int i = 0; i < spawnedButtons.Count; i++)
         {
-            healthRefillCostText.text = $"Cost: {cost}";
+            if (spawnedButtons[i] == null) continue;
+
+            ShopItemData item = ShopManager.Instance.shopItems[i];
+            int level = GetLocalUpgradeLevel(item.id);
+            spawnedButtons[i].UpdateState(level, coins);
+        }
+    }
+
+    void OnPurchaseClicked(string itemId)
+    {
+        if (ShopManager.Instance != null)
+        {
+            ShopManager.Instance.CmdPurchaseItem(itemId);
         }
     }
 
     int GetLocalPlayerCoins()
     {
-        if (NetworkClient.localPlayer == null)
-            return 0;
+        if (NetworkClient.localPlayer == null) return 0;
 
+        // Check PlayerCurrencyManager first (gameplay coins)
+        PlayerCurrencyManager currencyManager = NetworkClient.localPlayer.GetComponent<PlayerCurrencyManager>();
+        if (currencyManager != null)
+            return currencyManager.GetCoins();
+
+        // Fallback to PlayerCurrency (overworld)
         PlayerCurrency currency = NetworkClient.localPlayer.GetComponent<PlayerCurrency>();
-        if (currency != null)
-        {
-            return currency.Coins;
-        }
-
-        return 0;
+        return currency != null ? currency.Coins : 0;
     }
 
-    public void BuyHealthRefill()
+    int GetLocalUpgradeLevel(string itemId)
     {
-        if (ShopManager.Instance != null)
-        {
-            ShopManager.Instance.CmdPurchaseHealthRefill();
-        }
+        // Client can't directly read session data, so for now just check via coins affordability.
+        // The server enforces the actual level cap. This is a best-effort estimate.
+        // A more accurate approach would expose upgrade counts via SyncVar, but this keeps it simple.
+        return 0;
     }
 }

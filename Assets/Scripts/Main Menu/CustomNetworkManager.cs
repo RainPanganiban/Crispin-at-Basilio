@@ -54,28 +54,35 @@ public class CustomNetworkManager : NetworkManager
 
     public override void OnServerChangeScene(string newSceneName)
     {
-        // When leaving the Lobby, cache player selection into session data
         string currentSceneName = SceneManager.GetActiveScene().name;
 
-        if (currentSceneName == "Lobby")
+        foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
         {
-            foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
+            if (conn.identity == null)
+                continue;
+
+            if (!sessionDataByConnection.TryGetValue(conn.connectionId, out PlayerSessionData data))
             {
-                if (conn.identity == null)
-                    continue;
+                data = new PlayerSessionData();
+                sessionDataByConnection[conn.connectionId] = data;
+            }
 
+            // When leaving the Lobby, cache player class selection
+            if (currentSceneName == "Lobby")
+            {
                 LobbyPlayer lobbyPlayer = conn.identity.GetComponent<LobbyPlayer>();
-                if (lobbyPlayer == null)
-                    continue;
-
-                if (!sessionDataByConnection.TryGetValue(conn.connectionId, out PlayerSessionData data))
+                if (lobbyPlayer != null)
                 {
-                    data = new PlayerSessionData();
-                    sessionDataByConnection[conn.connectionId] = data;
+                    data.playerClass = lobbyPlayer.playerClass;
+                    data.playerName = lobbyPlayer.playerName;
                 }
+            }
 
-                data.playerClass = lobbyPlayer.playerClass;
-                data.playerName = lobbyPlayer.playerName;
+            // When leaving ANY gameplay scene, save coins from PlayerCurrencyManager
+            PlayerCurrencyManager currencyManager = conn.identity.GetComponent<PlayerCurrencyManager>();
+            if (currencyManager != null)
+            {
+                data.coins = currencyManager.GetCoins();
             }
         }
 
@@ -136,17 +143,25 @@ public class CustomNetworkManager : NetworkManager
         if (!sessionDataByConnection.TryGetValue(conn.connectionId, out PlayerSessionData data))
             return;
 
+        // Apply persistent upgrades to stats
         PlayerStatsManager stats = player.GetComponent<PlayerStatsManager>();
         if (stats != null)
         {
             stats.ServerApplyPersistentData(data.coins, data.purchasedUpgrades);
         }
 
-        // Sync coins to PlayerCurrency component if it exists
+        // Sync coins to PlayerCurrency (overworld shop)
         PlayerCurrency currency = player.GetComponent<PlayerCurrency>();
         if (currency != null)
         {
             currency.SetCoins(data.coins);
+        }
+
+        // Sync coins to PlayerCurrencyManager (gameplay coin pickups)
+        PlayerCurrencyManager currencyManager = player.GetComponent<PlayerCurrencyManager>();
+        if (currencyManager != null)
+        {
+            currencyManager.ServerSetCoins(data.coins);
         }
     }
 

@@ -26,13 +26,15 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
 
     private PlayerMovement movement;
     private Camera playerCamera;
-    private CrispinAnimation crispinAnimation; // Reference to the animation script
+    private CrispinAnimation crispinAnimation;
+    private PlayerStatsManager statsManager;
 
     public override void OnStartLocalPlayer()
     {
         movement = GetComponent<PlayerMovement>();
         playerCamera = GetComponentInChildren<Camera>();
-        crispinAnimation = GetComponent<CrispinAnimation>(); // Get the animation component
+        crispinAnimation = GetComponent<CrispinAnimation>();
+        statsManager = GetComponent<PlayerStatsManager>();
     }
 
     void Update()
@@ -118,7 +120,8 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
 
         float chargePercent = Mathf.Clamp01(currentCharge / maxChargeTime);
 
-        float damage = Mathf.Lerp(minDamage, maxDamage, chargePercent);
+        float bonus = statsManager != null ? statsManager.BonusAttackDamage : 0f;
+        float damage = Mathf.Lerp(minDamage, maxDamage, chargePercent) + bonus;
         float speed = Mathf.Lerp(minSpeed, maxSpeed, chargePercent);
         float lifetime = Mathf.Lerp(1.5f, maxLifetime, chargePercent);
 
