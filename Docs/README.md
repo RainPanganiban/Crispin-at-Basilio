@@ -152,14 +152,15 @@ Core components:
 
 ### Assets Layout
 
-| Folder                  | Contents      |
-| ----------------------- | ------------- |
-| `Assets/Scripts/`       | Gameplay code |
-| `Assets/Scenes/`        | Scenes        |
-| `Assets/Prefabs/`       | Prefabs       |
-| `Assets/UI Elements/`   | UI            |
-| `Assets/Player Models/` | Player assets |
-| `Assets/Enemy Models/`  | Enemy assets  |
+| Folder                  | Contents              |
+| ----------------------- | --------------------- |
+| `Assets/Scripts/`       | Gameplay code         |
+| `Assets/Scenes/`        | Scenes                |
+| `Assets/Prefabs/`       | Prefabs               |
+| `Assets/Shaders/`       | Shader files          |
+| `Assets/UI Elements/`   | UI                    |
+| `Assets/Player Models/` | Player assets         |
+| `Assets/Enemy Models/`  | Enemy assets          |
 
 ---
 
@@ -226,6 +227,23 @@ Contains:
 ## INPUT SYSTEM
 
 * `Assets/Scripts/PlayerControls.inputactions`
+
+---
+
+## OUTLINE SHADER
+
+Universal URP outline shader using the inverted hull (clip-space extrusion) method.
+
+* **File:** `Assets/Shaders/OutlineShader.shader`
+* **Shader path:** `Custom/Outline`
+
+| Property          | Type          | Default | Description                                    |
+| ----------------- | ------------- | ------- | ---------------------------------------------- |
+| Outline Color     | Color         | Black   | Color of the outline                           |
+| Outline Width     | Range (0–10)  | 2       | Thickness in screen pixels                     |
+| Render Distance   | Float         | 20      | Max distance (world units) outline is visible  |
+
+**Usage:** Create a material with the `Custom/Outline` shader, then add it as a second material element on any MeshRenderer/SkinnedMeshRenderer.
 
 ---
 
