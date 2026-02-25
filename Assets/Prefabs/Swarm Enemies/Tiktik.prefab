@@ -883,10 +883,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7317602641358766960, guid: 8bd106f6516393a489d5a466406d288b, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7317602641358766960, guid: 8bd106f6516393a489d5a466406d288b, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7ee1e89adeeaeb447920bd177e84a225, type: 2}
+    - target: {fileID: -835176428833300760, guid: 8bd106f6516393a489d5a466406d288b, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -835176428833300760, guid: 8bd106f6516393a489d5a466406d288b, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7ee1e89adeeaeb447920bd177e84a225, type: 2}
     - target: {fileID: 919132149155446097, guid: 8bd106f6516393a489d5a466406d288b, type: 3}
       propertyPath: m_Name
       value: tiktik
       objectReference: {fileID: 0}
+    - target: {fileID: 5048438259846592927, guid: 8bd106f6516393a489d5a466406d288b, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5048438259846592927, guid: 8bd106f6516393a489d5a466406d288b, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7ee1e89adeeaeb447920bd177e84a225, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
