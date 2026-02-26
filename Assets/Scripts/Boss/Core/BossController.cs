@@ -21,6 +21,8 @@ public class BossController : NetworkBehaviour
 
     private float nextThinkTime;
     private BaseAttack currentAttack;
+    private float lastAttackStartTime;
+    private const float AttackTimeout = 10f; // Seconds before we force-reset
 
     void Awake()
     {
@@ -50,12 +52,45 @@ public class BossController : NetworkBehaviour
         nextThinkTime = Time.time + thinkInterval;
 
         if (state == BossState.Idle && attackManager != null)
+        {
             attackManager.Server_TrySelectAndStartAttack();
+        }
+        else if (state == BossState.Attacking)
+        {
+            // Failsafe: If stuck in Attacking state too long, reset to Idle.
+            if (Time.time > lastAttackStartTime + AttackTimeout)
+            {
+                Debug.LogWarning($"[BossController] Attack timeout! Forcing reset from {currentAttack?.attackName ?? "Unknown"}.");
+                Server_EndAttack();
+            }
+            else if (Time.frameCount % 60 == 0)
+            {
+                Debug.Log($"[BossController] Current state: {state}. Waiting to return to Idle.");
+            }
+        }
+        else if (state != BossState.Idle && Time.frameCount % 60 == 0)
+        {
+            Debug.Log($"[BossController] Current state: {state}. Waiting to return to Idle.");
+        }
     }
 
     void OnStateChanged(BossState oldValue, BossState newValue)
     {
-        // Hook for UI/VFX later (intentionally empty in MVP).
+        // Clients and Server react to state changes.
+        if (newValue == BossState.Dead)
+        {
+            // Stop logic on clients (VFX/SFX).
+        }
+
+        if (isServer)
+            Rpc_OnStateChanged(oldValue, newValue);
+    }
+
+    [ClientRpc]
+    void Rpc_OnStateChanged(BossState oldValue, BossState newValue)
+    {
+        if (isServer) return; // Hook already fired on server.
+        // Hook for client-only state reactions.
     }
 
     // ---- Server-only state transitions ----
@@ -71,6 +106,7 @@ public class BossController : NetworkBehaviour
 
         currentAttack = attack;
         state = BossState.Attacking;
+        lastAttackStartTime = Time.time;
 
         if (movement != null && attack.requiresMovementLock)
             movement.Server_SetMovementEnabled(false);
@@ -82,14 +118,20 @@ public class BossController : NetworkBehaviour
     [Server]
     public void Server_EndAttack()
     {
+        Debug.Log($"[BossController] Server_EndAttack called. State: {state}");
+
         if (state != BossState.Attacking)
+        {
+            Debug.LogWarning($"[BossController] Server_EndAttack aborted. State is {state}, not Attacking.");
             return;
+        }
 
         if (movement != null)
             movement.Server_SetMovementEnabled(true);
 
         currentAttack = null;
         state = BossState.Idle;
+        Debug.Log("[BossController] State reverted to Idle.");
     }
 
     [Server]
@@ -134,7 +176,10 @@ public class BossController : NetworkBehaviour
         state = BossState.Dead;
 
         Server_PlayTrigger("Die");
-        // Collider disable / rewards / NetworkServer.Destroy should be handled by a dedicated death handler later.
+        
+        // Notify death handler if one exists
+        if (TryGetComponent<BossDeathHandler>(out var deathHandler))
+            deathHandler.Server_OnBossDeath();
     }
 
     // ---- Animation triggering (server authoritative) ----

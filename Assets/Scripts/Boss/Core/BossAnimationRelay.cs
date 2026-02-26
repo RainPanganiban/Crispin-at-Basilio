@@ -3,19 +3,22 @@ using Mirror;
 
 public class BossAnimationRelay : NetworkBehaviour
 {
-    private BossAttackManager attackManager;
-    private BossController controller;
+    [Header("References (Manual assignment avoids search errors)")]
+    [SerializeField] private BossAttackManager attackManager;
+    [SerializeField] private BossController controller;
 
     void Awake()
     {
-        attackManager = GetComponent<BossAttackManager>();
-        controller = GetComponent<BossController>();
+        if (attackManager == null) attackManager = GetComponentInParent<BossAttackManager>();
+        if (controller == null) controller = GetComponentInParent<BossController>();
     }
 
     // Called by Unity Animation Events.
     // IMPORTANT: Animation events can fire on clients too; only the server applies gameplay results.
     public void AnimationEvent(string eventName)
     {
+        Debug.Log($"[BossAnimationRelay] Received event: {eventName} (isServer: {isServer})");
+        
         if (!isServer)
             return;
 
@@ -26,17 +29,33 @@ public class BossAnimationRelay : NetworkBehaviour
             attackManager.Server_OnAnimationEvent(eventName);
     }
 
-    // Optional helper for “animation finished” events (attack end).
     public void AttackAnimationComplete()
     {
+        Debug.Log($"[BossAnimationRelay] AttackAnimationComplete fired (isServer: {isServer})");
+        
         if (!isServer)
             return;
 
-        if (attackManager != null)
-            attackManager.Server_OnAttackAnimationComplete();
+        // Force refresh if null
+        if (attackManager == null) attackManager = GetComponentInParent<BossAttackManager>();
+        if (controller == null) controller = GetComponentInParent<BossController>();
 
-        if (controller != null && controller.State == BossState.Attacking)
+        Debug.Log($"[BossAnimationRelay] Refs: controller={controller != null}, attackManager={attackManager != null}");
+
+        if (attackManager != null)
+        {
+            attackManager.Server_OnAttackAnimationComplete();
+        }
+
+        if (controller != null)
+        {
+            Debug.Log($"[BossAnimationRelay] Controller State: {controller.State}");
             controller.Server_EndAttack();
+        }
+        else
+        {
+            Debug.LogError("[BossAnimationRelay] Controller not found! Cannot end attack state.");
+        }
     }
 }
 

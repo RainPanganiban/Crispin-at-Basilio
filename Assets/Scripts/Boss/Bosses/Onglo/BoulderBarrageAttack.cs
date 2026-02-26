@@ -21,6 +21,9 @@ public class BoulderBarrageAttack : BaseAttack
     public float forwardSpeed = 10f;
     public float upSpeed = 9f;
 
+    [Header("Feedback")]
+    public float throwShakeIntensity = 1.5f;
+
     [Header("Phase scaling")]
     public int phase1Throws = 3;
     public int phase2Throws = 5;
@@ -47,6 +50,14 @@ public class BoulderBarrageAttack : BaseAttack
         int throws = Server_GetThrowsForCurrentPhase();
         for (int i = 0; i < throws; i++)
             Server_SpawnBoulder(i);
+            
+        Rpc_OnBoulderThrow();
+    }
+
+    [ClientRpc]
+    void Rpc_OnBoulderThrow()
+    {
+        Debug.Log($"[BoulderBarrage] Boulder thrown feedback. Intensity: {throwShakeIntensity}");
     }
 
     int Server_GetThrowsForCurrentPhase()

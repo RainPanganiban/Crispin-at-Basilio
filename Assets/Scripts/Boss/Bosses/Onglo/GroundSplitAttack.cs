@@ -19,6 +19,9 @@ public class GroundSplitAttack : BaseAttack
     public float damage = 35f;
     public LayerMask playerLayer;
 
+    [Header("Feedback")]
+    public float impactShakeIntensity = 3f;
+
     public override void Server_Execute()
     {
         // Telegraph is animation-driven.
@@ -30,6 +33,13 @@ public class GroundSplitAttack : BaseAttack
             return;
 
         Server_SpawnFissure();
+        Rpc_OnImpact();
+    }
+
+    [ClientRpc]
+    void Rpc_OnImpact()
+    {
+        Debug.Log($"[GroundSplit] Fissure impact feedback. Intensity: {impactShakeIntensity}");
     }
 
     [Server]

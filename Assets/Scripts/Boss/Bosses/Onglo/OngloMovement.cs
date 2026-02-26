@@ -3,6 +3,11 @@ using Mirror;
 
 public class OngloMovement : BossMovementBase
 {
+    [Header("Chase (Phase 1 & 2)")]
+    public float chaseSpeed = 1.5f;
+    public float chaseStopDistance = 3f;
+    public float chaseStartDistance = 6f;
+
     [Header("Center control")]
     public Transform arenaCenter;
     public float preferredRadius = 4f;
@@ -25,51 +30,126 @@ public class OngloMovement : BossMovementBase
     public float tremorExpandSpeed = 8f;
     public LayerMask playerLayer;
 
+    [Header("Phase Feedback")]
+    public float burstShakeIntensity = 2f;
+
     private bool movementEnabled = true;
     private float nextTremorTime;
     private float burstEndTime;
     private float nextBurstTime;
     private bool isPhase3;
+    private bool isChasing;
+
+    private Animator animator;
+    private static readonly int SpeedHash = Animator.StringToHash("Speed");
 
     public override void OnStartServer()
     {
+        animator = GetComponentInChildren<Animator>();
         nextTremorTime = Time.time + tremorInterval;
         nextBurstTime = Time.time + burstCooldown;
+
+        if (arenaCenter == null)
+            Debug.LogWarning($"[OngloMovement] Arena Center is not assigned on {gameObject.name}. Center-control movement will be disabled.");
     }
 
     [ServerCallback]
     void Update()
     {
         if (!movementEnabled)
+        {
+            if (animator != null && animator.runtimeAnimatorController != null) 
+                animator.SetFloat(SpeedHash, 0f);
             return;
+        }
 
-        Server_HandleCenterControl();
+        if (isPhase3)
+        {
+            Server_HandlePhase3Bursts();
+        }
+        else
+        {
+            Server_HandleStandardMovement();
+        }
 
         if (enableFootstepTremor && Time.time >= nextTremorTime)
         {
             nextTremorTime = Time.time + tremorInterval;
             Server_SpawnFootstepTremor();
         }
+    }
 
-        if (isPhase3)
-            Server_HandlePhase3Bursts();
+    [Server]
+    void Server_HandleStandardMovement()
+    {
+        Transform target = Server_FindClosestPlayer();
+        
+        // If no player, go home
+        if (target == null)
+        {
+            isChasing = false;
+            Server_HandleCenterControl();
+            return;
+        }
+
+        float distToPlayer = Vector3.Distance(transform.position, target.position);
+
+        // State Machine: Chase vs Return to Center
+        if (isChasing)
+        {
+            if (distToPlayer < chaseStopDistance)
+            {
+                isChasing = false;
+            }
+            else
+            {
+                // Chase player
+                Vector3 dir = (target.position - transform.position).normalized;
+                dir.y = 0f;
+                transform.position += dir * chaseSpeed * Time.deltaTime;
+                transform.forward = Vector3.Slerp(transform.forward, dir, 8f * Time.deltaTime);
+                if (animator != null && animator.runtimeAnimatorController != null) 
+                    animator.SetFloat(SpeedHash, chaseSpeed);
+                return;
+            }
+        }
+        else
+        {
+            if (distToPlayer > chaseStartDistance)
+            {
+                isChasing = true;
+                return; // Start chasing next frame
+            }
+        }
+
+        // Default or if stopped chasing: return to territorial center
+        Server_HandleCenterControl();
     }
 
     [Server]
     void Server_HandleCenterControl()
     {
         if (arenaCenter == null)
+        {
+            if (animator != null) animator.SetFloat(SpeedHash, 0f);
             return;
+        }
 
         Vector3 toCenter = arenaCenter.position - transform.position;
         toCenter.y = 0f;
         float dist = toCenter.magnitude;
 
         if (dist <= preferredRadius)
+        {
+            if (animator != null) animator.SetFloat(SpeedHash, 0f);
             return;
+        }
 
         Vector3 dir = toCenter.normalized;
         transform.position += dir * walkSpeed * Time.deltaTime;
+
+        if (animator != null && animator.runtimeAnimatorController != null) 
+            animator.SetFloat(SpeedHash, walkSpeed);
 
         if (dir.sqrMagnitude > 0.001f)
             transform.forward = Vector3.Slerp(transform.forward, dir, 8f * Time.deltaTime);
@@ -94,12 +174,30 @@ public class OngloMovement : BossMovementBase
 
             Vector3 dir = toTarget.normalized;
             transform.position += dir * burstSpeed * Time.deltaTime;
-            transform.forward = Vector3.Slerp(transform.forward, dir, 12f * Time.deltaTime);
+            
+            if (animator != null && animator.runtimeAnimatorController != null) 
+                animator.SetFloat(SpeedHash, burstSpeed);
+            
+            // Thrilling: Faster turn speed during enrage burst
+            transform.forward = Vector3.Slerp(transform.forward, dir, 15f * Time.deltaTime);
             return;
         }
 
+        // Post-burst recovery delay
+        if (Time.time < burstEndTime + 0.5f)
+            return;
+
         burstEndTime = Time.time + burstDuration;
         nextBurstTime = Time.time + burstCooldown;
+        
+        Rpc_OnBurstStarted();
+    }
+
+    [ClientRpc]
+    void Rpc_OnBurstStarted()
+    {
+        // Feedback: Dust clouds, screen rumble, etc.
+        Debug.Log("[OngloMovement] Enrage burst started!");
     }
 
     [Server]

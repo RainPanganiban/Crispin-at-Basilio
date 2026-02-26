@@ -71,9 +71,20 @@ public class BossAttackManager : NetworkBehaviour
         if (Time.time < nextGlobalReadyTime)
             return;
 
+        if (allowedAttacks.Count == 0)
+        {
+            if (Time.frameCount % 120 == 0)
+                Debug.LogWarning("[BossAttackManager] No allowed attacks in current phase! Boss will stay idle.");
+            return;
+        }
+
         BaseAttack selected = Server_SelectAttack_MvpRandom();
         if (selected == null)
+        {
+            if (Time.frameCount % 120 == 0)
+                Debug.Log("[BossAttackManager] No attacks currently available (all on cooldown or conditions failed).");
             return;
+        }
 
         currentAttack = selected;
         nextGlobalReadyTime = Time.time + globalCooldownBetweenAttacks;
@@ -86,6 +97,7 @@ public class BossAttackManager : NetworkBehaviour
 
         nextReadyTimeByAttack[selected] = Time.time + Mathf.Max(0f, selected.cooldown);
 
+        Debug.Log($"[BossAttackManager] Starting attack: {selected.attackName}");
         controller.Server_BeginAttack(selected);
     }
 
@@ -99,10 +111,17 @@ public class BossAttackManager : NetworkBehaviour
         foreach (var a in allowedAttacks)
         {
             if (a == null) continue;
-            if (!a.Server_CanExecute()) continue;
+            
+            bool canExecute = a.Server_CanExecute();
+            bool onCooldown = nextReadyTimeByAttack.TryGetValue(a, out float t) && Time.time < t;
 
-            if (nextReadyTimeByAttack.TryGetValue(a, out float t) && Time.time < t)
+            if (!canExecute || onCooldown)
+            {
+                // Only log if we are specifically looking for attacks to see why they are skipped
+                if (Time.frameCount % 120 == 0)
+                    Debug.Log($"[BossAttackManager] {a.attackName} skipped. CanExecute: {canExecute}, OnCooldown: {onCooldown}");
                 continue;
+            }
 
             available.Add(a);
         }
