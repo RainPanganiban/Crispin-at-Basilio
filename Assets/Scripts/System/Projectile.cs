@@ -47,12 +47,8 @@ public class Projectile : NetworkBehaviour
 
         if (other.TryGetComponent<IDamageable>(out var target))
         {
-            // Player projectiles should only damage enemies
-            if (target is EnemyHealth enemy)
-            {
-                Transform attackerTransform = ownerIdentity != null ? ownerIdentity.transform : null;
-                enemy.TakeDamage(damage, attackerTransform);
-            }
+            Transform attackerTransform = ownerIdentity != null ? ownerIdentity.transform : null;
+            target.TakeDamage(damage, attackerTransform);
         }
 
         NetworkServer.Destroy(gameObject);

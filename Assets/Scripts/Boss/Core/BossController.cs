@@ -60,12 +60,12 @@ public class BossController : NetworkBehaviour
             // Failsafe: If stuck in Attacking state too long, reset to Idle.
             if (Time.time > lastAttackStartTime + AttackTimeout)
             {
-                Debug.LogWarning($"[BossController] Attack timeout! Forcing reset from {currentAttack?.attackName ?? "Unknown"}.");
+                Debug.LogWarning($"[BossController][{gameObject.name}] Attack timeout! Forcing reset from {currentAttack?.attackName ?? "Unknown"}.");
                 Server_EndAttack();
             }
-            else if (Time.frameCount % 60 == 0)
+            else if (Time.frameCount % 120 == 0)
             {
-                Debug.Log($"[BossController] Current state: {state}. Waiting to return to Idle.");
+                Debug.Log($"[BossController][{gameObject.name}] Current state: {state}. Waiting to return to Idle.");
             }
         }
         else if (state != BossState.Idle && Time.frameCount % 60 == 0)
@@ -118,11 +118,11 @@ public class BossController : NetworkBehaviour
     [Server]
     public void Server_EndAttack()
     {
-        Debug.Log($"[BossController] Server_EndAttack called. State: {state}");
+        Debug.Log($"[BossController][{gameObject.name}] Server_EndAttack called. current state: {state}");
 
         if (state != BossState.Attacking)
         {
-            Debug.LogWarning($"[BossController] Server_EndAttack aborted. State is {state}, not Attacking.");
+            // No warning here, just return silently to avoid log spam from legitimate double-calls (Relay + Timeout)
             return;
         }
 
@@ -131,7 +131,7 @@ public class BossController : NetworkBehaviour
 
         currentAttack = null;
         state = BossState.Idle;
-        Debug.Log("[BossController] State reverted to Idle.");
+        Debug.Log($"[BossController][{gameObject.name}] State reverted to Idle.");
     }
 
     [Server]

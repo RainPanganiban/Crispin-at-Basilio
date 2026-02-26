@@ -2818,6 +2818,14 @@ PrefabInstance:
       propertyPath: sceneId
       value: 1148333321
       objectReference: {fileID: 0}
+    - target: {fileID: 4116270753762418489, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4116270753762418489, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6452086661933529828, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
       propertyPath: m_Controller
       value: 
@@ -2866,6 +2874,10 @@ PrefabInstance:
       propertyPath: arenaCenter
       value: 
       objectReference: {fileID: 465475523}
+    - target: {fileID: 8076329196129536826, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
+      propertyPath: maxHealth
+      value: 3000
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

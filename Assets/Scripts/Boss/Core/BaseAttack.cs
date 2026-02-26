@@ -26,7 +26,15 @@ public abstract class BaseAttack : NetworkBehaviour
         if (target == null) return false;
 
         float distSqr = (target.position - transform.position).sqrMagnitude;
-        return distSqr <= (maxRange * maxRange);
+        float finalMaxRange = Mathf.Max(0.5f, maxRange); // Safety: avoid 0 range lockout
+        bool inRange = distSqr <= (finalMaxRange * finalMaxRange);
+
+        if (!inRange && Time.frameCount % 120 == 0)
+        {
+            Debug.Log($"[BaseAttack] {attackName} rejected. Distance: {Mathf.Sqrt(distSqr):F1}m, MaxRange: {finalMaxRange}m");
+        }
+
+        return inRange;
     }
 
     protected Transform Server_FindClosestPlayer()

@@ -2,7 +2,7 @@ using UnityEngine;
 using Mirror;
 using System;
 
-public class BossHealth : NetworkBehaviour
+public class BossHealth : NetworkBehaviour, IDamageable
 {
     [Header("Health")]
     public float maxHealth = 500f;
@@ -22,6 +22,7 @@ public class BossHealth : NetworkBehaviour
         controller = GetComponent<BossController>();
     }
 
+
     [Server]
     public void Server_TakeDamage(float amount)
     {
@@ -31,13 +32,21 @@ public class BossHealth : NetworkBehaviour
         if (currentHealth <= 0)
             return;
 
+        float oldHealth = currentHealth;
         currentHealth = Mathf.Max(0f, currentHealth - amount);
+        
+        Debug.Log($"[BossHealth] Boss took {amount} damage. Health: {oldHealth} -> {currentHealth}");
 
         if (phaseManager != null)
             phaseManager.Server_OnHealthChanged(currentHealth, maxHealth);
 
         if (currentHealth <= 0f && controller != null)
             controller.Server_Die();
+    }
+
+    public void TakeDamage(float amount, Transform attacker)
+    {
+        Server_TakeDamage(amount);
     }
 
     void OnHealthChanged(float oldValue, float newValue)

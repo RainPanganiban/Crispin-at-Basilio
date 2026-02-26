@@ -97,6 +97,7 @@ public class OngloMovement : BossMovementBase
         // State Machine: Chase vs Return to Center
         if (isChasing)
         {
+            // Chase logic: stay chasing until very close
             if (distToPlayer < chaseStopDistance)
             {
                 isChasing = false;
@@ -115,14 +116,29 @@ public class OngloMovement : BossMovementBase
         }
         else
         {
-            if (distToPlayer > chaseStartDistance)
+            // Territorial logic: If player enters chase range, prioritize them
+            if (distToPlayer > chaseStartDistance && distToPlayer < (chaseStartDistance * 2f))
             {
                 isChasing = true;
-                return; // Start chasing next frame
+                return; 
+            }
+            
+            // If player is quite close (within chase/attack range zone), don't go back to center!
+            // Just look at the player and wait for attack manager to pick one.
+            if (distToPlayer < chaseStartDistance)
+            {
+                Vector3 lookDir = (target.position - transform.position).normalized;
+                lookDir.y = 0f;
+                if (lookDir.sqrMagnitude > 0.001f)
+                    transform.forward = Vector3.Slerp(transform.forward, lookDir, 5f * Time.deltaTime);
+                
+                if (animator != null && animator.runtimeAnimatorController != null) 
+                    animator.SetFloat(SpeedHash, 0f);
+                return;
             }
         }
 
-        // Default or if stopped chasing: return to territorial center
+        // If player is very far away or target is null, return to center
         Server_HandleCenterControl();
     }
 
