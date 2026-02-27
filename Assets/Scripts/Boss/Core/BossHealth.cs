@@ -35,8 +35,6 @@ public class BossHealth : NetworkBehaviour, IDamageable
         float oldHealth = currentHealth;
         currentHealth = Mathf.Max(0f, currentHealth - amount);
         
-        Debug.Log($"[BossHealth] Boss took {amount} damage. Health: {oldHealth} -> {currentHealth}");
-
         if (phaseManager != null)
             phaseManager.Server_OnHealthChanged(currentHealth, maxHealth);
 

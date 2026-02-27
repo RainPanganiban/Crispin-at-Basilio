@@ -95,7 +95,6 @@ public class BossUIController : MonoBehaviour
         {
             float fill = current / max;
             healthSlider.value = fill;
-            Debug.Log($"[BossUIController] Slider updated: {current}/{max} -> Value: {fill}");
         }
     }
 }

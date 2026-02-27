@@ -40,12 +40,8 @@ public class OngloMovement : BossMovementBase
     private bool isPhase3;
     private bool isChasing;
 
-    private Animator animator;
-    private static readonly int SpeedHash = Animator.StringToHash("Speed");
-
     public override void OnStartServer()
     {
-        animator = GetComponentInChildren<Animator>();
         nextTremorTime = Time.time + tremorInterval;
         nextBurstTime = Time.time + burstCooldown;
 
@@ -58,6 +54,7 @@ public class OngloMovement : BossMovementBase
     {
         if (!movementEnabled)
         {
+            syncedMovementSpeed = 0f;
             if (animator != null && animator.runtimeAnimatorController != null) 
                 animator.SetFloat(SpeedHash, 0f);
             return;
@@ -109,6 +106,8 @@ public class OngloMovement : BossMovementBase
                 dir.y = 0f;
                 transform.position += dir * chaseSpeed * Time.deltaTime;
                 transform.forward = Vector3.Slerp(transform.forward, dir, 8f * Time.deltaTime);
+                
+                syncedMovementSpeed = chaseSpeed;
                 if (animator != null && animator.runtimeAnimatorController != null) 
                     animator.SetFloat(SpeedHash, chaseSpeed);
                 return;
@@ -132,6 +131,7 @@ public class OngloMovement : BossMovementBase
                 if (lookDir.sqrMagnitude > 0.001f)
                     transform.forward = Vector3.Slerp(transform.forward, lookDir, 5f * Time.deltaTime);
                 
+                syncedMovementSpeed = 0f;
                 if (animator != null && animator.runtimeAnimatorController != null) 
                     animator.SetFloat(SpeedHash, 0f);
                 return;
@@ -164,6 +164,7 @@ public class OngloMovement : BossMovementBase
         Vector3 dir = toCenter.normalized;
         transform.position += dir * walkSpeed * Time.deltaTime;
 
+        syncedMovementSpeed = walkSpeed;
         if (animator != null && animator.runtimeAnimatorController != null) 
             animator.SetFloat(SpeedHash, walkSpeed);
 
@@ -191,6 +192,7 @@ public class OngloMovement : BossMovementBase
             Vector3 dir = toTarget.normalized;
             transform.position += dir * burstSpeed * Time.deltaTime;
             
+            syncedMovementSpeed = burstSpeed;
             if (animator != null && animator.runtimeAnimatorController != null) 
                 animator.SetFloat(SpeedHash, burstSpeed);
             
