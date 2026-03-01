@@ -118,12 +118,14 @@ Core components:
 * `BossPhaseManager`
 * `BossAttackManager`
 * `BossAnimationRelay`
+* `BossUIController`
 
 **Rules:**
 
 * No logic in animation events (server only applies results)
 * Phases are data-driven
 * Bosses extend, not rewrite core
+* Bosses must implement `IDamageable` (via `BossHealth`) to receive player attacks
 
 ---
 

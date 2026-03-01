@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Mirror;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ChargePunchAttack : EnemyAttack
 {
@@ -13,10 +14,33 @@ public class ChargePunchAttack : EnemyAttack
     public float hitRadius = 1.5f;
     public LayerMask playerLayer;
 
+    [Header("Animation")]
+    public NetworkAnimator networkAnimator;
+    public string chargePunchTrigger = "ChargePunch";
+
+    private HashSet<GameObject> hitTargets = new HashSet<GameObject>();
+    private bool isDashing = false;
+
     protected override void OnExecute()
     {
         if (!isServer) return;
+
+        if (networkAnimator != null)
+        {
+            networkAnimator.SetTrigger(chargePunchTrigger);
+        }
+
+        // Clear previous hits at the start of a new attack
+        hitTargets.Clear();
         StartCoroutine(ChargeAndDash());
+    }
+
+    [ServerCallback]
+    public void DealDamageEvent()
+    {
+        // This can be called forcefully via animation event if we want a specific hit frame
+        // Otherwise, the coroutine handles the sweeping dash damage
+        ApplyDashDamage();
     }
 
     private IEnumerator ChargeAndDash()
@@ -59,6 +83,8 @@ public class ChargePunchAttack : EnemyAttack
 
         // Dash phase
         float travelled = 0f;
+        isDashing = true;
+        
         while (travelled < dashDistance)
         {
             float step = dashSpeed * Time.deltaTime;
@@ -75,11 +101,13 @@ public class ChargePunchAttack : EnemyAttack
                 transform.position = nextPosition;
             }
 
-            // Check for player hits during the dash
+            // Check for player hits continuously during the dash movement
             ApplyDashDamage();
 
             yield return null;
         }
+
+        isDashing = false;
 
         // Optionally let the NavMeshAgent resume after the dash
         if (agent != null)
@@ -98,10 +126,15 @@ public class ChargePunchAttack : EnemyAttack
 
         foreach (Collider hit in hits)
         {
+            // Skip if we already hit this object during this dash
+            if (hitTargets.Contains(hit.gameObject)) continue;
+
             IDamageable damageable = hit.GetComponent<IDamageable>();
 
             if (damageable != null)
             {
+                hitTargets.Add(hit.gameObject); // Remember we hit them
+                Debug.Log($"[ChargePunchAttack] Dealt {damage} damage to {hit.name} during dash!");
                 damageable.TakeDamage(damage, transform);
             }
         }
@@ -109,6 +142,8 @@ public class ChargePunchAttack : EnemyAttack
 
     private void OnDrawGizmosSelected()
     {
+        Gizmos.color = new Color(0, 1, 1, 0.5f); // Semi-transparent cyan
+        Gizmos.DrawSphere(transform.position, hitRadius);
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, hitRadius);
     }

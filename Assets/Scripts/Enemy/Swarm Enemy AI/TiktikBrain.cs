@@ -145,6 +145,13 @@ public class TiktikBrain : EnemyBrain
                 stateTimer = swoopTelegraphDuration;
                 swoopTargetPos = target.position;
                 swoopDamageApplied = false;
+
+                // Trigger Swoop Animation
+                NetworkAnimator netAnim = GetComponent<NetworkAnimator>();
+                if (netAnim != null)
+                {
+                    netAnim.SetTrigger("SwoopAttack");
+                }
             }
             else
             {

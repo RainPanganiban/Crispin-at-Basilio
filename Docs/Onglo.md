@@ -116,9 +116,11 @@ This guide assumes your boss framework exists (it does) and you’re creating On
    - `BossController` will auto-find `Animator` in children if its `animator` field is empty.
 3. Add colliders (for body + hitboxes as needed)
 
-### 2) Add Mirror components (root `Onglo`)
+### 2) Add Mirror / Physics components (root `Onglo`)
 - `NetworkIdentity`
-- `NetworkTransform`
+- `NetworkTransform` (Sync Direction: Server To Client, Interpolate enabled)
+- `Rigidbody` (Is Kinematic: true, Use Gravity: false - needed for MovePosition sync)
+- `CapsuleCollider` (for hit detection)
 
 ### 3) Add core boss components (root `Onglo`)
 Add these components:
@@ -171,9 +173,9 @@ Add these components:
 - `BoulderBarrageAttack`
 
 Recommended cooldowns (set on each attack component):
-- **EarthshakerStompAttack.cooldown**: `6`
-- **GroundSplitAttack.cooldown**: `10`
-- **BoulderBarrageAttack.cooldown**: `14`
+- **EarthshakerStompAttack.cooldown**: `6`, **maxRange**: `8`
+- **GroundSplitAttack.cooldown**: `10`, **maxRange**: `12`
+- **BoulderBarrageAttack.cooldown**: `14`, **maxRange**: `20`
 
 Recommended `animationTriggerName` values:
 - `EarthshakerStompAttack.animationTriggerName`: **`Onglo_Stomp`**
@@ -258,6 +260,13 @@ Phase 3:
   If you do: `Onglo_Enrage`
  - **Special Behavior Flag**: `true`
   (enables OngloMovement phase-3 bursts)
+
+### 9) Boss UI Controller Setup (Health Bar)
+Add a proximity-based health UI to the Boss:
+- Create a `Canvas` child under `Onglo` (World Space or Screen Space - Overlay).
+- Assign the `BossUIController` script.
+- Link the `BossHealth` reference, a UI `CanvasGroup` (for fading), the `Slider`, and `TextMeshProUGUI` for the name.
+- Set `Activation Range` to `15` (UI appears when players get close).
 
 ### 9) Animator parameters + animation events
 

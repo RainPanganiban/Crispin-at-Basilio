@@ -66,13 +66,14 @@ public class EnemyHealthUI : MonoBehaviour
 
     void FaceCamera()
     {
-        if (localCamera == null) return;
+        if (localCamera == null || canvas == null) return;
 
-        Vector3 direction = transform.position - localCamera.transform.position;
+        // Rotate the CANVAS, not the parent enemy root!
+        Vector3 direction = canvas.transform.position - localCamera.transform.position;
         direction.y = 0f;
 
         if (direction.sqrMagnitude > 0.001f)
-            transform.rotation = Quaternion.LookRotation(direction);
+            canvas.transform.rotation = Quaternion.LookRotation(direction);
     }
 
     void UpdateHealth(float current, float max)

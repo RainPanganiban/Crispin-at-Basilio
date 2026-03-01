@@ -15,6 +15,10 @@ public class EnemyAggro : NetworkBehaviour
     [Header("Aggro Type")]
     [SerializeField] private AggroType aggroType = AggroType.DamagePriority;
 
+    [Header("Targeting Preferences")]
+    [Tooltip("The name of the child object on the Player prefab that enemies should look at (e.g., 'Model', 'Head', 'Base'). Leave empty to target the Root.")]
+    public string targetChildName = "Model";
+
     [Header("Surround Settings")]
     [SerializeField] private float surroundRadius = 3f;
     [SerializeField] private float surroundJitter = 0.5f;
@@ -72,7 +76,7 @@ public class EnemyAggro : NetworkBehaviour
     [Server]
     private void ChooseTarget()
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        PlayerMovement[] players = GameObject.FindObjectsByType<PlayerMovement>(FindObjectsSortMode.None);
 
         if (players.Length == 0)
         {
@@ -83,11 +87,12 @@ public class EnemyAggro : NetworkBehaviour
         Transform bestTarget = null;
         float bestScore = Mathf.Infinity;
 
-        foreach (GameObject player in players)
+        foreach (PlayerMovement player in players)
         {
             if (player == null) continue;
 
-            float distance = Vector3.Distance(transform.position, player.transform.position);
+            Transform playerRoot = player.transform;
+            float distance = Vector3.Distance(transform.position, playerRoot.position);
 
             if (distance > aggroRadius)
                 continue;
@@ -101,7 +106,7 @@ public class EnemyAggro : NetworkBehaviour
             if (score < bestScore)
             {
                 bestScore = score;
-                bestTarget = player.transform;
+                bestTarget = playerRoot;
             }
         }
 
@@ -155,12 +160,25 @@ public class EnemyAggro : NetworkBehaviour
     [Server]
     private void SetTarget(Transform target)
     {
-        currentTarget = target;
+        // Try to target the actual player visual model rather than the root
+        // This stops enemies from looking at the camera pivot or feet.
+        Transform actualTarget = target;
+        
+        if (!string.IsNullOrEmpty(targetChildName))
+        {
+            Transform modelTransform = target.Find(targetChildName);
+            if (modelTransform != null)
+            {
+                actualTarget = modelTransform;
+            }
+        }
+
+        currentTarget = actualTarget;
         lastSwitchTime = Time.time;
 
         if (aggroType == AggroType.SwarmShared)
         {
-            ShareTargetWithSwarm(target);
+            ShareTargetWithSwarm(actualTarget);
         }
     }
 

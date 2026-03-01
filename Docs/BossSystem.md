@@ -97,15 +97,16 @@ Each boss prefab contains (minimum):
 - No attack starts during **Transitioning**.
 - No movement during **Dead**.
 - All state changes occur **server-side**.
+- **Failsafe**: If stuck in **Attacking** for too long (e.g., missed animation event), it automatically forces a reset to **Idle** after a 10-second timeout.
 
 ---
 
 ## Health system (server authoritative)
 
-`BossHealth` responsibilities:
+`BossHealth` responsibilities (`IDamageable`):
 - Store `maxHealth`
 - SyncVar `currentHealth`
-- Provide `Server_TakeDamage(...)` (server-only)
+- Provide `TakeDamage(float, Transform)` via `IDamageable` interface, which routes to `Server_TakeDamage(...)`
 - Notify phase thresholds (based on percentage)
 - Trigger death when HP reaches 0
 
@@ -165,6 +166,7 @@ All attacks inherit from `BaseAttack`.
 Each attack defines:
 - `attackName`
 - `cooldown`
+- `maxRange` (prevents attacks from executing if player is too far)
 - `animationTriggerName`
 - `requiresMovementLock`
 
@@ -220,9 +222,12 @@ Movement responsibilities:
 
 **Hard rule**: Movement never contains attack logic.
 
-Networking:
-- Movement runs server-side.
-- `NetworkTransform` (or equivalent) replicates position/rotation to clients.
+**Hard rule**: Movement never contains attack logic.
+
+Networking & Sync:
+- Movement extends `BossMovementBase`, which holds a `SyncVar` for `syncedMovementSpeed` to ensure locomotion animations play properly on clients.
+- Movement logic runs server-side using **physics-safe** methods (e.g., `Rigidbody.MovePosition` and `Rigidbody.MoveRotation`) on a `Kinematic` rigidbody.
+- Standard `NetworkTransform` replicates position/rotation to clients with `Interpolation` enabled for smooth movement without fighting the animator's root motion (which should be disabled).
 
 ---
 

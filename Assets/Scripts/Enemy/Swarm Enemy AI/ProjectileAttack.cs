@@ -10,6 +10,10 @@ public class ProjectileAttack : EnemyAttack
     [SerializeField] private float projectileSpeed = 15f;
     [SerializeField] private float projectileLifetime = 5f;
 
+    [Header("Animation")]
+    public NetworkAnimator networkAnimator; 
+    public string attackTrigger = "RangedAttack";
+
     private Collider ownerCollider;
     private NetworkIdentity ownerIdentity;
     private EnemyAggro aggroSystem;
@@ -22,6 +26,17 @@ public class ProjectileAttack : EnemyAttack
     }
 
     protected override void OnExecute()
+    {
+        // 1. Trigger the animation across the network
+        if (networkAnimator != null)
+        {
+            networkAnimator.SetTrigger(attackTrigger);
+        }
+    }
+
+    // 2. Call this specific method from the Animation Event on the FBX
+    [ServerCallback]
+    public void FireProjectileEvent()
     {
         if (projectilePrefab == null || firePoint == null)
         {

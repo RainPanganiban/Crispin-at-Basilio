@@ -56,7 +56,10 @@ public class EnemyBrain : NetworkBehaviour
 
         // Sync stopping distance with attack range so we don't overshoot when closing in
         if (agent != null)
+        {
             agent.stoppingDistance = Mathf.Min(attackRange * 0.4f, 0.6f);
+            agent.updateRotation = false; // We handle rotation manually in FaceTarget()
+        }
     }
 
     void Update()
