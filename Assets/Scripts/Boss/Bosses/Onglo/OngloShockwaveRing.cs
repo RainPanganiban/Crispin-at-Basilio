@@ -1,10 +1,16 @@
 using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
+using UnityEngine.VFX;
 
 [RequireComponent(typeof(SphereCollider))]
 public class OngloShockwaveRing : NetworkBehaviour
 {
+    [Header("Visuals")]
+    public VisualEffect vfxRing;
+    public ParticleSystem psRing;
+    public string vfxRadiusParam = "Radius";
+
     [Header("Runtime (server initialized)")]
     [SyncVar] private float damage;
     [SyncVar] private float expandSpeed;
@@ -44,6 +50,29 @@ public class OngloShockwaveRing : NetworkBehaviour
         if (trigger.radius >= maxRadius)
             NetworkServer.Destroy(gameObject);
     }
+
+    void LateUpdate()
+    {
+        if (vfxRing != null)
+        {
+            // Calculate radius locally on clients using the syncvars
+            // We use a local timer to match server's trigger.radius expansion
+            float currentRadius = Mathf.Min(maxRadius, expandSpeed * age);
+            vfxRing.SetFloat(vfxRadiusParam, currentRadius);
+            
+            if (currentRadius >= maxRadius)
+                vfxRing.Stop();
+        }
+
+        if (psRing != null && !psRing.isPlaying && age < 0.1f)
+        {
+            psRing.Play();
+        }
+
+        age += Time.deltaTime;
+    }
+
+    private float age;
 
     [ServerCallback]
     void OnTriggerEnter(Collider other)

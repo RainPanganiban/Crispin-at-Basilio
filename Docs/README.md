@@ -266,19 +266,18 @@ Universal URP outline shader using the inverted hull (clip-space extrusion) meth
 * Multiplayer system
 * Lobby + transitions
 * Player combat & movement
-* Enemy + swarm AI foundation
+* Enemy + swarm AI foundation & tuning
 * Overworld system
 * Boss system core
+* Playtest swarm AI
 
 ### In Progress
 
-* Swarm AI tuning
 * Cooldown consistency
 * Movement validation
 
 ### Next
 
-* Playtest swarm AI
 * Improve attack syncing
 * Add attack variety
 
@@ -306,6 +305,7 @@ Use this README as entry point.
 
 * `Docs/project-context.md` — full architecture + roadmap
 * `Docs/BossSystem.md` — boss framework
+* `Docs/SwarmSystem.md` — swarm AI documentation
 * `Docs/Onglo.md` — example boss
 * `Docs/playeranimation.md` — animation system
 

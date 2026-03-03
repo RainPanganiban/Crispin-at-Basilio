@@ -1,9 +1,16 @@
 using UnityEngine;
 using Mirror;
+using UnityEngine.VFX;
 
 [RequireComponent(typeof(BoxCollider))]
 public class OngloFissure : NetworkBehaviour
 {
+    [Header("Visuals")]
+    public VisualEffect vfxTravel;
+    public VisualEffect vfxErupt;
+    public ParticleSystem psTravel;
+    public ParticleSystem psErupt;
+
     [Header("Runtime (server initialized)")]
     [SyncVar] private float speed;
     [SyncVar] private float maxDistance;
@@ -82,6 +89,26 @@ public class OngloFissure : NetworkBehaviour
             dmgable.TakeDamage(damage, owner != null ? owner.transform : null);
         }
 
+        Rpc_TriggerErupt();
+        
+        // Destroy after a small delay to let VFX play out, 
+        // but hide the object/colliders immediately.
+        trigger.enabled = false;
+        Invoke(nameof(DestroyFissure), 2.0f);
+    }
+
+    [ClientRpc]
+    void Rpc_TriggerErupt()
+    {
+        if (vfxTravel != null) vfxTravel.Stop();
+        if (vfxErupt != null) vfxErupt.Play();
+        
+        if (psTravel != null) psTravel.Stop();
+        if (psErupt != null) psErupt.Play();
+    }
+
+    void DestroyFissure()
+    {
         NetworkServer.Destroy(gameObject);
     }
 }

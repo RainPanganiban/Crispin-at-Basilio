@@ -1,9 +1,16 @@
 using UnityEngine;
 using Mirror;
+using UnityEngine.VFX;
 
 [RequireComponent(typeof(SphereCollider))]
 public class OngloBoulder : NetworkBehaviour
 {
+    [Header("Visuals")]
+    public VisualEffect vfxTrail;
+    public VisualEffect vfxImpact;
+    public ParticleSystem psTrail;
+    public ParticleSystem psImpact;
+
     [Header("Runtime (server initialized)")]
     [SyncVar] private float damage;
     [SyncVar] private float gravity;
@@ -75,6 +82,31 @@ public class OngloBoulder : NetworkBehaviour
             dmgable.TakeDamage(damage, owner != null ? owner.transform : null);
         }
 
+        Rpc_TriggerImpact();
+        
+        // Disable immediate gameplay components
+        trigger.enabled = false;
+        // Optionally disable model renderer here if it was a separate component
+        
+        Invoke(nameof(DestroyBoulder), 2.0f);
+    }
+
+    [ClientRpc]
+    void Rpc_TriggerImpact()
+    {
+        if (vfxTrail != null) vfxTrail.Stop();
+        if (vfxImpact != null) vfxImpact.Play();
+
+        if (psTrail != null) psTrail.Stop();
+        if (psImpact != null) psImpact.Play();
+        
+        // Hide the model if it exists
+        MeshRenderer renderer = GetComponentInChildren<MeshRenderer>();
+        if (renderer != null) renderer.enabled = false;
+    }
+
+    void DestroyBoulder()
+    {
         NetworkServer.Destroy(gameObject);
     }
 }

@@ -57,7 +57,10 @@ public class BoulderBarrageAttack : BaseAttack
     [ClientRpc]
     void Rpc_OnBoulderThrow()
     {
-        Debug.Log($"[BoulderBarrage] Boulder thrown feedback. Intensity: {throwShakeIntensity}");
+        if (CameraShake.Instance != null)
+        {
+            CameraShake.Instance.Shake(0.3f, throwShakeIntensity * 0.05f);
+        }
     }
 
     int Server_GetThrowsForCurrentPhase()

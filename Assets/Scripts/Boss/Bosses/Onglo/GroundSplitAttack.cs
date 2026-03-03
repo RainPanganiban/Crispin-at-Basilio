@@ -39,7 +39,10 @@ public class GroundSplitAttack : BaseAttack
     [ClientRpc]
     void Rpc_OnImpact()
     {
-        Debug.Log($"[GroundSplit] Fissure impact feedback. Intensity: {impactShakeIntensity}");
+        if (CameraShake.Instance != null)
+        {
+            CameraShake.Instance.Shake(0.5f, impactShakeIntensity * 0.05f);
+        }
     }
 
     [Server]

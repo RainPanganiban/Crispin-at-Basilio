@@ -59,9 +59,14 @@ public class EarthshakerStompAttack : BaseAttack
     [ClientRpc]
     void Rpc_TriggerShake()
     {
-        // Simple local shake logic if no global system found
-        // For now, we'll try to find a camera shake component or just debug log
-        Debug.Log($"[EarthshakerStomp] Shaking screen on client. Intensity: {shakeIntensity}");
+        if (CameraShake.Instance != null)
+        {
+            CameraShake.Instance.Shake(shakeDuration, shakeIntensity * 0.05f); // Normalized intensity
+        }
+        else
+        {
+            Debug.Log($"[EarthshakerStomp] CameraShake instance not found. Intensity: {shakeIntensity}");
+        }
     }
 
     int Server_GetRingCountForCurrentPhase()
