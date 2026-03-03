@@ -1341,7 +1341,7 @@ MonoBehaviour:
     unlocksOnComplete: []
   - levelId: Optional 1
     sceneName: Optional 1
-    startUnlocked: 1
+    startUnlocked: 0
     isMainPath: 0
     isArena: 1
     unlocksOnComplete: []

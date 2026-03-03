@@ -87,7 +87,7 @@ public class ArenaUI : MonoBehaviour
             bannerDisplayTimer = BANNER_DISPLAY_DURATION;
 
             if (waveText != null)
-                waveText.text = $"Wave {wave} / {total}";
+                waveText.text = $"WAVE {wave} / {total}";
 
             SetActive(waveBannerRoot, true);
         }
@@ -116,7 +116,7 @@ public class ArenaUI : MonoBehaviour
 
         if (show && countdownText != null)
         {
-            countdownText.text = $"Next wave in {Mathf.CeilToInt(countdown)}...";
+            countdownText.text = $"NEXT WAVE IN {Mathf.CeilToInt(countdown)}...";
         }
     }
 
@@ -137,7 +137,7 @@ public class ArenaUI : MonoBehaviour
         SetActive(completeRoot, true);
 
         if (completeText != null)
-            completeText.text = "Arena Cleared!";
+            completeText.text = "ARENA CLEARED!";
     }
 
     void UpdateReturnCountdown()
