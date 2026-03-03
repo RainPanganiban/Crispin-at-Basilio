@@ -31,6 +31,7 @@ If you are an AI (or developer) working in this repo, here is the **quick mental
 * Enemy (base AI + swarm logic)
 * Overworld (progression, shop, nodes)
 * Boss System (modular, phase-based)
+* Level Progression (defeat → overworld, persistent health/coins)
 
 ---
 
@@ -136,6 +137,33 @@ Core components:
 * Shop with validated purchases
 * Currency synced via SyncVar
 
+### Level Progression & Persistence
+
+* **Boss Defeat Flow:** Handled by `LevelCompleteManager`. Triggers victory UI, delay, and return to overworld.
+* **Health Persistence:** Damage taken in levels persists in the overworld. Restorable via shop items.
+* **Currency Persistence:** Coins earned in gameplay scenes are saved to `PlayerSessionData` and restored in the overworld.
+* **Level Unlocks:** Completing a boss level queues an unlock in `CustomNetworkManager`, which filters back to `LevelProgressionManager` on overworld load.
+
+### Arena System (Optional Levels)
+
+Wave-based combat arenas for optional currency farming before boss fights.
+
+**Flow:** Overworld → Arena Scene → Clear Waves → Auto-Return to Overworld
+
+* **ArenaWaveData** – ScriptableObject defining enemy composition per wave (Create → Arena → Wave Data)
+* **ArenaManager** – Server-authoritative wave controller (spawns enemies, tracks deaths, advances waves)
+* **ArenaCompleteManager** – Snapshots player data and returns to overworld after all waves cleared
+* **ArenaUI** – Client-side HUD (wave banner, inter-wave countdown, completion screen)
+* **EnemyDeathTracker** – Lightweight runtime component for tracking enemy deaths without modifying existing AI
+
+**Rules:**
+
+* Arenas do NOT unlock progression — only boss levels do
+* Arenas are repeatable (can re-enter anytime)
+* Coins earned from enemy drops persist via `PlayerSessionData`
+* Health damage taken persists (same as boss levels)
+* Minimum 3 waves recommended per arena
+
 ---
 
 ## WORKSPACE INDEX (MERGED & CLEAN)
@@ -204,6 +232,10 @@ Only scripts outside `Network/Mirror/` are gameplay logic.
 
 * Progression, nodes, shop, currency
 
+### Level Progression
+
+* `LevelCompleteManager`, `LevelCompleteUI` (victory flow)
+
 ### System
 
 * Interfaces (`IDamageable`, `ICombatHandler`), projectiles
@@ -269,7 +301,10 @@ Universal URP outline shader using the inverted hull (clip-space extrusion) meth
 * Enemy + swarm AI foundation & tuning
 * Overworld system
 * Boss system core
+* Level progression system (Boss defeat → Overworld)
+* Persistent health & currency
 * Playtest swarm AI
+* Optional arena-style wave system (Currency farming)
 
 ### In Progress
 

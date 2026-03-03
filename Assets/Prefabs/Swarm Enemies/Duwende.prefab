@@ -455,6 +455,7 @@ GameObject:
   - component: {fileID: 3416735622254214932}
   - component: {fileID: 663002815195305105}
   - component: {fileID: 4678268891435951822}
+  - component: {fileID: 3754407659582714503}
   m_Layer: 0
   m_Name: Duwende
   m_TagString: Enemy
@@ -799,7 +800,21 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   animator: {fileID: 6294319997736787191}
-  agent: {fileID: 3896022786008997590}
+--- !u!114 &3754407659582714503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7329386342253342632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2c5b939de20ae74db256db4b8827418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!1 &7648058361784440064
 GameObject:
   m_ObjectHideFlags: 0

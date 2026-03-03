@@ -13,6 +13,7 @@ public class LevelProgressionManager : NetworkBehaviour
         public string sceneName;
         public bool startUnlocked;
         public bool isMainPath;
+        public bool isArena;
         public List<string> unlocksOnComplete = new List<string>();
     }
 

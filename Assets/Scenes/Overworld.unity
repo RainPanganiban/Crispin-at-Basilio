@@ -1321,6 +1321,7 @@ MonoBehaviour:
     sceneName: Level 1
     startUnlocked: 1
     isMainPath: 1
+    isArena: 0
     unlocksOnComplete:
     - Level 2
     - Optional 1
@@ -1328,6 +1329,7 @@ MonoBehaviour:
     sceneName: Level 2
     startUnlocked: 0
     isMainPath: 1
+    isArena: 0
     unlocksOnComplete:
     - Level 3
     - Optional 2
@@ -1335,21 +1337,25 @@ MonoBehaviour:
     sceneName: Level 3
     startUnlocked: 0
     isMainPath: 1
+    isArena: 0
     unlocksOnComplete: []
   - levelId: Optional 1
     sceneName: Optional 1
-    startUnlocked: 0
+    startUnlocked: 1
     isMainPath: 0
+    isArena: 1
     unlocksOnComplete: []
   - levelId: Optional 2
     sceneName: Optional 2
     startUnlocked: 0
     isMainPath: 0
+    isArena: 0
     unlocksOnComplete: []
   - levelId: Optional 3
     sceneName: Optional 3
     startUnlocked: 0
     isMainPath: 0
+    isArena: 0
     unlocksOnComplete: []
 --- !u!114 &487397803
 MonoBehaviour:
