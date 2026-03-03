@@ -32,10 +32,16 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
 
     private PlayerMovement playerMovement;
 
+    // When true, Start() will NOT reset health to max (session data already applied)
+    private bool healthSetFromSession = false;
+
     private void Start()
     {
-        // Initialize stats
-        health.SetValue(health.maxValue);
+        // Only reset health to max if session data hasn't already set it
+        if (!healthSetFromSession)
+        {
+            health.SetValue(health.maxValue);
+        }
         stamina.SetValue(stamina.maxValue);
 
         syncedHealth = health.currentValue;
@@ -131,6 +137,19 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     {
         health.ChangeValue(amount);
         if (isServer) syncedHealth = health.currentValue;
+    }
+
+    /// <summary>
+    /// Sets health to specific values. Used by CustomNetworkManager
+    /// to restore persistent health from session data after a scene change.
+    /// </summary>
+    [Server]
+    public void ServerSetHealth(float current, float max)
+    {
+        healthSetFromSession = true;
+        health.maxValue = max;
+        health.SetValue(current);
+        syncedHealth = health.currentValue;
     }
 
     public void RestoreStamina(float amount)

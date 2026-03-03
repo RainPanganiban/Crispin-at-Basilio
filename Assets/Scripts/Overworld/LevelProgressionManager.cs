@@ -44,6 +44,7 @@ public class LevelProgressionManager : NetworkBehaviour
     {
         base.OnStartServer();
         InitializeProgression();
+        ApplyPendingCompletions();
     }
 
     [Server]
@@ -60,6 +61,24 @@ public class LevelProgressionManager : NetworkBehaviour
         }
 
         ReevaluateAllNodes();
+    }
+
+    /// <summary>
+    /// Applies level completions that were queued in CustomNetworkManager
+    /// while the overworld scene (and this manager) didn't exist.
+    /// </summary>
+    [Server]
+    void ApplyPendingCompletions()
+    {
+        CustomNetworkManager manager = CustomNetworkManager.Instance;
+        if (manager == null) return;
+
+        HashSet<string> pending = manager.ConsumePendingCompletedLevels();
+        foreach (string levelId in pending)
+        {
+            Debug.Log($"[LevelProgressionManager] Applying pending completion for '{levelId}'.");
+            MarkLevelCompleted(levelId);
+        }
     }
 
     [Server]

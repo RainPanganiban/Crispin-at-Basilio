@@ -13,6 +13,8 @@ public class CustomNetworkManager : NetworkManager
 
         // Session-long progression values
         public int coins;
+        public float currentHealth = -1f;  // -1 means "full health" (first spawn)
+        public float maxHealth = 100f;
         public List<string> purchasedUpgrades = new List<string>();
     }
 
@@ -26,6 +28,9 @@ public class CustomNetworkManager : NetworkManager
     // Session data keyed by connectionId so it survives scene changes
     private readonly Dictionary<int, PlayerSessionData> sessionDataByConnection =
         new Dictionary<int, PlayerSessionData>();
+
+    // Levels completed during gameplay, applied when overworld reloads
+    private readonly HashSet<string> pendingCompletedLevels = new HashSet<string>();
 
     public static CustomNetworkManager Instance => (CustomNetworkManager)singleton;
     
@@ -83,6 +88,14 @@ public class CustomNetworkManager : NetworkManager
             if (currencyManager != null)
             {
                 data.coins = currencyManager.GetCoins();
+            }
+
+            // Save health so it persists into the overworld
+            PlayerStatsManager stats = conn.identity.GetComponent<PlayerStatsManager>();
+            if (stats != null)
+            {
+                data.currentHealth = stats.health.currentValue;
+                data.maxHealth = stats.health.maxValue;
             }
         }
 
@@ -150,6 +163,12 @@ public class CustomNetworkManager : NetworkManager
             stats.ServerApplyPersistentData(data.coins, data.purchasedUpgrades);
         }
 
+        // Restore persistent health (currentHealth == -1 means first spawn, use full health)
+        if (data.currentHealth >= 0f && stats != null)
+        {
+            stats.ServerSetHealth(data.currentHealth, data.maxHealth);
+        }
+
         // Sync coins to PlayerCurrency (overworld shop)
         PlayerCurrency currency = player.GetComponent<PlayerCurrency>();
         if (currency != null)
@@ -182,5 +201,27 @@ public class CustomNetworkManager : NetworkManager
     public bool TryGetSessionData(NetworkConnectionToClient conn, out PlayerSessionData data)
     {
         return sessionDataByConnection.TryGetValue(conn.connectionId, out data);
+    }
+
+    /// <summary>
+    /// Queue a level as completed. Applied to LevelProgressionManager when the overworld loads.
+    /// Called by LevelCompleteManager from inside level scenes where LevelProgressionManager doesn't exist.
+    /// </summary>
+    [Server]
+    public void ServerMarkLevelCompleted(string levelId)
+    {
+        pendingCompletedLevels.Add(levelId);
+        Debug.Log($"[CustomNetworkManager] Queued level '{levelId}' for completion.");
+    }
+
+    /// <summary>
+    /// Consumes and returns all pending level completions. Called by LevelProgressionManager on overworld load.
+    /// </summary>
+    [Server]
+    public HashSet<string> ConsumePendingCompletedLevels()
+    {
+        HashSet<string> result = new HashSet<string>(pendingCompletedLevels);
+        pendingCompletedLevels.Clear();
+        return result;
     }
 }

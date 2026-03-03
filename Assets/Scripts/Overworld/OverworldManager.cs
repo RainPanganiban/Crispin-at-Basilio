@@ -42,5 +42,19 @@ public class OverworldManager : NetworkBehaviour
             manager.ServerChangeScene(sceneName);
         }
     }
+
+    /// <summary>
+    /// Returns all players to the overworld scene.
+    /// Called by LevelCompleteManager after boss defeat.
+    /// </summary>
+    [Server]
+    public void ServerReturnToOverworld()
+    {
+        CustomNetworkManager manager = CustomNetworkManager.Instance;
+        if (manager != null)
+        {
+            manager.ServerChangeScene(overworldSceneName);
+        }
+    }
 }
 

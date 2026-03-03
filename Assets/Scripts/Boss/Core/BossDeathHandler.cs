@@ -3,6 +3,11 @@ using Mirror;
 
 public class BossDeathHandler : NetworkBehaviour
 {
+    /// <summary>
+    /// Fired on the server when any boss dies. LevelCompleteManager subscribes to this.
+    /// </summary>
+    public static event System.Action OnBossDefeated;
+
     [Header("Death Settings")]
     public float delayBeforeDestroy = 5f;
     public GameObject deathVfxPrefab;
@@ -43,6 +48,9 @@ public class BossDeathHandler : NetworkBehaviour
             GameObject vfx = Instantiate(deathVfxPrefab, vfxSpawnPoint ? vfxSpawnPoint.position : transform.position, Quaternion.identity);
             NetworkServer.Spawn(vfx);
         }
+
+        // Notify level-complete system
+        OnBossDefeated?.Invoke();
 
         // Cleanup after delay
         Invoke(nameof(Server_Cleanup), delayBeforeDestroy);
