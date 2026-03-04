@@ -35,6 +35,10 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     // When true, Start() will NOT reset health to max (session data already applied)
     private bool healthSetFromSession = false;
 
+    private Coroutine activeStaggerCoroutine;
+    private Dictionary<Renderer, Color[]> originalColorsMap = new Dictionary<Renderer, Color[]>();
+    private bool colorsCached = false;
+
     private void Start()
     {
         // Only reset health to max if session data hasn't already set it
@@ -99,6 +103,102 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
             syncedHealth = 0;
             Die();
         }
+        else
+        {
+            Vector3 attackerPos = attacker != null ? attacker.position : transform.position;
+            RpcOnTookDamage(attackerPos);
+        }
+    }
+
+    [ClientRpc]
+    void RpcOnTookDamage(Vector3 attackerPos)
+    {
+        if (!colorsCached) CacheOriginalColors();
+        
+        if (activeStaggerCoroutine != null)
+        {
+            StopCoroutine(activeStaggerCoroutine);
+        }
+        activeStaggerCoroutine = StartCoroutine(HitStaggerRoutine(attackerPos));
+    }
+
+    private void CacheOriginalColors()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (Renderer r in renderers)
+        {
+            Color[] colors = new Color[r.materials.Length];
+            for (int i = 0; i < r.materials.Length; i++)
+            {
+                if (r.materials[i].HasProperty("_Color"))
+                {
+                    colors[i] = r.materials[i].color;
+                }
+            }
+            originalColorsMap[r] = colors;
+        }
+        colorsCached = true;
+    }
+
+    private System.Collections.IEnumerator HitStaggerRoutine(Vector3 attackerPos)
+    {
+        // 1. Red flash on material
+        foreach (var kvp in originalColorsMap)
+        {
+            if (kvp.Key != null)
+            {
+                for (int i = 0; i < kvp.Key.materials.Length; i++)
+                {
+                    if (kvp.Key.materials[i].HasProperty("_Color"))
+                    {
+                        kvp.Key.materials[i].color = Color.red;
+                    }
+                }
+            }
+        }
+
+        // 2. Small knockback (impulse)
+        if (playerMovement != null)
+        {
+            Vector3 pushDir = (transform.position - attackerPos).normalized;
+            pushDir.y = 0; // Keep it horizontal
+            
+            // If direction is zero (e.g. attacker is exactly at same spot), push back locally
+            if (pushDir.sqrMagnitude < 0.01f) pushDir = -transform.forward;
+
+            playerMovement.ApplyKnockback(pushDir * 3f, 0.15f); // 3 units speed for 0.15s
+        }
+
+        // 3. Briefly slow animator to simulate impact weight
+        Animator anim = GetComponent<Animator>();
+        if (anim != null) 
+        {
+            anim.speed = 0.5f; 
+        }
+
+        yield return new WaitForSeconds(0.15f);
+
+        // Restore colors
+        foreach (var kvp in originalColorsMap)
+        {
+            if (kvp.Key != null)
+            {
+                for (int i = 0; i < kvp.Key.materials.Length; i++)
+                {
+                    if (kvp.Key.materials[i].HasProperty("_Color"))
+                    {
+                        kvp.Key.materials[i].color = kvp.Value[i];
+                    }
+                }
+            }
+        }
+
+        if (anim != null)
+        {
+            anim.speed = 1f;
+        }
+        
+        activeStaggerCoroutine = null;
     }
 
     // ===============================

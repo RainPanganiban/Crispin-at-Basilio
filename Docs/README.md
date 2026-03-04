@@ -297,7 +297,7 @@ Universal URP outline shader using the inverted hull (clip-space extrusion) meth
 
 * Multiplayer system
 * Lobby + transitions
-* Player combat & movement
+* Player combat (Responsive Input Buffer & Melee Polish)
 * Enemy + swarm AI foundation & tuning
 * Overworld system
 * Boss system core
@@ -305,6 +305,12 @@ Universal URP outline shader using the inverted hull (clip-space extrusion) meth
 * Persistent health & currency
 * Playtest swarm AI
 * Optional arena-style wave system (Currency farming)
+* **Melee Combat Polish:**
+  - True Input Buffer system (eliminates dropped clicks)
+  - Snappy animation-cancelable combos
+  - Programmatic Hit-Stop (weighted impact feel)
+  - Attack Stepping (auto-forward thrust on swing)
+  - Non-animation Hit Stagger (visual flash & knockback)
 
 ### In Progress
 
@@ -321,7 +327,6 @@ Universal URP outline shader using the inverted hull (clip-space extrusion) meth
 * Dodge/roll system
 * Boss content
 * Player classes
-* UI polish
 * Sound system
 
 ---

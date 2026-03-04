@@ -36,24 +36,26 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
 
         // Call your existing LightAttack logic
         GetComponent<CharacterAnimationController>()?.PlayAttack();
-        LightAttack();
     }
 
-    // ===============================
-    // INPUT ENTRY POINT (CLIENT)
-    // ===============================
-    public void LightAttack()
+    // Called by the Animation Event "AnimationEvent_Hit"
+    public void ApplyDamageLocalClient(int currentComboStep)
     {
-        CmdPerformLightAttack();
+        if (isLocalPlayer)
+        {
+            CmdApplyDamage(currentComboStep);
+        }
     }
 
     // ===============================
     // SERVER AUTHORITATIVE ATTACK
     // ===============================
     [Command]
-    void CmdPerformLightAttack()
+    void CmdApplyDamage(int animationComboStep)
     {
-        HandleCombo();
+        // Sync combo step based on client's animation to ensure damage matches visuals.
+        comboStep = animationComboStep;
+        lastAttackTime = Time.time; 
 
         float bonus = statsManager != null ? statsManager.BonusAttackDamage : 0f;
         float damage = ((comboStep == 3) ? heavyDamage : lightDamage) + bonus;
@@ -68,39 +70,55 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
             hitLayers
         );
 
+        bool hitAnything = false;
+
         foreach (Collider hit in hits)
         {
             if (hit.TryGetComponent(out IDamageable damageable))
             {
                 damageable.TakeDamage(damage, transform);
+                hitAnything = true;
             }
         }
 
-        RpcOnAttack(comboStep);
+        RpcOnAttack(comboStep, hitAnything);
     }
 
     // ===============================
     // COMBO LOGIC (SERVER)
     // ===============================
-    void HandleCombo()
-    {
-        if (Time.time - lastAttackTime > comboResetTime)
-            comboStep = 0;
-
-        comboStep++;
-        comboStep = Mathf.Clamp(comboStep, 1, 3);
-
-        lastAttackTime = Time.time;
-    }
+    // Note: comboStep is now purely driven by the client's animation comboCount to stay perfectly synced.
 
     // ===============================
     // VISUAL FEEDBACK (ALL CLIENTS)
     // ===============================
     [ClientRpc]
-    void RpcOnAttack(int step)
+    void RpcOnAttack(int step, bool hitAnything)
     {
-        // Hook animations, VFX, sound later
-        Debug.Log($"Melee Attack Step: {step}");
+        Debug.Log($"Melee Attack Hit Event (Step: {step}, Hit Anything: {hitAnything})");
+
+        // Hit Stop / Freeze Frame
+        if (hitAnything)
+        {
+            StartCoroutine(HitStopRoutine(0.08f)); // Freeze for 80ms for nice crunchy impact
+        }
+    }
+
+    private System.Collections.IEnumerator HitStopRoutine(float duration)
+    {
+        Animator anim = GetComponent<Animator>();
+        if (anim != null)
+        {
+            float originalSpeed = anim.speed;
+            anim.speed = 0f;
+            yield return new WaitForSecondsRealtime(duration);
+            
+            // Only unfreeze if it hasn't been destroyed
+            if (anim != null)
+            {
+                anim.speed = originalSpeed;
+            }
+        }
     }
 
     // ===============================

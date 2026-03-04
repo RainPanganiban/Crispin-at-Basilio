@@ -1512,7 +1512,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  comboWindowDuration: 0.8
+  inputBufferTime: 0.5
+  weaponTrail: {fileID: 0}
 --- !u!114 &1564830389230270293
 MonoBehaviour:
   m_ObjectHideFlags: 0

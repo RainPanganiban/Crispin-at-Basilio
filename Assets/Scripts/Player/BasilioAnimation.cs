@@ -9,15 +9,15 @@ public abstract class CharacterAnimationController : NetworkBehaviour
     protected PlayerMovement movement;
     protected PlayerStatsManager statsManager;
 
-    // Combo System Fields
+    // True Input Buffer & Combo System
     [Header("Combo Settings")]
     [SerializeField]
-    private float comboWindowDuration = 0.5f; // Time player has to input next attack      
+    private float inputBufferTime = 0.5f; // How long to remember a button press
+    protected float lastAttackInputTime = -10f;
     protected int comboCount = 0; // Current attack in combo (0: none, 1: Attack1, 2: Attack2, 3: Attack3)
-    protected float nextAttackInputTime = 0f; // Time when the combo input window closes     
-    protected bool attackInputQueued = false; // True if attack button pressed during combo window
-
+    protected bool canCombo = false; // Set via Animation Event to allow next attack
     protected bool isLocked;
+    public bool IsActionLocked => isLocked;
 
     protected virtual void Awake()
     {
@@ -30,35 +30,71 @@ public abstract class CharacterAnimationController : NetworkBehaviour
     protected virtual void Update()
     {
         // This log will show even if the object is not the local player.
-        Debug.Log($"Update() called on GameObject '{this.gameObject.name}'. isLocalPlayer = {isLocalPlayer}");
+        // Debug.Log($"Update() called on GameObject '{this.gameObject.name}'. isLocalPlayer = {isLocalPlayer}");
 
         if (!isLocalPlayer) return;
-
-        // Log the state *before* any logic runs
-        Debug.Log($"Frame Start -- isLocked: {isLocked}, MoveInput Magnitude: {movement.MoveInput.magnitude}");
 
         UpdateLockState();
         UpdateLocomotion();
 
-        // Combo Timeout Logic
-        if (comboCount > 0 && Time.time > nextAttackInputTime)
+        // Tightly responsive True Input Buffer
+        if (Time.time - lastAttackInputTime <= inputBufferTime)
         {
-            // Combo window expired, reset combo
-            comboCount = 0;
-            attackInputQueued = false;
-            // Optionally, if you have a specific "return to idle" transition from attack  
-            // states, you might want to set another trigger here, but usually Has Exit Time handles this.
+            if (!isLocked) // Free to start fresh combo
+            {
+                Debug.Log($"[Combo] Starting New Combo. Step: 1");
+                comboCount = 1;
+                Trigger("Attack"); // Trigger Animator from Idle to Attack1
+                lastAttackInputTime = -10f; // Consume input
+                canCombo = false;
+                
+                // Strong punchy forward momentum
+                GetComponent<PlayerMovement>()?.ApplyAttackStep(transform.forward * 12f, 0.15f);
+            }
+            else if (canCombo && comboCount < 3) // Mid-attack, but combo window is OPEN
+            {
+                Debug.Log($"[Combo] Buffering Next Hit. Current Step: {comboCount} -> Target Step: {comboCount + 1}");
+                comboCount++;
+                Trigger("ContinueCombo"); // Trigger Animator from Attack N to Attack N+1
+                lastAttackInputTime = -10f; // Consume input
+                canCombo = false;
+                
+                // Strong punchy forward momentum
+                GetComponent<PlayerMovement>()?.ApplyAttackStep(transform.forward * 12f, 0.15f);
+            }
         }
     }
+
+    private int lastResetCheckFrame = 0;
 
     void UpdateLockState()
     {
         AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+        bool transitioning = animator.IsInTransition(0);
+        
         bool inAction =
             state.IsTag("Action") || // Check for states tagged as "Action"
             state.IsName("Jump");
 
-        isLocked = inAction;
+        // Cleanly reset combo state when exiting an Action state back back to Locomotion
+        // We add a tiny frame delay (2 frames) before resetting. This handles the case where 
+        // Unity might report !inAction for a single frame during a transition.
+        if (isLocked && !inAction && !transitioning)
+        {
+            if (Time.frameCount > lastResetCheckFrame + 2)
+            {
+                Debug.Log($"[Combo] Action Finished. Resetting Combo.");
+                comboCount = 0;
+                canCombo = false;
+                animator.speed = 1f; // Reset speed multiplier if we exit Action
+            }
+        }
+        else
+        {
+            lastResetCheckFrame = Time.frameCount;
+        }
+
+        isLocked = inAction || transitioning;
     }
 
     protected virtual void UpdateLocomotion()
@@ -98,20 +134,7 @@ public abstract class CharacterAnimationController : NetworkBehaviour
 
     public virtual void PlayAttack()
     {
-        if (comboCount == 0) // Only check isLocked when starting a NEW combo
-        {
-            if (isLocked) return; // Prevent starting a new combo if locked
-
-            comboCount = 1;
-            Trigger("Attack"); // Trigger the main Attack trigger for Attack1
-            nextAttackInputTime = Time.time + comboWindowDuration; // Start combo window
-            attackInputQueued = false; // Reset queued input
-        }
-        else if (comboCount < 3) // If already in a combo, allow queuing regardless of locked state
-        {
-            attackInputQueued = true;
-        }
-        // If comboCount is 3, player is at the end of combo, cannot queue more.
+        lastAttackInputTime = Time.time; // Simply store the input time
     }
 
     public virtual void PlayRoll()
@@ -120,7 +143,8 @@ public abstract class CharacterAnimationController : NetworkBehaviour
         Trigger("Roll");
         // Reset combo if rolling, as it interrupts attack flow
         comboCount = 0;
-        attackInputQueued = false;
+        canCombo = false;
+        lastAttackInputTime = -10f; // Clear input buffer
     }
 
     public virtual void PlayJump()
@@ -129,7 +153,8 @@ public abstract class CharacterAnimationController : NetworkBehaviour
         Trigger("Jump");
         // Reset combo if jumping, as it interrupts attack flow
         comboCount = 0;
-        attackInputQueued = false;
+        canCombo = false;
+        lastAttackInputTime = -10f; // Clear input buffer
     }
 
     public void LockMovement()
@@ -143,41 +168,53 @@ public abstract class CharacterAnimationController : NetworkBehaviour
     }
 
     // --- Animation Event Methods ---
-    // These methods are called via Animation Events on the attack animation clips.        
 
-    // Called at the start of the combo input window for the next attack
-    public void AnimationEvent_SetComboWindow(int state)
+    // Called precisely when the weapon finishes striking and starts returning.
+    // This allows the player to chain the next attack instantly.
+    public void AnimationEvent_OpenComboWindow()
     {
-        Debug.Log($"AnimationEvent_SetComboWindow: state={state}, comboCount={comboCount}");
-        if (state == 1) // Start of window
-        {
-            nextAttackInputTime = Time.time + comboWindowDuration;
-            // Optionally, you might want to reset attackInputQueued here
-            // if the window only starts after an anim frame.
-        }
-        // If state == 0, it means end of window. But we manage this with nextAttackInputTime.
+        canCombo = true;
     }
 
-    // Called towards the end of each attack animation to check for combo continuation     
-    public void AnimationEvent_CheckCombo()
+    // (Optional) Closes the combo buffer early if you want a strict ending window.
+    // However, going back to Idle automatically resets comboCount anyway.
+    public void AnimationEvent_CloseComboWindow()
     {
-        Debug.Log($"AnimationEvent_CheckCombo: attackInputQueued={attackInputQueued}, comboCount={comboCount}");
-        if (attackInputQueued && comboCount < 3)
+        canCombo = false;
+    }
+
+    // --- Legacy / Compatibility Stubs ---
+    // These methods are no longer used by the new Input Buffer system.
+    // They are left as empty stubs to prevent "No Receiver" errors in Unity until 
+    // you remove/replace referencing events in the Animation Clips.
+    public void AnimationEvent_SetComboWindow(int state) { }
+    public void AnimationEvent_CheckCombo() { }
+
+    // --- Combat / VFX Animation Events ---
+    // (Trail methods removed at user request)
+
+    // Called at exact frame of impact
+    public void AnimationEvent_Hit()
+    {
+        if (!isServer) // Usually we want server to apply damage, but for responsiveness we can signal local MeleeCombat to Cmd Apply Damage.
         {
-            // Player pressed attack during the window, proceed to next combo step
-            comboCount++;
-            attackInputQueued = false; // Consume the queued input
-            Trigger("ContinueCombo"); // Trigger Animator to transition to next attack     
-            nextAttackInputTime = Time.time + comboWindowDuration; // Start new window for 
-            // next attack
+            // We tell MeleeCombat on local client to tell server to apply damage now
+            if (isLocalPlayer)
+            {
+                MeleeCombat combat = GetComponent<MeleeCombat>();
+                if (combat != null)
+                {
+                    combat.ApplyDamageLocalClient(comboCount);
+                }
+            }
         }
-        else
+        else if (isLocalPlayer && isServer) // Host case
         {
-            // No input, or max combo reached, reset combo
-            comboCount = 0;
-            attackInputQueued = false;
-            // The Animator should transition back to Locomotion via Has Exit Time from    
-            // Attack3, or if no ContinueCombo trigger is received from Attack1/Attack2.
+            MeleeCombat combat = GetComponent<MeleeCombat>();
+            if (combat != null)
+            {
+                combat.ApplyDamageLocalClient(comboCount);
+            }
         }
     }
 }

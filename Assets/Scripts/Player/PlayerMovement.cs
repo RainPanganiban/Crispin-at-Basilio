@@ -40,6 +40,24 @@ public class PlayerMovement : NetworkBehaviour
     public bool IsGrounded => controller.isGrounded;
     public bool IsRolling => isRolling;
 
+    private Vector3 knockbackVelocity;
+    private float knockbackTimer;
+
+    private Vector3 attackStepVelocity;
+    private float attackStepTimer;
+
+    public void ApplyKnockback(Vector3 force, float duration)
+    {
+        knockbackVelocity = force;
+        knockbackTimer = duration;
+    }
+
+    public void ApplyAttackStep(Vector3 velocity, float duration)
+    {
+        attackStepVelocity = velocity;
+        attackStepTimer = duration;
+    }
+
     void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -130,8 +148,34 @@ public class PlayerMovement : NetworkBehaviour
         if (!isLocalPlayer) return;
         if (isRolling) return;
 
+        // Knockback Handling
+        if (knockbackTimer > 0)
+        {
+            knockbackTimer -= Time.deltaTime;
+            controller.Move(knockbackVelocity * Time.deltaTime);
+            knockbackVelocity = Vector3.Lerp(knockbackVelocity, Vector3.zero, Time.deltaTime * 5f);
+            
+            // Apply gravity even during knockback
+            if (controller.isGrounded && velocity.y < 0) velocity.y = -2f;
+            velocity.y += gravity * Time.deltaTime;
+            controller.Move(velocity * Time.deltaTime);
+            return; // Skip normal movement while knocked back
+        }
+
+        // Lock movement if attacking
+        CharacterAnimationController animCtrl = GetComponent<CharacterAnimationController>();
+        bool isLocked = animCtrl != null && animCtrl.IsActionLocked;
+
+        // Attack Step Handling
+        if (attackStepTimer > 0)
+        {
+            attackStepTimer -= Time.deltaTime;
+            controller.Move(attackStepVelocity * Time.deltaTime);
+            attackStepVelocity = Vector3.Lerp(attackStepVelocity, Vector3.zero, Time.deltaTime * 5f);
+        }
+
         // Movement input
-        if (moveInput.sqrMagnitude > 0.01f)
+        if (moveInput.sqrMagnitude > 0.01f && !isLocked)
         {
             Vector3 camForward = cam.forward;
             Vector3 camRight = cam.right;
