@@ -59,7 +59,7 @@ Material:
     - _QueueOffset: 0
     - _WindDensity: 0.43
     - _WindSpeed: 2.41
-    - _WindStregnth: 3.75
+    - _WindStregnth: 0.86
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 0}
     - _Windensity: {r: 0, g: 0, b: 0, a: 0}
