@@ -23,6 +23,7 @@ public class PlayerMovement : NetworkBehaviour
     private Vector2 moveInput;
     private Vector3 velocity;
     private Transform cam;
+    public Transform PlayerCamera => cam;
 
     [SyncVar] private bool isRunning = false;
     private bool isRolling = false;
@@ -185,7 +186,17 @@ public class PlayerMovement : NetworkBehaviour
 
             float speed = moveSpeed;
 
-            if (isRunning && statsManager.stamina.currentValue > 0f)
+            // Slow Walk Approach: Cut speed dramatically while aiming
+            if (isAiming)
+            {
+                speed = moveSpeed * 0.3f; // 70% reduction in speed
+                if (isRunning) 
+                {
+                    isRunning = false;
+                    CmdSetRunning(false);
+                }
+            }
+            else if (isRunning && statsManager.stamina.currentValue > 0f)
             {
                 speed = runSpeed;
                 // Drain stamina while running (only if server to update SyncVar,

@@ -24,8 +24,9 @@ public class CrispinAnimation : CharacterAnimationController
     /// </summary>
     public void OnAttackStarted()
     {
-        // Prevent starting a wind-up if already in a locked action (like jump or roll)
-        if (isLocked) return;
+        // Ranged attacks can be spammed, so we only block if hard-locked (like rolling)
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+        if (state.IsName("Roll") || state.IsName("Jump")) return;
 
         isHoldingAttack = true;
         animator.SetBool("IsWindingUp", true);
@@ -49,6 +50,37 @@ public class CrispinAnimation : CharacterAnimationController
         // This will allow the animator to transition from AttackRelease back to Locomotion,
         // or from WindUp back to Locomotion if the attack was cancelled.
         animator.SetBool("IsWindingUp", false);
+    }
+
+    protected override void UpdateLockState()
+    {
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+
+        // Crispin should NOT be locked while aiming or firing!
+        // He should only be locked if he is rolling or jumping.
+        bool inAction = state.IsName("Roll") || state.IsName("Jump");
+
+        isLocked = inAction;
+    }
+
+    protected override void UpdateLocomotion()
+    {
+        base.UpdateLocomotion(); // Still processes the base "Speed" parameter for normal running
+
+        if (isLocked) return;
+
+        // If movement script knows we are aiming, pass the raw input axes to the Animator
+        // This is crucial for driving a 1D Blend Tree (Slow Strafing)
+        if (movement != null)
+        {
+            // X is left/right (A/D)
+            Vector2 input = movement.MoveInput;
+            
+            // Smoothly damp the input values so the animations blend nicely instead of snapping
+            float currentX = animator.GetFloat("InputX");
+            
+            animator.SetFloat("InputX", Mathf.Lerp(currentX, input.x, 10f * Time.deltaTime));
+        }
     }
 
     protected override void Update()

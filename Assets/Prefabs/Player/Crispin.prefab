@@ -588,6 +588,9 @@ MonoBehaviour:
   minY: -30
   maxY: 60
   distance: 3
+  aimSensitivity: 15
+  zoomDistance: 0.5
+  zoomSpeed: 1
 --- !u!1 &5987745965457055518
 GameObject:
   m_ObjectHideFlags: 0
@@ -1129,9 +1132,9 @@ MonoBehaviour:
   syncInterval: 0
   projectilePrefab: {fileID: 4164222620869133773, guid: a479284caa825284c8656eed0523b6c2, type: 3}
   firePoint: {fileID: 7978120703670083817}
-  normalFOV: 60
-  chargedFOV: 35
-  zoomSpeed: 8
+  aimLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   maxChargeTime: 2
   minDamage: 10
   maxDamage: 40
@@ -1153,7 +1156,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  comboWindowDuration: 0.5
+  inputBufferTime: 0.5
 --- !u!114 &1764073941880475441
 MonoBehaviour:
   m_ObjectHideFlags: 0

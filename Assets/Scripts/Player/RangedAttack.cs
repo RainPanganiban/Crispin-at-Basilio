@@ -8,10 +8,8 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform firePoint;
 
-    [Header("Charge Zoom")]
-    [SerializeField] private float normalFOV = 60f;
-    [SerializeField] private float chargedFOV = 45f;
-    [SerializeField] private float zoomSpeed = 8f;
+    [Header("Aiming")]
+    [SerializeField] private LayerMask aimLayerMask = ~0; // Everything by default
 
     [Header("Charge Settings")]
     [SerializeField] public float maxChargeTime = 2f;
@@ -26,13 +24,39 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
 
     private PlayerMovement movement;
     private Camera playerCamera;
+    private ThirdPersonCamera tpCamera;
     private CrispinAnimation crispinAnimation;
     private PlayerStatsManager statsManager;
 
     public override void OnStartLocalPlayer()
     {
         movement = GetComponent<PlayerMovement>();
+        
+
+        // Locate ThirdPersonCamera
+        tpCamera = GetComponent<ThirdPersonCamera>();
+        if (tpCamera == null)
+        {
+            tpCamera = GetComponentInChildren<ThirdPersonCamera>();
+        }
+        
+        if (tpCamera == null)
+        {
+            Debug.LogError("[RangedAttack] ThirdPersonCamera NOT FOUND on Player root or children!");
+        }
+        else
+        {
+            Debug.Log("[RangedAttack] ThirdPersonCamera successfully found!");
+        }
+
+        // Locate Camera
         playerCamera = GetComponentInChildren<Camera>();
+        if (playerCamera == null)
+        {
+            playerCamera = Camera.main;
+            if (playerCamera == null) playerCamera = FindFirstObjectByType<Camera>();
+        }
+
         crispinAnimation = GetComponent<CrispinAnimation>();
         statsManager = GetComponent<PlayerStatsManager>();
     }
@@ -41,16 +65,19 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
     {
         if (!isLocalPlayer) return;
 
-        // Camera zoom
         if (playerCamera == null)
         {
             playerCamera = GetComponentInChildren<Camera>();
+            if (playerCamera == null) playerCamera = Camera.main;
             if (playerCamera == null)
                 return;
         }
 
-        float targetFOV = isCharging ? chargedFOV : normalFOV;
-        playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFOV, zoomSpeed * Time.deltaTime);
+        if (tpCamera == null)
+        {
+            tpCamera = GetComponent<ThirdPersonCamera>();
+            if (tpCamera == null) tpCamera = GetComponentInChildren<ThirdPersonCamera>();
+        }
 
         if (!isCharging) return;
 
@@ -88,6 +115,16 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
         isCharging = true;
         currentCharge = 0f;
 
+        if (tpCamera != null)
+        {
+            Debug.Log("[RangedAttack] Telling tpCamera to SetAiming(true)");
+            tpCamera.SetAiming(true);
+        }
+        else
+        {
+            Debug.LogWarning("[RangedAttack] Cannot aim: tpCamera is NULL!");
+        }
+
         movement.isAiming = true;
 
         // Tell the animation controller to start the wind-up animation
@@ -107,6 +144,13 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
         if (!isCharging) return;
 
         isCharging = false;
+        
+        if (tpCamera != null)
+        {
+            Debug.Log("[RangedAttack] Telling tpCamera to SetAiming(false)");
+            tpCamera.SetAiming(false);
+        }
+
         if (movement == null)
             movement = GetComponent<PlayerMovement>();
         if (movement != null)
@@ -126,7 +170,21 @@ public class RangedAttack : NetworkBehaviour, ICombatHandler
         float lifetime = Mathf.Lerp(1.5f, maxLifetime, chargePercent);
 
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        Vector3 direction = ray.direction.normalized;
+        Vector3 targetPoint;
+
+        // Raycast from camera center to find exactly what the crosshair is looking at
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, aimLayerMask))
+        {
+            targetPoint = hit.point;
+        }
+        else
+        {
+            // If we didn't hit anything, pick a point far away in the air
+            targetPoint = ray.GetPoint(100f);
+        }
+
+        // Projectile direction is exactly from the hand to the hit point
+        Vector3 direction = (targetPoint - firePoint.position).normalized;
 
         CmdFireProjectile(
             Mathf.RoundToInt(damage),

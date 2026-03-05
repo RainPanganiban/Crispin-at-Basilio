@@ -237,7 +237,7 @@ ModelImporter:
       name: StrafeAiming(left).001
       takeName: StrafeAiming(left).001
       internalID: 7576291246468517310
-      firstFrame: 0
+      firstFrame: 3.8
       lastFrame: 19
       wrapMode: 0
       orientationOffsetY: 0
@@ -245,7 +245,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -295,7 +295,7 @@ ModelImporter:
       name: StrafeAiming(right).001
       takeName: StrafeAiming(right).001
       internalID: -5128906302457237706
-      firstFrame: 0
+      firstFrame: 5.3
       lastFrame: 19
       wrapMode: 0
       orientationOffsetY: 0
@@ -303,7 +303,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -324,8 +324,8 @@ ModelImporter:
       name: Fullattack.001
       takeName: Fullattack.001
       internalID: -4089587346617389165
-      firstFrame: 7.2
-      lastFrame: 8.5
+      firstFrame: 1.2
+      lastFrame: 7
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

@@ -59,7 +59,19 @@ public abstract class CharacterAnimationController : NetworkBehaviour
                 lastAttackInputTime = -10f; // Consume input
                 canCombo = false;
                 
-                // Strong punchy forward momentum
+                // Allow the player to readjust their aim to the crosshair between combo attacks
+                Transform camTransform = movement != null ? movement.PlayerCamera : null;
+                if (camTransform != null)
+                {
+                    Vector3 camForward = camTransform.forward;
+                    camForward.y = 0; // Keep the rotation perfectly flat on the ground
+                    if (camForward.sqrMagnitude > 0.01f)
+                    {
+                        transform.rotation = Quaternion.LookRotation(camForward);
+                    }
+                }
+
+                // Strong punchy forward momentum in the NEW direction
                 GetComponent<PlayerMovement>()?.ApplyAttackStep(transform.forward * 12f, 0.15f);
             }
         }
@@ -67,7 +79,7 @@ public abstract class CharacterAnimationController : NetworkBehaviour
 
     private int lastResetCheckFrame = 0;
 
-    void UpdateLockState()
+    protected virtual void UpdateLockState()
     {
         AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
         bool transitioning = animator.IsInTransition(0);

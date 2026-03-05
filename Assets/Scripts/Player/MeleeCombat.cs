@@ -34,6 +34,18 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
         if (!isLocalPlayer) return; // Make sure only local player triggers it
         if (!context.started) return;
 
+        // Orient Basilio towards the camera crosshair immediately upon attacking
+        Transform camTransform = GetComponent<PlayerMovement>()?.PlayerCamera;
+        if (camTransform != null)
+        {
+            Vector3 camForward = camTransform.forward;
+            camForward.y = 0; // Keep the rotation perfectly flat on the ground
+            if (camForward.sqrMagnitude > 0.01f)
+            {
+                transform.rotation = Quaternion.LookRotation(camForward);
+            }
+        }
+
         // Call your existing LightAttack logic
         GetComponent<CharacterAnimationController>()?.PlayAttack();
     }
@@ -76,8 +88,15 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
         {
             if (hit.TryGetComponent(out IDamageable damageable))
             {
-                damageable.TakeDamage(damage, transform);
-                hitAnything = true;
+                // Friendly Fire Protection (If attacker is player and target is player, ignore)
+                // Assuming MeleeCombat is always on a player character
+                bool isTargetPlayer = hit.GetComponent<PlayerMovement>() != null;
+
+                if (!isTargetPlayer)
+                {
+                    damageable.TakeDamage(damage, transform);
+                    hitAnything = true;
+                }
             }
         }
 

@@ -47,6 +47,17 @@ public class Projectile : NetworkBehaviour
 
         if (other.TryGetComponent<IDamageable>(out var target))
         {
+            // Friendly Fire Protection
+            bool isAttackerPlayer = ownerCollider != null && ownerCollider.GetComponent<PlayerMovement>() != null;
+            bool isTargetPlayer = other.GetComponent<PlayerMovement>() != null;
+
+            if (isAttackerPlayer && isTargetPlayer)
+            {
+                // It's a player hitting another player, ignore the damage but destroy the projectile
+                NetworkServer.Destroy(gameObject);
+                return;
+            }
+
             Transform attackerTransform = ownerIdentity != null ? ownerIdentity.transform : null;
             target.TakeDamage(damage, attackerTransform);
         }

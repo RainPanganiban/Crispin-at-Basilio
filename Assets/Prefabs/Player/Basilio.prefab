@@ -462,6 +462,9 @@ MonoBehaviour:
   minY: -30
   maxY: 60
   distance: 3
+  aimSensitivity: 60
+  zoomDistance: 1.5
+  zoomSpeed: 8
 --- !u!1 &4737923447960994346
 GameObject:
   m_ObjectHideFlags: 0
@@ -1490,7 +1493,7 @@ MonoBehaviour:
   syncInterval: 0
   lightDamage: 10
   heavyDamage: 25
-  attackRadius: 1.5
+  attackRadius: 1.8
   attackRange: 1.5
   hitLayers:
     serializedVersion: 2
@@ -1513,7 +1516,6 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   inputBufferTime: 0.5
-  weaponTrail: {fileID: 0}
 --- !u!114 &1564830389230270293
 MonoBehaviour:
   m_ObjectHideFlags: 0
