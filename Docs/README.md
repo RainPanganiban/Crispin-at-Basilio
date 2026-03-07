@@ -305,12 +305,21 @@ Universal URP outline shader using the inverted hull (clip-space extrusion) meth
 * Persistent health & currency
 * Playtest swarm AI
 * Optional arena-style wave system (Currency farming)
-* **Melee Combat Polish:**
+* **Melee Combat Polish (Basilio):**
   - True Input Buffer system (eliminates dropped clicks)
   - Snappy animation-cancelable combos
   - Programmatic Hit-Stop (weighted impact feel)
   - Attack Stepping (auto-forward thrust on swing)
   - Non-animation Hit Stagger (visual flash & knockback)
+  - **Dynamic Aiming:** Automatic re-orientation towards camera crosshair at attack start and between combo hits.
+* **Ranged Combat Polish (Crispin):**
+  - **Physical Camera ADS:** Physical distance-based camera zoom for reliable aiming.
+  - **Aim Sensitivity Scaling:** Automatically reduces mouse sensitivity while charging/aiming.
+  - **Crosshair Accuracy:** Physics-based projectile targeting (projectiles fire exactly at the crosshair hit point).
+  - **Slow-Walk Mechanic:** Strategic speed reduction (70%) while aiming to improve animation quality and control.
+  - **Directional Wind-up:** 1D Blend Tree integration for left/right strafing while charging.
+* **General Combat Polish:**
+  - **Friendly Fire Prevention:** Attacks (both ranged and melee) no longer damage teammates.
 
 ### In Progress
 
@@ -333,7 +342,7 @@ Universal URP outline shader using the inverted hull (clip-space extrusion) meth
 
 ## KNOWN ISSUES
 
-* Crispin wind-up attack animation not working
+None currently reported.
 
 ---
 

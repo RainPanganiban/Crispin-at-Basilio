@@ -17,6 +17,7 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
 
     // SyncVars for multiplayer UI syncing
     [SyncVar(hook = nameof(OnHealthChanged))] private float syncedHealth;
+    [SyncVar(hook = nameof(OnMaxHealthChanged))] private float syncedMaxHealth;
     [SyncVar(hook = nameof(OnStaminaChanged))] private float syncedStamina;
 
     // Death & Revive
@@ -41,15 +42,19 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
 
     private void Start()
     {
-        // Only reset health to max if session data hasn't already set it
-        if (!healthSetFromSession)
+        if (isServer)
         {
-            health.SetValue(health.maxValue);
-        }
-        stamina.SetValue(stamina.maxValue);
+            // Only reset health to max if session data hasn't already set it
+            if (!healthSetFromSession)
+            {
+                health.SetValue(health.maxValue);
+            }
+            stamina.SetValue(stamina.maxValue);
 
-        syncedHealth = health.currentValue;
-        syncedStamina = stamina.currentValue;
+            syncedMaxHealth = health.maxValue;
+            syncedHealth = health.currentValue;
+            syncedStamina = stamina.currentValue;
+        }
 
         playerMovement = GetComponent<PlayerMovement>();
 
@@ -209,6 +214,11 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         health.SetValue(newValue); // updates UI via Stat events
     }
 
+    void OnMaxHealthChanged(float oldValue, float newValue)
+    {
+        health.SetMax(newValue); 
+    }
+
     void OnStaminaChanged(float oldValue, float newValue)
     {
         float previous = stamina.currentValue;
@@ -247,8 +257,9 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     public void ServerSetHealth(float current, float max)
     {
         healthSetFromSession = true;
-        health.maxValue = max;
+        health.SetMax(max);
         health.SetValue(current);
+        syncedMaxHealth = health.maxValue;
         syncedHealth = health.currentValue;
     }
 
@@ -343,8 +354,8 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         switch (statName)
         {
             case "MaxHealth":
-                health.maxValue += amount;
-                health.SetValue(health.currentValue); // re-clamp
+                health.SetMax(health.maxValue + amount);
+                syncedMaxHealth = health.maxValue;
                 syncedHealth = health.currentValue;
                 break;
 

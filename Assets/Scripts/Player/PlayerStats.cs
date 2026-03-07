@@ -23,6 +23,13 @@ public class Stat
         OnValueChanged?.Invoke(currentValue, maxValue);
     }
 
+    public void SetMax(float newMax)
+    {
+        maxValue = newMax;
+        currentValue = Mathf.Clamp(currentValue, 0, maxValue);
+        OnValueChanged?.Invoke(currentValue, maxValue);
+    }
+
     public void ChangeValue(float delta)
     {
         SetValue(currentValue + delta);
