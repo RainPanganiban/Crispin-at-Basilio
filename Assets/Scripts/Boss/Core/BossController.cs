@@ -43,7 +43,7 @@ public class BossController : NetworkBehaviour
     [ServerCallback]
     void Update()
     {
-        if (state == BossState.Dead)
+        if (state == BossState.Dead || state == BossState.Stunned)
             return;
 
         if (Time.time < nextThinkTime)
@@ -153,6 +153,34 @@ public class BossController : NetworkBehaviour
     public void Server_EndPhaseTransition()
     {
         if (state != BossState.Transitioning)
+            return;
+
+        if (movement != null)
+            movement.Server_SetMovementEnabled(true);
+
+        state = BossState.Idle;
+    }
+
+    [Server]
+    public void Server_Stun()
+    {
+        if (state == BossState.Dead)
+            return;
+
+        if (attackManager != null)
+            attackManager.Server_StopCurrentAttack();
+
+        if (movement != null)
+            movement.Server_SetMovementEnabled(false);
+
+        currentAttack = null;
+        state = BossState.Stunned;
+    }
+
+    [Server]
+    public void Server_EndStun()
+    {
+        if (state != BossState.Stunned)
             return;
 
         if (movement != null)

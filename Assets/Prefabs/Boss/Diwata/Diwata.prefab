@@ -1,0 +1,712 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4445531958615690861
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4313839619742991061}
+  - component: {fileID: 8671135333036763877}
+  - component: {fileID: 1820636031681020932}
+  - component: {fileID: 6196041851639489252}
+  - component: {fileID: 6090721644125013600}
+  - component: {fileID: 327661629350915891}
+  - component: {fileID: 8044141190622913945}
+  - component: {fileID: 7671506956600284580}
+  - component: {fileID: 8934656448057782840}
+  - component: {fileID: 9177734711733212002}
+  - component: {fileID: 4495508302107019261}
+  - component: {fileID: 1642757255525516541}
+  - component: {fileID: 1120197735599768708}
+  - component: {fileID: 4313390737703135535}
+  - component: {fileID: 1763037232701644203}
+  - component: {fileID: 8542820687180936648}
+  - component: {fileID: 1413133698108565249}
+  - component: {fileID: 8682163624340012642}
+  - component: {fileID: 457684601319585629}
+  - component: {fileID: 4707338214520200396}
+  - component: {fileID: 3798965447748796455}
+  - component: {fileID: 3754177926930371036}
+  m_Layer: 0
+  m_Name: Diwata
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4313839619742991061
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1933374345953446350}
+  - {fileID: 4933477418656660600}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8671135333036763877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 3937203033
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
+--- !u!114 &1820636031681020932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 4313839619742991061}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  onlySyncOnChangeCorrectionMultiplier: 2
+  useFixedUpdate: 0
+  rotationSensitivity: 0.01
+  positionPrecision: 0.01
+  scalePrecision: 0.01
+--- !u!95 &6196041851639489252
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!136 &6090721644125013600
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &327661629350915891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 948c92d53e9441d4581bef86c232740f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  health: {fileID: 8044141190622913945}
+  phaseManager: {fileID: 7671506956600284580}
+  attackManager: {fileID: 8934656448057782840}
+  animationRelay: {fileID: 9177734711733212002}
+  movement: {fileID: 1120197735599768708}
+  animator: {fileID: 6196041851639489252}
+  thinkInterval: 0.2
+--- !u!114 &8044141190622913945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e22cd5995529ca4c9840b849c912a87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  maxHealth: 2000
+--- !u!114 &7671506956600284580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21f3379bb1def854687b509db9a3e2e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  phases:
+  - enterAtHealthPercent: 1
+    allowedAttacks:
+    - {fileID: 1763037232701644203}
+    - {fileID: 8542820687180936648}
+    - {fileID: 3754177926930371036}
+    transitionTriggerName: 
+    movementSpeedMultiplier: 0
+    specialBehaviorFlag: 0
+  - enterAtHealthPercent: 0.7
+    allowedAttacks:
+    - {fileID: 1413133698108565249}
+    - {fileID: 8682163624340012642}
+    - {fileID: 3754177926930371036}
+    transitionTriggerName: 
+    movementSpeedMultiplier: 1
+    specialBehaviorFlag: 0
+  - enterAtHealthPercent: 0.35
+    allowedAttacks:
+    - {fileID: 457684601319585629}
+    - {fileID: 4707338214520200396}
+    - {fileID: 3798965447748796455}
+    - {fileID: 3754177926930371036}
+    transitionTriggerName: 
+    movementSpeedMultiplier: 1.5
+    specialBehaviorFlag: 1
+--- !u!114 &8934656448057782840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7915b3457ee2ffe43a4f2059e426a0a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  globalCooldownBetweenAttacks: 0.5
+--- !u!114 &9177734711733212002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f372a7164d5dbc44a9a6263e14f8c6f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attackManager: {fileID: 8934656448057782840}
+  controller: {fileID: 327661629350915891}
+--- !u!114 &4495508302107019261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0915d6eb35ad3944e8b6f5f0acb9e91f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  delayBeforeDestroy: 5
+  deathVfxPrefab: {fileID: 0}
+  vfxSpawnPoint: {fileID: 0}
+--- !u!114 &1642757255525516541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8eb9c1ebdbc8e340af4c0e8fece27e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bossHealth: {fileID: 8044141190622913945}
+  canvasGroup: {fileID: 0}
+  healthSlider: {fileID: 0}
+  bossNameText: {fileID: 0}
+  activationRange: 15
+  fadeSpeed: 2
+  bossName: Onglo, Guardian of the Basilio
+--- !u!114 &1120197735599768708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5939395a0a5e7db4a97065b7c73c1bf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  hoverHeight: 6
+  hoverBobAmplitude: 0.3
+  hoverBobFrequency: 1.2
+  driftSpeed: 1.5
+  driftChangeInterval: 3
+  arenaCenter: {fileID: 0}
+  arenaRadius: 12
+  teleportCooldown: 8
+  turnSpeed: 5
+--- !u!114 &4313390737703135535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 769a532c6e983dc4a8135aafb3b7ae3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attacksBeforeFall: 4
+  swarmKillsBeforeFall: 6
+  vulnerabilityDuration: 5
+  bonusDamageMultiplier: 1.5
+  controller: {fileID: 327661629350915891}
+  health: {fileID: 8044141190622913945}
+  movement: {fileID: 1120197735599768708}
+  bossAnimator: {fileID: 6196041851639489252}
+--- !u!114 &1763037232701644203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6104d93fe6d98684886edc8c8ec80c81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attackName: Attack
+  cooldown: 2
+  maxRange: 5
+  animationTriggerName: 
+  requiresMovementLock: 0
+  petalPrefab: {fileID: 1361365814092637503, guid: 6e5cf2eb15937254f95a34ec32277789, type: 3}
+  spawnOrigin: {fileID: 4933477418656660600}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  petalSpeed: 8
+  petalDamage: 12
+  petalLifetime: 5
+  spiralSpread: 30
+  phase1Petals: 6
+  phase2Petals: 10
+  phase3Petals: 16
+--- !u!114 &8542820687180936648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9dc81d7055db8a459e10e808e5a04eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attackName: Attack
+  cooldown: 2
+  maxRange: 5
+  animationTriggerName: 
+  requiresMovementLock: 0
+  vineAttackPrefab: {fileID: 7347794123305069028, guid: c4a786ec34f321847bcb67ddc51563bb, type: 3}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  vineDamage: 20
+  vineRadius: 2.5
+  telegraphDuration: 1.2
+  vineCount: 3
+  spawnOffsetRadius: 2
+--- !u!114 &1413133698108565249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf3b45693f579674992aadb8683e78e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attackName: Attack
+  cooldown: 2
+  maxRange: 5
+  animationTriggerName: 
+  requiresMovementLock: 0
+  lancePrefab: {fileID: 7574140319921097983, guid: 1d639da618f939f4ab3bc4bd40f461ed, type: 3}
+  arenaCenter: {fileID: 0}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  arenaEdgeRadius: 14
+  spawnHeight: 2
+  lanceDamage: 25
+  lanceSpeed: 15
+  lanceMaxDistance: 30
+  phase2Lances: 6
+  phase3Lances: 10
+--- !u!114 &8682163624340012642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d886a2943bc30b540aa2aa317b49e4e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attackName: Attack
+  cooldown: 2
+  maxRange: 5
+  animationTriggerName: 
+  requiresMovementLock: 0
+  wispPrefab: {fileID: 9198556767433010623, guid: 29103a799fc9da740bc33f1a1d9dfdd6, type: 3}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  orbitRadius: 3
+  orbitHeight: 1
+  orbitSpeed: 180
+  wispDamage: 15
+  wispProjectileSpeed: 12
+  wispLifetime: 6
+  phase2Wisps: 5
+  phase3Wisps: 8
+--- !u!114 &457684601319585629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ae9bfe9698a44f4fa20caa7fe34156e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attackName: Attack
+  cooldown: 2
+  maxRange: 5
+  animationTriggerName: 
+  requiresMovementLock: 0
+  beamPrefab: {fileID: 3977383432115975055, guid: 014d1ee8f5722bd4b810f7a00e6e7f68, type: 3}
+  arenaCenter: {fileID: 0}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  arenaRadius: 12
+  beamDamage: 30
+  beamRadius: 3
+  telegraphDuration: 1.5
+  phase3Beams: 5
+  defaultBeams: 3
+--- !u!114 &4707338214520200396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a23a9a183bc82b4a9a2ae45d04d8899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attackName: Attack
+  cooldown: 2
+  maxRange: 5
+  animationTriggerName: 
+  requiresMovementLock: 0
+  petalPrefab: {fileID: 1361365814092637503, guid: 6e5cf2eb15937254f95a34ec32277789, type: 3}
+  spawnOrigin: {fileID: 4933477418656660600}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  petalSpeed: 10
+  petalDamage: 10
+  petalLifetime: 4
+  fireInterval: 0.15
+  rotationSpeed: 90
+  petalsPerBurst: 2
+  spiralDuration: 4
+--- !u!114 &3798965447748796455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff34a1256312d8c4ab6383d2372529df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attackName: Attack
+  cooldown: 2
+  maxRange: 5
+  animationTriggerName: 
+  requiresMovementLock: 0
+  spearPrefab: {fileID: 8031572621132017615, guid: 167bfc640ba6ba8489b9140b6efa348a, type: 3}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  spawnHeight: 8
+  spawnSpread: 3
+  spearDamage: 30
+  spearSpeed: 18
+  lockOnDuration: 1.2
+  maxDistance: 30
+  phase3Spears: 4
+  defaultSpears: 2
+--- !u!114 &3754177926930371036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445531958615690861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27fc2169deaeaeb4aae39064362e8156, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attackName: Attack
+  cooldown: 2
+  maxRange: 5
+  animationTriggerName: 
+  requiresMovementLock: 0
+  tyanakPrefab: {fileID: 0}
+  bungisngisAnimrefab: {fileID: 0}
+  swarmSpawnPoints: []
+  phase1SpawnCount: 4
+  phase2SpawnCount: 6
+  phase3SpawnCount: 8
+  spawnRadius: 2
+--- !u!1 &7958369695002163250
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4933477418656660600}
+  m_Layer: 0
+  m_Name: Petal Spawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4933477418656660600
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7958369695002163250}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.698}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4313839619742991061}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8039646431454328824
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1933374345953446350}
+  - component: {fileID: 2269619261190424337}
+  - component: {fileID: 5838250672717522714}
+  m_Layer: 0
+  m_Name: Model
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1933374345953446350
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8039646431454328824}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4313839619742991061}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &2269619261190424337
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8039646431454328824}
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &5838250672717522714
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8039646431454328824}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
