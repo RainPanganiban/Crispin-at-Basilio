@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Mirror;
 
-public class BungisngisiBrain : EnemyBrain
+public class BungisngisBrain : EnemyBrain
 {
     public enum BungisngisState
     {
@@ -11,9 +11,11 @@ public class BungisngisiBrain : EnemyBrain
         Dead
     }
 
-    [Header("Bungisngis Artilliary Settings")]
+    [Header("Bungisngis Artillery Settings")]
     public float repositionTime = 2f;     
-    public float repositionDistance = 3f;
+    public float repositionDistance = 5f;
+    [Tooltip("Preferred distance to maintain from player for attacks")]
+    public float preferredAttackDistance = 12f;
 
     private BungisngisState currentBungisngisState;
     private Transform target;
@@ -23,17 +25,32 @@ public class BungisngisiBrain : EnemyBrain
     void Start()
     {
         if (!isServer) return;
+        
+        Debug.Log($"[BungisngisBrain] {name} starting AI...");
+
         if (aggroSystem == null) aggroSystem = GetComponent<EnemyAggro>();
         if (attackController == null) attackController = GetComponent<EnemyAttackController>();
+        if (agent == null) agent = GetComponent<NavMeshAgent>();
         
         currentBungisngisState = BungisngisState.Advancing;
         
         if (agent != null)
         {
             // Set a long stopping distance for artillery
-            agent.stoppingDistance = attackRange * 0.8f;
+            // If attackRange is too small (e.g. default 2), use preferredAttackDistance
+            float effectiveRange = Mathf.Max(attackRange, preferredAttackDistance);
+            agent.stoppingDistance = effectiveRange * 0.7f;
             agent.updateRotation = false; 
+            
+            Debug.Log($"[BungisngisBrain] Agent configured with stopping distance {agent.stoppingDistance}");
         }
+        else
+        {
+            Debug.LogError($"[BungisngisBrain] NavMeshAgent missing on {name}!");
+        }
+
+        if (aggroSystem == null) Debug.LogError($"[BungisngisBrain] EnemyAggro missing on {name}!");
+        if (attackController == null) Debug.LogError($"[BungisngisBrain] EnemyAttackController missing on {name}!");
     }
 
     void Update()
@@ -44,13 +61,18 @@ public class BungisngisiBrain : EnemyBrain
         
         if (target == null)
         {
-            if (agent != null && agent.isOnNavMesh) agent.ResetPath();
+            if (agent != null && agent.isOnNavMesh && !agent.isStopped) 
+            {
+                agent.isStopped = true;
+                agent.ResetPath();
+            }
             return;
         }
 
         // If currently in the middle of executing an attack, don't move or change state
         if (isAttacking)
         {
+            FaceTarget();
             return;
         }
 
@@ -69,29 +91,35 @@ public class BungisngisiBrain : EnemyBrain
     {
         FaceTarget();
         float distance = Vector3.Distance(transform.position, target.position);
+        float effectiveRange = Mathf.Max(attackRange, preferredAttackDistance);
 
-        if (distance > attackRange)
+        if (distance > effectiveRange)
         {
-            agent.isStopped = false;
+            if (agent.isStopped) agent.isStopped = false;
             
             // Move into long-range attack position
-            Vector3 surroundPos = aggroSystem.GetSurroundPosition(attackRange);
+            Vector3 surroundPos = aggroSystem.GetSurroundPosition(effectiveRange);
             agent.SetDestination(surroundPos);
         }
         else
         {
-            agent.isStopped = true;
+            if (!agent.isStopped) agent.isStopped = true;
             if (agent.isOnNavMesh) agent.ResetPath();
             
             if (attackController.CanAttack())
             {
+                Debug.Log($"[BungisngisBrain] Triggering Attack on {target.name}");
                 isAttacking = true;
                 attackController.ExecuteRandomAttack();
             }
             else
             {
-                // Can't attack yet, just reposition slightly
-                StartReposition();
+                // Can't attack yet, just reposition slightly if we've been standing here too long
+                // In Advancing state, we just wait for CD or reposition
+                if (distance < effectiveRange * 0.5f) // Too close?
+                {
+                    StartReposition();
+                }
             }
         }
     }
@@ -99,6 +127,7 @@ public class BungisngisiBrain : EnemyBrain
     [Server]
     public override void OnAttackFinished()
     {
+        Debug.Log("[BungisngisBrain] Attack Finished");
         isAttacking = false;
         StartReposition();
     }
@@ -119,32 +148,22 @@ public class BungisngisiBrain : EnemyBrain
         
         NavMeshHit hit;
         Vector3 backPoint = idealBackPoint;
-        if (NavMesh.SamplePosition(idealBackPoint, out hit, repositionDistance * 0.5f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(idealBackPoint, out hit, repositionDistance, NavMesh.AllAreas))
         {
             backPoint = hit.position;
         }
 
-        agent.isStopped = false;
-        agent.SetDestination(backPoint);
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.isStopped = false;
+            agent.SetDestination(backPoint);
+        }
     }
 
     void HandleRepositioning()
     {
         stateTimer -= Time.deltaTime;
         FaceTarget();
-
-        // Continue tracking and adjusting reposition path if target moves
-        Vector3 toPlayer = target != null ? (target.position - transform.position).normalized : transform.forward;
-        toPlayer.y = 0;
-        Vector3 perp = Vector3.Cross(Vector3.up, toPlayer).normalized;
-        if (Vector3.Dot(perp, agent.velocity) < 0) perp *= -1f;
-        
-        Vector3 idealPoint = transform.position + perp * repositionDistance;
-        
-        if (agent.isOnNavMesh)
-        {
-             agent.SetDestination(idealPoint);
-        }
 
         if (stateTimer <= 0f)
         {
