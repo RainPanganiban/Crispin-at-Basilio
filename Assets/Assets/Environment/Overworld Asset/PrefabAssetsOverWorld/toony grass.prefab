@@ -49,9 +49,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: ffe4a256fa3056d478f792f0121a5a79, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: ffe4a256fa3056d478f792f0121a5a79, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 14a5eeb304494be49a3d2c1b18dba103, type: 2}
+    - target: {fileID: -7511558181221131132, guid: ffe4a256fa3056d478f792f0121a5a79, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7ee1e89adeeaeb447920bd177e84a225, type: 2}
     - target: {fileID: 919132149155446097, guid: ffe4a256fa3056d478f792f0121a5a79, type: 3}
       propertyPath: m_Name
       value: toony grass

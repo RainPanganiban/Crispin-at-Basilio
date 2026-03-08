@@ -30,7 +30,7 @@ Material:
     - _PulseSpeed: 2.94
     - _QueueControl: 0
     m_Colors:
-    - _EmmisionColor: {r: 1, g: 0.2479741, b: 0, a: 0}
+    - _EmmisionColor: {r: 0.010800362, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &7556228808683719267
