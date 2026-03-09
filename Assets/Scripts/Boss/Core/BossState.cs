@@ -4,5 +4,6 @@ public enum BossState
     Attacking = 1,
     Transitioning = 2,
     Dead = 3,
+    Stunned = 4,
 }
 

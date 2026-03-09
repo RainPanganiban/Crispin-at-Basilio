@@ -12,6 +12,7 @@ public class EnemyHealth : NetworkBehaviour, IDamageable
 
     public event Action<float, float> OnHealthChangedUI;
     public event Action OnDamaged;
+    public event Action OnDeath;
 
     private EnemyBrain brain;
     private EnemyAggro aggro;
@@ -67,6 +68,9 @@ public class EnemyHealth : NetworkBehaviour, IDamageable
     void Die()
     {
         brain.Die();
+
+        // Notify listeners (e.g. DiwataVulnerabilityManager for swarm kill tracking)
+        OnDeath?.Invoke();
 
         // Drop coins before the object is destroyed
         GetComponent<EnemyCoinDrop>()?.DropCoins();
