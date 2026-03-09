@@ -66900,7 +66900,7 @@ MonoBehaviour:
     unlocksOnComplete: []
   - levelId: Optional 1
     sceneName: Optional 1
-    startUnlocked: 0
+    startUnlocked: 1
     isMainPath: 0
     isArena: 1
     unlocksOnComplete:
@@ -164197,9 +164197,17 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1936553808317030635, guid: aa33fc31224314d45bdc8f64e14db21b, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1936553808317030635, guid: aa33fc31224314d45bdc8f64e14db21b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 90c06370d43d4dd44adedb1329c45ef2, type: 2}
+    - target: {fileID: 1936553808317030635, guid: aa33fc31224314d45bdc8f64e14db21b, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7ee1e89adeeaeb447920bd177e84a225, type: 2}
     - target: {fileID: 7170729666578347781, guid: aa33fc31224314d45bdc8f64e14db21b, type: 3}
       propertyPath: m_LocalScale.x
       value: 50.760967
