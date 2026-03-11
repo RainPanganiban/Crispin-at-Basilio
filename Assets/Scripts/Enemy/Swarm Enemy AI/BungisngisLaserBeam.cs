@@ -32,8 +32,21 @@ public class BungisngisLaserBeam : NetworkBehaviour
         hitMask = mask;
         lifetime = 0f;
         
+        Debug.Log($"[BungisngisLaserBeam] Initialized on Server. Damage: {damage}, Lifetime: {maxLifetime}");
+
         // Immediate first damage tick
         lastDamageTime = Time.time - tickInterval; 
+    }
+
+    private void Start()
+    {
+        if (lineRenderer != null)
+        {
+            lineRenderer.useWorldSpace = true;
+            // Ensure shadow casting is off for performance/visibility
+            lineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            lineRenderer.receiveShadows = false;
+        }
     }
 
     void Update()
@@ -53,6 +66,7 @@ public class BungisngisLaserBeam : NetworkBehaviour
         
         if (lifetime >= maxLifetime)
         {
+            Debug.Log("[BungisngisLaserBeam] Lifetime expired, destroying.");
             NetworkServer.Destroy(gameObject);
             return;
         }
@@ -69,6 +83,11 @@ public class BungisngisLaserBeam : NetworkBehaviour
     {
         RaycastHit[] hits = Physics.SphereCastAll(transform.position, width / 2f, transform.forward, maxDistance, hitMask);
         
+        if (hits.Length > 0)
+        {
+            Debug.Log($"[BungisngisLaserBeam] Applying damage tick to {hits.Length} potential targets.");
+        }
+
         foreach (RaycastHit hit in hits)
         {
             if (ownerCollider != null && hit.collider == ownerCollider)
@@ -87,9 +106,15 @@ public class BungisngisLaserBeam : NetworkBehaviour
     {
         if (lineRenderer == null) return;
         
+        // Use World Space positions
         lineRenderer.SetPosition(0, transform.position);
         lineRenderer.SetPosition(1, transform.position + transform.forward * maxDistance);
+        
+        // Ensure width is set
         lineRenderer.startWidth = width;
         lineRenderer.endWidth = width;
+        
+        // Ensure it's enabled
+        if (!lineRenderer.enabled) lineRenderer.enabled = true;
     }
 }
