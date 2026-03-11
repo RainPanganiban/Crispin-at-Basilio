@@ -11,22 +11,45 @@ public class TyanakLeapAttack : EnemyAttack
     public float leapSpeed = 15f;
     public float leapDistance = 5f;
     public float hitRadius = 1.5f;
+    [Tooltip("Extra distance to travel past the player's position to ensure we 'jump through' them")]
+    public float pounceOvershoot = 2.5f;
+    [Tooltip("Time to wait (telegraph) before the physical jump starts. Use this to sync with your animation.")]
+    public float leapTelegraphDuration = 0.2f;
     public LayerMask playerLayer;
+    [Tooltip("Vertical offset to aim the leap at the player's body instead of their feet")]
+    public float targetVerticalOffset = 1.0f;
 
     [Header("Animation")]
     public NetworkAnimator networkAnimator;
     public string leapTrigger = "LeapPounce";
 
+    private Collider ownerCollider;
     private HashSet<GameObject> hitTargets = new HashSet<GameObject>();
     private bool isLeaping = false;
+
+    void Awake()
+    {
+        ownerCollider = GetComponent<Collider>();
+        if (networkAnimator == null) 
+        {
+            networkAnimator = GetComponent<NetworkAnimator>();
+            if (networkAnimator == null) networkAnimator = GetComponentInParent<NetworkAnimator>();
+        }
+    }
 
     protected override void OnExecute()
     {
         if (!isServer) return;
 
+        Debug.Log($"[TyanakLeapAttack] Executing Leap on {name}");
+
         if (networkAnimator != null)
         {
             networkAnimator.SetTrigger(leapTrigger);
+        }
+        else
+        {
+            Debug.LogError($"[TyanakLeapAttack] NetworkAnimator missing on {name}!");
         }
 
         hitTargets.Clear();
@@ -50,12 +73,23 @@ public class TyanakLeapAttack : EnemyAttack
         }
 
         Vector3 dashDirection = transform.forward.normalized;
+        float actualLeapDistance = leapDistance;
+        
         EnemyAggro aggro = GetComponent<EnemyAggro>();
-        Transform target = aggro != null ? aggro.GetCurrentTarget() : null;
-        if (target != null)
+        Transform targetTransform = aggro != null ? aggro.GetCurrentTarget() : null;
+        
+        if (targetTransform != null)
         {
-            Vector3 targetDir = (target.position - transform.position).normalized;
-            targetDir.y = 0f;
+            // Aim at the player's body center, not feet
+            Vector3 targetCenter = targetTransform.position + Vector3.up * targetVerticalOffset;
+            Vector3 diff = targetCenter - transform.position;
+            float distToTarget = new Vector3(diff.x, 0, diff.z).magnitude;
+            
+            // Set leap distance to go past the player
+            actualLeapDistance = distToTarget + pounceOvershoot;
+            
+            Vector3 targetDir = diff.normalized;
+            targetDir.y = 0f; 
 
             if (targetDir.sqrMagnitude > 0.0001f)
             {
@@ -65,12 +99,16 @@ public class TyanakLeapAttack : EnemyAttack
         }
 
         // Brief telegraph (crouch) before launching
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(leapTelegraphDuration);
         
         float travelled = 0f;
         isLeaping = true;
+        Debug.Log($"[TyanakLeapAttack] {name} launching pounce! Passing through player.");
         
-        while (travelled < leapDistance)
+        // Temporarily make collider a trigger so we pass through the player
+        if (ownerCollider != null) ownerCollider.isTrigger = true;
+
+        while (travelled < actualLeapDistance)
         {
             float step = leapSpeed * Time.deltaTime;
             travelled += step;
@@ -91,6 +129,9 @@ public class TyanakLeapAttack : EnemyAttack
             yield return null;
         }
 
+        // Restore collider
+        if (ownerCollider != null) ownerCollider.isTrigger = false;
+
         isLeaping = false;
 
         // Brief recovery
@@ -104,8 +145,11 @@ public class TyanakLeapAttack : EnemyAttack
 
     private void ApplyLeapDamage()
     {
+        // Use the vertical offset for the damage sphere too
+        Vector3 checkPos = transform.position + Vector3.up * targetVerticalOffset;
+
         Collider[] hits = Physics.OverlapSphere(
-            transform.position,
+            checkPos,
             hitRadius,
             playerLayer
         );
@@ -117,6 +161,7 @@ public class TyanakLeapAttack : EnemyAttack
             IDamageable damageable = hit.GetComponent<IDamageable>();
             if (damageable != null)
             {
+                Debug.Log($"[TyanakLeapAttack] {name} hit {hit.gameObject.name} during leap!");
                 hitTargets.Add(hit.gameObject);
                 damageable.TakeDamage(damage, transform);
             }
@@ -125,9 +170,10 @@ public class TyanakLeapAttack : EnemyAttack
 
     private void OnDrawGizmosSelected()
     {
+        Vector3 checkPos = transform.position + Vector3.up * (targetVerticalOffset != 0 ? targetVerticalOffset : 1.0f);
         Gizmos.color = new Color(1, 0.5f, 0, 0.5f);
-        Gizmos.DrawSphere(transform.position, hitRadius);
+        Gizmos.DrawSphere(checkPos, hitRadius);
         Gizmos.color = new Color(1, 0.5f, 0);
-        Gizmos.DrawWireSphere(transform.position, hitRadius);
+        Gizmos.DrawWireSphere(checkPos, hitRadius);
     }
 }

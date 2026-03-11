@@ -25,8 +25,12 @@ public class TyanakBrain : EnemyBrain
     void Start()
     {
         if (!isServer) return;
+
+        Debug.Log($"[TyanakBrain] {name} starting AI...");
+
         if (aggroSystem == null) aggroSystem = GetComponent<EnemyAggro>();
         if (attackController == null) attackController = GetComponent<EnemyAttackController>();
+        if (agent == null) agent = GetComponent<NavMeshAgent>();
         
         currentTyanakState = TyanakState.Chasing;
         
@@ -35,7 +39,15 @@ public class TyanakBrain : EnemyBrain
             // Close range for fast melee
             agent.stoppingDistance = attackRange * 0.5f; 
             agent.updateRotation = false; 
+            Debug.Log($"[TyanakBrain] Agent configured with stopping distance {agent.stoppingDistance}");
         }
+        else
+        {
+            Debug.LogError($"[TyanakBrain] NavMeshAgent missing on {name}!");
+        }
+
+        if (aggroSystem == null) Debug.LogError($"[TyanakBrain] EnemyAggro missing on {name}!");
+        if (attackController == null) Debug.LogError($"[TyanakBrain] EnemyAttackController missing on {name}!");
     }
 
     void Update()
@@ -46,12 +58,17 @@ public class TyanakBrain : EnemyBrain
         
         if (target == null)
         {
-            if (agent != null && agent.isOnNavMesh) agent.ResetPath();
+            if (agent != null && agent.isOnNavMesh && !agent.isStopped) 
+            {
+                agent.isStopped = true;
+                agent.ResetPath();
+            }
             return;
         }
 
         if (isAttacking)
         {
+            FaceTarget(); // Still face target while mid-attack animation if applicable
             return; 
         }
 
@@ -73,7 +90,7 @@ public class TyanakBrain : EnemyBrain
 
         if (distance > attackRange)
         {
-            agent.isStopped = false;
+            if (agent.isStopped) agent.isStopped = false;
             
             // Fast chase straight at target (swarm surround)
             Vector3 surroundPos = aggroSystem.GetSurroundPosition(attackRange);
@@ -87,7 +104,7 @@ public class TyanakBrain : EnemyBrain
         }
         else
         {
-            agent.isStopped = true;
+            if (!agent.isStopped) agent.isStopped = true;
             if (agent.isOnNavMesh) agent.ResetPath();
             
             if (attackController.CanAttack())
@@ -104,6 +121,7 @@ public class TyanakBrain : EnemyBrain
 
     void TryTriggerAttack()
     {
+        Debug.Log($"[TyanakBrain] Triggering Attack on {target.name}");
         isAttacking = true;
         
         // Tyanak prefers leap when far, claw when close. 
@@ -114,6 +132,7 @@ public class TyanakBrain : EnemyBrain
     [Server]
     public override void OnAttackFinished()
     {
+        Debug.Log("[TyanakBrain] Attack Finished");
         isAttacking = false;
         StartReposition();
     }
@@ -134,13 +153,16 @@ public class TyanakBrain : EnemyBrain
         
         NavMeshHit hit;
         Vector3 backPoint = idealPoint;
-        if (NavMesh.SamplePosition(idealPoint, out hit, repositionDistance * 0.5f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(idealPoint, out hit, repositionDistance, NavMesh.AllAreas))
         {
             backPoint = hit.position;
         }
 
-        agent.isStopped = false;
-        agent.SetDestination(backPoint);
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.isStopped = false;
+            agent.SetDestination(backPoint);
+        }
     }
 
     void HandleRepositioning()

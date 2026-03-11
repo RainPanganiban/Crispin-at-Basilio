@@ -384,7 +384,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   initialTrackingSpeed: 5
-  trackingAcceleration: 15
+  trackingAcceleration: 20
   initialAimOffsetAngle: 5
   targetVerticalOffset: 2
   networkAnimator: {fileID: 7385062362227428125}
