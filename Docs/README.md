@@ -281,6 +281,27 @@ Universal URP outline shader using the inverted hull (clip-space extrusion) meth
 
 ---
 
+## CEL SHADER
+
+Stylized URP toon shader with adjustable lighting steps and rim lighting.
+
+* **File:** `Assets/Shaders/CelShader.shader`
+* **Shader path:** `Custom/CelShader`
+
+| Property          | Type          | Default | Description                                    |
+| ----------------- | ------------- | ------- | ---------------------------------------------- |
+| Base Map          | Texture2D     | White   | Main texture for the object                    |
+| Base Color        | Color         | White   | Tint color                                     |
+| Cel Steps         | Range (1–10)  | 3       | Number of discrete lighting bands              |
+| Step Smoothness   | Range (0–0.5) | 0.05    | Softness of the band transitions               |
+| Shadow Color      | Color         | Gray    | Color of the shaded areas                      |
+| Rim Color         | Color         | White   | Edge highlight color                           |
+| Rim Power         | Range (0–10)  | 4       | Sharpness/influence of the rim light           |
+
+**Usage:** Create a material with the `Custom/CelShader` shader and apply it to any model. Combines perfectly with the Outline shader for a complete stylized look.
+
+---
+
 ## DEVELOPMENT RULES (CRITICAL)
 
 * Server is authoritative
