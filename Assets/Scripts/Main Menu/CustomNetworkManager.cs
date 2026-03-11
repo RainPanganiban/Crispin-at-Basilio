@@ -59,6 +59,12 @@ public class CustomNetworkManager : NetworkManager
 
     public override void OnServerChangeScene(string newSceneName)
     {
+        Debug.Log($"[CustomNetworkManager] ServerChangeScene to: {newSceneName}");
+        if (LoadingScreenManager.Instance != null)
+            LoadingScreenManager.Instance.ShowLoadingScreen();
+        else
+            Debug.LogWarning("[CustomNetworkManager] LoadingScreenManager.Instance is null during OnServerChangeScene!");
+
         string currentSceneName = SceneManager.GetActiveScene().name;
 
         foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
@@ -105,6 +111,12 @@ public class CustomNetworkManager : NetworkManager
     // Called AFTER scene has fully loaded
     public override void OnServerSceneChanged(string sceneName)
     {
+        Debug.Log($"[CustomNetworkManager] ServerSceneChanged to: {sceneName}");
+        if (LoadingScreenManager.Instance != null)
+            LoadingScreenManager.Instance.HideLoadingScreen();
+        else
+            Debug.LogWarning("[CustomNetworkManager] LoadingScreenManager.Instance is null during OnServerSceneChanged!");
+
         // Handle all gameplay scenes (not just overworld)
         // Skip Lobby scene (players are already spawned there)
         if (sceneName == "Lobby")
@@ -223,5 +235,28 @@ public class CustomNetworkManager : NetworkManager
         HashSet<string> result = new HashSet<string>(pendingCompletedLevels);
         pendingCompletedLevels.Clear();
         return result;
+    }
+
+    // Client Scene Change Hooks for Loading Screen
+    public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
+    {
+        Debug.Log($"[CustomNetworkManager] OnClientChangeScene to: {newSceneName} (Host Active: {NetworkServer.active})");
+        if (LoadingScreenManager.Instance != null)
+            LoadingScreenManager.Instance.ShowLoadingScreen();
+        else
+            Debug.LogWarning("[CustomNetworkManager] LoadingScreenManager.Instance is null during OnClientChangeScene!");
+
+        base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
+    }
+
+    public override void OnClientSceneChanged()
+    {
+        Debug.Log("[CustomNetworkManager] OnClientSceneChanged");
+        if (LoadingScreenManager.Instance != null)
+            LoadingScreenManager.Instance.HideLoadingScreen();
+        else
+            Debug.LogWarning("[CustomNetworkManager] LoadingScreenManager.Instance is null during OnClientSceneChanged!");
+
+        base.OnClientSceneChanged();
     }
 }
