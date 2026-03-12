@@ -1499,12 +1499,13 @@ GameObject:
   - component: {fileID: 1060723325}
   - component: {fileID: 1060723324}
   - component: {fileID: 1060723323}
+  - component: {fileID: 1060723331}
   - component: {fileID: 1060723322}
   - component: {fileID: 1060723321}
+  - component: {fileID: 1060723330}
   - component: {fileID: 1060723320}
   - component: {fileID: 1060723319}
   - component: {fileID: 1060723318}
-  - component: {fileID: 1060723317}
   - component: {fileID: 1060723316}
   - component: {fileID: 1060723315}
   m_Layer: 6
@@ -1532,8 +1533,8 @@ MonoBehaviour:
   cooldown: 2
   duration: 1
   bubblePrefab: {fileID: 1321602652105065632, guid: 91dac709119a0774ea1fe728fa65a79e, type: 3}
-  bubbleCount: 4
-  spawnRadius: 5
+  bubbleCount: 5
+  spawnRadius: 15
   networkAnimator: {fileID: 1060723326}
   attackTrigger: BubbleBurst
 --- !u!114 &1060723316
@@ -1556,38 +1557,12 @@ MonoBehaviour:
   waterProjectilePrefab: {fileID: 3216240422717333500, guid: c987039422dd8d94d828059f05310362, type: 3}
   directDamage: 5
   projectileSpeed: 10
-  arcHeight: 2
+  arcHeight: 3
   projectilesToFire: 3
   delayBetweenShots: 0.3
   firePoint: {fileID: 213717324}
   networkAnimator: {fileID: 1060723326}
   attackTrigger: WaterStream
---- !u!114 &1060723317
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1060723314}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dceeb678885da744fa5c26137a16c427, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  agent: {fileID: 1060723325}
-  aggroSystem: {fileID: 1060723322}
-  attackController: {fileID: 1060723321}
-  attackRange: 2
-  combatDistance: 2.5
-  backOffDistance: 3
-  repositionTimeout: 2
-  strafeDurationMin: 1
-  strafeDurationMax: 2
-  strafeDistance: 2
-  attacksBeforeReposition: 2
 --- !u!114 &1060723318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1673,7 +1648,7 @@ MonoBehaviour:
   targetChildName: Model
   surroundRadius: 3
   surroundJitter: 0.5
-  aggroRadius: 15
+  aggroRadius: 20
   aggroSwitchDistance: 1.5
   similarDistanceThreshold: 0.2
   aggroUpdateInterval: 0.6
@@ -1833,6 +1808,51 @@ Transform:
   - {fileID: 1486819880}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1060723330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1060723314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aebdaa8ad62f384caeefaefaba0e6ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  animator: {fileID: 1060723323}
+--- !u!114 &1060723331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1060723314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1307a68b5180ea048900702bcdcf363e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  agent: {fileID: 1060723325}
+  aggroSystem: {fileID: 1060723322}
+  attackController: {fileID: 1060723321}
+  attackRange: 15
+  combatDistance: 15.5
+  backOffDistance: 5
+  repositionTimeout: 2
+  strafeDurationMin: 1
+  strafeDurationMax: 2
+  strafeDistance: 2
+  attacksBeforeReposition: 2
+  minRetreatDistance: 5
+  maxChaseDistance: 12
+  repositionCooldown: 2
 --- !u!1 &1214101270
 GameObject:
   m_ObjectHideFlags: 0
@@ -2326,9 +2346,9 @@ GameObject:
   - component: {fileID: 1749358862}
   - component: {fileID: 1749358861}
   - component: {fileID: 1749358865}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Plane
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

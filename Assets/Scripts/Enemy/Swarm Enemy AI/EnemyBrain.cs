@@ -13,7 +13,7 @@ public class EnemyBrain : NetworkBehaviour
         Dead
     }
 
-    private enum CombatPhase
+    protected enum CombatPhase
     {
         Positioning,
         Attacking,
@@ -39,10 +39,10 @@ public class EnemyBrain : NetworkBehaviour
     [Header("Attack Settings")]
     public int attacksBeforeReposition = 2;
 
-    private EnemyState currentState;
-    private CombatPhase combatPhase;
+    protected EnemyState currentState;
+    protected CombatPhase combatPhase;
 
-    private Transform currentTarget;
+    protected Transform currentTarget;
     private int consecutiveAttacks;
 
     private Vector3 strafeDirection;
@@ -70,7 +70,7 @@ public class EnemyBrain : NetworkBehaviour
         HandleState();
     }
 
-    void UpdateTarget()
+    protected void UpdateTarget()
     {
         currentTarget = aggroSystem.GetCurrentTarget();
         if (currentTarget == null)

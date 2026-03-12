@@ -14,6 +14,7 @@ public class ShokoyWaterProjectile : NetworkBehaviour
     private NetworkIdentity ownerIdentity;
     
     private float progress = 0f;
+    private System.Collections.Generic.HashSet<IDamageable> damagedTargets = new System.Collections.Generic.HashSet<IDamageable>();
 
     [Server]
     public void InitializeArc(Vector3 target, float arcZ, float spd, float dmg, Collider ownerCol, NetworkIdentity ownerId)
@@ -38,14 +39,16 @@ public class ShokoyWaterProjectile : NetworkBehaviour
         
         Vector3 currentPos = Vector3.Lerp(startPos, targetPos, progress);
         
+        // Add arc
         float yOffset = Mathf.Sin(progress * Mathf.PI) * arcHeight;
         currentPos.y += yOffset;
         
         transform.position = currentPos;
 
-        if (progress >= 1f)
+        // If we missed or went past target without hitting anything, destroy after some time
+        if (progress >= 2.0f)
         {
-            SpawnPuddleAndDestroy();
+            NetworkServer.Destroy(gameObject);
         }
     }
     
@@ -54,12 +57,18 @@ public class ShokoyWaterProjectile : NetworkBehaviour
     {
         if(other == ownerCollider) return;
         
+        bool isGrounded = other.CompareTag("Ground") || other.gameObject.layer == LayerMask.NameToLayer("Ground");
+        
         if (other.TryGetComponent<IDamageable>(out var hitTarget))
         {
-            hitTarget.TakeDamage(damage, ownerIdentity != null ? ownerIdentity.transform : null);
-            SpawnPuddleAndDestroy();
+            if (!damagedTargets.Contains(hitTarget))
+            {
+                hitTarget.TakeDamage(damage, ownerIdentity != null ? ownerIdentity.transform : null);
+                damagedTargets.Add(hitTarget);
+            }
+            // Do NOT SpawnPuddleAndDestroy here, let it continue to ground
         }
-        else if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        else if (isGrounded)
         {
             SpawnPuddleAndDestroy();
         }
@@ -71,11 +80,25 @@ public class ShokoyWaterProjectile : NetworkBehaviour
         if (hazardPuddlePrefab != null)
         {
             Vector3 spawnPos = transform.position;
-            spawnPos.y = 0.1f; 
+            
+            // Cast a ray from slightly above the projectile straight down 
+            // This is more robust than relying single point collision with thin meshes
+            if (Physics.Raycast(transform.position + Vector3.up * 2f, Vector3.down, out RaycastHit hit, 10f))
+            {
+                // Place puddle slightly above the hit point to prevent z-fighting
+                spawnPos = hit.point + Vector3.up * 0.05f;
+            }
+            else
+            {
+                // Fallback: spawn at the projectile's current height (approx ground level if it trigger hit)
+                spawnPos.y = 0.05f; 
+            }
             
             GameObject puddle = Instantiate(hazardPuddlePrefab, spawnPos, Quaternion.identity);
             NetworkServer.Spawn(puddle);
         }
+        
+        // Always destroy the projectile
         NetworkServer.Destroy(gameObject);
     }
 }

@@ -49,7 +49,7 @@ public class ShokoyBubbleBurstAttack : EnemyAttack
         for (int i = 0; i < bubbleCount; i++)
         {
             Vector3 randomOffset = Random.insideUnitSphere * spawnRadius;
-            randomOffset.y = 0; 
+            randomOffset.y = 0f; 
             
             Vector3 spawnPos = target.position + randomOffset;
 
