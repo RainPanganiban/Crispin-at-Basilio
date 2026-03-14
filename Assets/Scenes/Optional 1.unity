@@ -725,6 +725,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 448074b1a6d881f44afec3e80d5699de, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 448074b1a6d881f44afec3e80d5699de, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7daeab5063c3cf94ca7d3ec9a8ba82e8, type: 2}
     - target: {fileID: 919132149155446097, guid: 448074b1a6d881f44afec3e80d5699de, type: 3}
       propertyPath: m_Name
       value: Arena
@@ -740,6 +748,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 448074b1a6d881f44afec3e80d5699de, type: 3}
       insertIndex: -1
       addedObject: {fileID: 40650871}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 448074b1a6d881f44afec3e80d5699de, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 40650872}
   m_SourcePrefab: {fileID: 100100000, guid: 448074b1a6d881f44afec3e80d5699de, type: 3}
 --- !u!1 &40650870 stripped
 GameObject:
@@ -768,6 +779,38 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -462981019419857548, guid: 448074b1a6d881f44afec3e80d5699de, type: 3}
+--- !u!114 &40650872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40650870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 40fb4359c23a5bc4eb309ca05cd4af3a, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1001 &42327856
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6487,6 +6530,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 086986396bf78cb43a5f1b9098213184, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 086986396bf78cb43a5f1b9098213184, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7daeab5063c3cf94ca7d3ec9a8ba82e8, type: 2}
     - target: {fileID: 919132149155446097, guid: 086986396bf78cb43a5f1b9098213184, type: 3}
       propertyPath: m_Name
       value: Tower
@@ -21156,7 +21207,7 @@ Transform:
   m_GameObject: {fileID: 879823404}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -14.24, y: -8.378481, z: -36.3}
+  m_LocalPosition: {x: -14.24, y: -6.907, z: -36.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -26732,7 +26783,7 @@ Transform:
   m_GameObject: {fileID: 1106711410}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -8.378481, z: -22}
+  m_LocalPosition: {x: 0, y: -6.907, z: -22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27259,7 +27310,7 @@ Transform:
   m_GameObject: {fileID: 1120495657}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -8.378481, z: -49.6}
+  m_LocalPosition: {x: 0, y: -6.907, z: -49.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -32972,6 +33023,14 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6940067656995383668, guid: d6184146cc2abf1489f3d5bc9b6a1720, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6940067656995383668, guid: d6184146cc2abf1489f3d5bc9b6a1720, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7daeab5063c3cf94ca7d3ec9a8ba82e8, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -36846,7 +36905,7 @@ Transform:
   m_GameObject: {fileID: 1467892317}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -15.8, y: -8.378481, z: -51.1}
+  m_LocalPosition: {x: -15.8, y: -6.907, z: -51.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
