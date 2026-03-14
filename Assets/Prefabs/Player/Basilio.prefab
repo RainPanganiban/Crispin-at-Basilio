@@ -1390,7 +1390,7 @@ MonoBehaviour:
   runSpeed: 8
   rotationSpeed: 10
   gravity: -9.81
-  jumpHeight: 2
+  jumpHeight: 1
   rollDistance: 5
   rollDuration: 0.3
   isAiming: 0
