@@ -453,6 +453,7 @@ GameObject:
   - component: {fileID: 6136922510818819562}
   - component: {fileID: 1636874723775487178}
   - component: {fileID: 7478020136605033640}
+  - component: {fileID: 6224256772417625587}
   m_Layer: 6
   m_Name: Tiktik
   m_TagString: Untagged
@@ -770,6 +771,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2c5b939de20ae74db256db4b8827418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6224256772417625587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7329386342253342632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b1004b98b2f72d4ca41c9a6150a49f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkClip: {fileID: 0}
+  attackClip: {fileID: 0}
+  hurtClip: {fileID: 0}
+  deathClip: {fileID: 0}
 --- !u!1 &7648058361784440064
 GameObject:
   m_ObjectHideFlags: 0

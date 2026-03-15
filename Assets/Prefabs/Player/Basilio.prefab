@@ -1087,6 +1087,7 @@ GameObject:
   - component: {fileID: 4406393203481131743}
   - component: {fileID: 1564830389230270293}
   - component: {fileID: 1235246060560929250}
+  - component: {fileID: 8298266975775707702}
   m_Layer: 8
   m_Name: Basilio
   m_TagString: Player
@@ -1546,6 +1547,26 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &8298266975775707702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6827224680543321162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0fd35c279cc4944eb60bb7eadf9b19d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkClip: {fileID: 0}
+  runClip: {fileID: 0}
+  rollClip: {fileID: 0}
+  hurtClip: {fileID: 0}
+  deathClip: {fileID: 0}
+  meleeAttackClips: []
+  rangedChargeClip: {fileID: 0}
+  rangedReleaseClip: {fileID: 0}
 --- !u!1 &7400287037343656186
 GameObject:
   m_ObjectHideFlags: 0

@@ -202,6 +202,7 @@ GameObject:
   - component: {fileID: 4607799906614599158}
   - component: {fileID: 5181256738174564894}
   - component: {fileID: 7399111249922438580}
+  - component: {fileID: 3627367901116228669}
   m_Layer: 6
   m_Name: Tyanak
   m_TagString: Enemy
@@ -537,6 +538,22 @@ MonoBehaviour:
   hitForwardOffset: 1.56
   networkAnimator: {fileID: 6069244397733546888}
   attackTrigger: ClawSwipe
+--- !u!114 &3627367901116228669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3060605970339348292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b1004b98b2f72d4ca41c9a6150a49f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkClip: {fileID: 0}
+  attackClip: {fileID: 0}
+  hurtClip: {fileID: 0}
+  deathClip: {fileID: 0}
 --- !u!1 &4497798143143256255
 GameObject:
   m_ObjectHideFlags: 0
