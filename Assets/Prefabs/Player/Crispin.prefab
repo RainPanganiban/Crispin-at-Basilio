@@ -1201,9 +1201,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkClip: {fileID: 0}
-  runClip: {fileID: 0}
-  rollClip: {fileID: 0}
-  hurtClip: {fileID: 0}
+  runClip: {fileID: 8300000, guid: d6fe7f08145ebea44850e24b9d6b1e7e, type: 3}
+  rollClip: {fileID: 8300000, guid: 4114ebb9f6078c846af84b12e2fd158f, type: 3}
+  hurtClip: {fileID: 8300000, guid: b585a96d1f071514f84dc13f7bad0b81, type: 3}
   deathClip: {fileID: 0}
   meleeAttackClips: []
   rangedChargeClip: {fileID: 0}

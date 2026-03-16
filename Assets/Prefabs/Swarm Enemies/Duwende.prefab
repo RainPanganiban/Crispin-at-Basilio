@@ -827,7 +827,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkClip: {fileID: 0}
   attackClip: {fileID: 0}
-  hurtClip: {fileID: 0}
+  hurtClip: {fileID: 8300000, guid: a44ae72bab58c48488abdd371931c376, type: 3}
   deathClip: {fileID: 0}
 --- !u!1 &7648058361784440064
 GameObject:

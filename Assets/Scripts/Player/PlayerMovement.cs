@@ -33,6 +33,7 @@ public class PlayerMovement : NetworkBehaviour
     public float rollStaminaCost = 25f;
 
     private PlayerStatsManager statsManager;
+    private PlayerSoundManager soundManager;
     private ICombatHandler combatHandler;
 
     [Header("Animation Parameters")]
@@ -63,6 +64,7 @@ public class PlayerMovement : NetworkBehaviour
     {
         controller = GetComponent<CharacterController>();
         statsManager = GetComponent<PlayerStatsManager>();
+        soundManager = GetComponent<PlayerSoundManager>();
     }
 
     public override void OnStartLocalPlayer()
@@ -122,6 +124,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             statsManager.CmdUseStamina(rollStaminaCost);
             GetComponent<CharacterAnimationController>()?.PlayRoll();
+            if (soundManager != null) soundManager.PlayRoll();
             StartCoroutine(Roll());
         }
     }

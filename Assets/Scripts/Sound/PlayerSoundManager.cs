@@ -37,14 +37,73 @@ public class PlayerSoundManager : MonoBehaviour
     [Tooltip("Sound played when the projectile is released.")]
     [SerializeField] private AudioClip rangedReleaseClip;
 
+    [Header("Movement Intervals")]
+    [Tooltip("How often to play the walk sound (in seconds) while moving.")]
+    [SerializeField] private float walkInterval = 0.5f;
+
+    [Tooltip("How often to play the run sound (in seconds) while running.")]
+    [SerializeField] private float runInterval = 0.3f;
+
     private AudioSource sfxSource;
+    private AudioSource movementSource;
+    private PlayerMovement playerMovement;
+    private float footstepTimer;
 
     private void Awake()
     {
         sfxSource = GetComponent<AudioSource>();
         if (sfxSource == null) sfxSource = gameObject.AddComponent<AudioSource>();
-
         ConfigureSFXSource(sfxSource);
+
+        // Dedicated source for movement to allow immediate stopping
+        movementSource = gameObject.AddComponent<AudioSource>();
+        ConfigureSFXSource(movementSource);
+
+        playerMovement = GetComponent<PlayerMovement>();
+    }
+
+    private void Update()
+    {
+        // Only run this logic on the local player to avoid hearing everyone's footsteps 
+        // if they are non-positional, but since we use 1.0 spatial blend, 
+        // we can run it for everyone or just owner. Usually footsteps are better handled per-client.
+        // For Mirror, we check isLocalPlayer if we only want OUR sounds, 
+        // but here we'll let it run so we hear others too (3D audio handles the distance).
+
+        if (playerMovement == null) return;
+
+        // Check if player is moving on the ground and not performing an action like rolling
+        bool isMoving = playerMovement.MoveInput.sqrMagnitude > 0.01f && 
+                        playerMovement.IsGrounded && 
+                        !playerMovement.IsRolling;
+
+        if (isMoving)
+        {
+            footstepTimer -= Time.deltaTime;
+            if (footstepTimer <= 0f)
+            {
+                if (playerMovement.IsRunning)
+                {
+                    PlayMovementClip(runClip);
+                    footstepTimer = runInterval;
+                }
+                else
+                {
+                    PlayMovementClip(walkClip);
+                    footstepTimer = walkInterval;
+                }
+            }
+        }
+        else
+        {
+            // Immediately cut off any playing footstep sounds
+            if (movementSource != null && movementSource.isPlaying)
+            {
+                movementSource.Stop();
+            }
+            // Reset timer so the first step plays immediately when we start moving again
+            footstepTimer = 0f;
+        }
     }
 
     // ============================
@@ -93,6 +152,17 @@ public class PlayerSoundManager : MonoBehaviour
     {
         if (clip == null) return;
         sfxSource.PlayOneShot(clip, GetEffectiveSFXVolume());
+    }
+
+    private void PlayMovementClip(AudioClip clip)
+    {
+        if (clip == null || movementSource == null) return;
+        
+        // Using standard Play() instead of PlayOneShot() for footsteps
+        // so movementSource.Stop() can cut the sound off instantly.
+        movementSource.clip = clip;
+        movementSource.volume = GetEffectiveSFXVolume();
+        movementSource.Play();
     }
 
     private float GetEffectiveSFXVolume()

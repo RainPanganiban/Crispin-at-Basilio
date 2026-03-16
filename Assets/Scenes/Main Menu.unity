@@ -3131,9 +3131,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ef548035cc760146a63ba820a0d0530, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenuMusic: {fileID: 8300000, guid: f4eee620a262d604fbc864a96a26a079, type: 3}
+  mainMenuMusic: {fileID: 8300000, guid: de54183f2656d1d448353e6e2bd48141, type: 3}
   autoPlayMenuMusic: 1
-  overworldMusic: {fileID: 8300000, guid: fc19ff77bf901bf44902dcc829cf22aa, type: 3}
+  overworldMusic: {fileID: 8300000, guid: 0289d3b0e550f1e418aab28060633ca7, type: 3}
   normalLevels:
   - levelName: Level 1
     explorationMusic: {fileID: 8300000, guid: 29c025307ed33d7499b2130d4537d2d2, type: 3}
@@ -3143,7 +3143,7 @@ MonoBehaviour:
   - levelName: Optional 1
     backgroundMusic: {fileID: 8300000, guid: a50251075179f834cb4925c391e28798, type: 3}
   masterVolume: 1
-  musicVolume: 0.7
+  musicVolume: 0.2
   sfxVolume: 1
   fadeDuration: 1.5
 --- !u!4 &1313726899
