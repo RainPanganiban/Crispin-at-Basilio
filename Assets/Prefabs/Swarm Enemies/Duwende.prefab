@@ -700,6 +700,7 @@ MonoBehaviour:
   syncInterval: 0
   cooldown: 1
   duration: 1
+  attackSound: {fileID: 0}
   damage: 3
   hitRadius: 1.5
   playerLayer:
@@ -756,6 +757,7 @@ MonoBehaviour:
   syncInterval: 0
   cooldown: 5
   duration: 1
+  attackSound: {fileID: 8300000, guid: 0573fd4586f303a499f2cdebef883071, type: 3}
   damage: 3
   chargeTime: 0.5
   dashSpeed: 10
@@ -825,10 +827,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b1004b98b2f72d4ca41c9a6150a49f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkClip: {fileID: 0}
-  attackClip: {fileID: 0}
+  walkClip: {fileID: 8300000, guid: 1c7210c1cb0857d4b993fb41d7eb92d1, type: 3}
+  walkVolume: 0.4
+  attackVolume: 1
   hurtClip: {fileID: 8300000, guid: a44ae72bab58c48488abdd371931c376, type: 3}
-  deathClip: {fileID: 0}
+  hurtVolume: 1
+  deathClip: {fileID: 8300000, guid: b585a96d1f071514f84dc13f7bad0b81, type: 3}
+  deathVolume: 1
+  walkInterval: 0.5
 --- !u!1 &7648058361784440064
 GameObject:
   m_ObjectHideFlags: 0

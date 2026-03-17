@@ -16,12 +16,14 @@ public class EnemyHealth : NetworkBehaviour, IDamageable
 
     private EnemyBrain brain;
     private EnemyAggro aggro;
+    private EnemySoundManager soundManager;
 
     public override void OnStartServer()
     {
         currentHealth = maxHealth;
         brain = GetComponent<EnemyBrain>();
         aggro = GetComponent<EnemyAggro>(); // ✅ FIXED
+        soundManager = GetComponent<EnemySoundManager>();
     }
 
     // Interface-required method
@@ -57,6 +59,13 @@ public class EnemyHealth : NetworkBehaviour, IDamageable
     void RpcNotifyDamaged()
     {
         OnDamaged?.Invoke();
+        
+        // Play hurt sound for all clients
+        if (soundManager == null) 
+            soundManager = GetComponent<EnemySoundManager>();
+        
+        if (soundManager != null)
+            soundManager.PlayHurt();
     }
 
     void OnHealthChanged(float oldValue, float newValue)
@@ -67,6 +76,9 @@ public class EnemyHealth : NetworkBehaviour, IDamageable
     [Server]
     void Die()
     {
+        // Play death sound before destroying the object
+        RpcNotifyDeath();
+
         brain.Die();
 
         // Notify listeners (e.g. DiwataVulnerabilityManager for swarm kill tracking)
@@ -76,6 +88,16 @@ public class EnemyHealth : NetworkBehaviour, IDamageable
         GetComponent<EnemyCoinDrop>()?.DropCoins();
 
         NetworkServer.Destroy(gameObject);
+    }
+
+    [ClientRpc]
+    void RpcNotifyDeath()
+    {
+        if (soundManager == null) 
+            soundManager = GetComponent<EnemySoundManager>();
+
+        if (soundManager != null)
+            soundManager.PlayDeath();
     }
 
     public float GetCurrentHealth() => currentHealth;

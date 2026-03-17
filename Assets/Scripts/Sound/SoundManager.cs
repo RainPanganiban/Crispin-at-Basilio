@@ -101,6 +101,16 @@ public class SoundManager : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
+    private void OnValidate()
+    {
+        // This ensures the volume changes in the Inspector 
+        // take effect immediately while the game is running.
+        if (Application.isPlaying && Instance == this)
+        {
+            ApplyMusicVolume();
+        }
+    }
+
     // ============================
     // Profile Loading
     // ============================
@@ -189,9 +199,10 @@ public class SoundManager : MonoBehaviour
         {
             elapsed += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsed / fadeDuration);
+            float currentMaxVolume = EffectiveMusicVolume;
 
-            if (fadeOutSource.isPlaying) fadeOutSource.volume = Mathf.Lerp(targetVolume, 0f, t);
-            if (newClip != null) fadeInSource.volume = Mathf.Lerp(0f, targetVolume, t);
+            if (fadeOutSource.isPlaying) fadeOutSource.volume = Mathf.Lerp(currentMaxVolume, 0f, t);
+            if (newClip != null) fadeInSource.volume = Mathf.Lerp(0f, currentMaxVolume, t);
 
             yield return null;
         }
@@ -217,7 +228,18 @@ public class SoundManager : MonoBehaviour
     private void ApplyMusicVolume()
     {
         float vol = EffectiveMusicVolume;
-        AudioSource activeSource = isSourceAActive ? musicSourceA : musicSourceB;
-        if (activeSource != null && activeSource.isPlaying) activeSource.volume = vol;
+        
+        // Apply to both sources so crossfades are also updated in real-time
+        if (musicSourceA != null)
+        {
+            // If the source is fading out, its volume shouldn't be clamped 
+            // but for simplicity, we apply the master scale. 
+            // The crossfade routine will still do the Lerp.
+            if (musicSourceA.isPlaying) musicSourceA.volume = vol;
+        }
+        if (musicSourceB != null)
+        {
+            if (musicSourceB.isPlaying) musicSourceB.volume = vol;
+        }
     }
 }

@@ -3143,7 +3143,7 @@ MonoBehaviour:
   - levelName: Optional 1
     backgroundMusic: {fileID: 8300000, guid: a50251075179f834cb4925c391e28798, type: 3}
   masterVolume: 1
-  musicVolume: 0.2
+  musicVolume: 0.1
   sfxVolume: 1
   fadeDuration: 1.5
 --- !u!4 &1313726899
@@ -4813,7 +4813,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1939753517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4836,7 +4836,7 @@ MonoBehaviour:
   smoothSpeed: 5
   tips:
   - Crispin's quick attacks can interrupt enemy Leap behaviors.
-  - Basilio's heavy strikes deal massive damage to Tyanak armor.
+  - Basilio's heavy strikes deal massive damage.
   - "Watch for the glowing red eyes\u2014it means an attack is coming!"
   - Stay mobile to avoid being surrounded by the swarm.
   - Coins can be spent at the Overworld shop for upgrades.
