@@ -10,11 +10,11 @@ Material:
   m_Name: grass_05_basecolor_1k
   m_Shader: {fileID: -6465566751694194690, guid: 3ae793dc2b7efe940ad52b79be7555ab, type: 3}
   m_Parent: {fileID: -876546973899608171, guid: 3ae793dc2b7efe940ad52b79be7555ab, type: 3}
-  m_ModifiedSerializedProperties: 8
+  m_ModifiedSerializedProperties: 12
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
