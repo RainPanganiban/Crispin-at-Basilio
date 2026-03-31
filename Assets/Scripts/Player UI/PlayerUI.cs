@@ -84,7 +84,7 @@ public class PlayerUI : NetworkBehaviour
     private void UpdateCoinDisplay(int amount)
     {
         if (coinCountText != null)
-            coinCountText.text = $"Coins: {amount}";
+            coinCountText.text = $"{amount}";
     }
 
     public override void OnStopLocalPlayer()

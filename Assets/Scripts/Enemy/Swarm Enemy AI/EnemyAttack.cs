@@ -8,6 +8,9 @@ public abstract class EnemyAttack : NetworkBehaviour
     public float cooldown = 2f;   // Time between uses
     public float duration = 1f;   // How long the attack "takes"
 
+    [Tooltip("Specific sound to play for this attack (optional). Falls back to generic Attack sound if null.")]
+    public AudioClip attackSound;
+
     protected float lastUsedTime = -Mathf.Infinity;
 
     // Check if the attack can currently be used

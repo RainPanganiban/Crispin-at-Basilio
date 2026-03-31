@@ -32,6 +32,7 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     public float BonusAttackDamage => bonusAttackDamage;
 
     private PlayerMovement playerMovement;
+    private PlayerSoundManager playerSoundManager;
 
     // When true, Start() will NOT reset health to max (session data already applied)
     private bool healthSetFromSession = false;
@@ -57,6 +58,7 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         }
 
         playerMovement = GetComponent<PlayerMovement>();
+        playerSoundManager = GetComponent<PlayerSoundManager>();
 
         OnStatsReady?.Invoke();
     }
@@ -125,6 +127,9 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
             StopCoroutine(activeStaggerCoroutine);
         }
         activeStaggerCoroutine = StartCoroutine(HitStaggerRoutine(attackerPos));
+
+        // Play hurt sound on all clients for this player
+        if (playerSoundManager != null) playerSoundManager.PlayHurt();
     }
 
     private void CacheOriginalColors()
@@ -139,6 +144,10 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
                 {
                     colors[i] = r.materials[i].color;
                 }
+                else if (r.materials[i].HasProperty("_BaseColor"))
+                {
+                    colors[i] = r.materials[i].GetColor("_BaseColor");
+                }
             }
             originalColorsMap[r] = colors;
         }
@@ -147,16 +156,23 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
 
     private System.Collections.IEnumerator HitStaggerRoutine(Vector3 attackerPos)
     {
-        // 1. Red flash on material
+        // 1. 50% White flash on material
         foreach (var kvp in originalColorsMap)
         {
             if (kvp.Key != null)
             {
                 for (int i = 0; i < kvp.Key.materials.Length; i++)
                 {
+                    Color originalColor = kvp.Value[i];
+                    Color flashColor = Color.Lerp(originalColor, Color.white, 0.5f);
+
                     if (kvp.Key.materials[i].HasProperty("_Color"))
                     {
-                        kvp.Key.materials[i].color = Color.red;
+                        kvp.Key.materials[i].color = flashColor;
+                    }
+                    else if (kvp.Key.materials[i].HasProperty("_BaseColor"))
+                    {
+                        kvp.Key.materials[i].SetColor("_BaseColor", flashColor);
                     }
                 }
             }
@@ -193,6 +209,10 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
                     if (kvp.Key.materials[i].HasProperty("_Color"))
                     {
                         kvp.Key.materials[i].color = kvp.Value[i];
+                    }
+                    else if (kvp.Key.materials[i].HasProperty("_BaseColor"))
+                    {
+                        kvp.Key.materials[i].SetColor("_BaseColor", kvp.Value[i]);
                     }
                 }
             }
@@ -311,6 +331,9 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
 
         RangedAttack ranged = GetComponent<RangedAttack>();
         if (ranged != null) ranged.enabled = false;
+
+        // Play death sound
+        if (playerSoundManager != null) playerSoundManager.PlayDeath();
     }
 
     [Server]

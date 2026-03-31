@@ -121,8 +121,8 @@ ModelImporter:
       name: Roll.001
       takeName: Roll.001
       internalID: -8967437178350921373
-      firstFrame: 0
-      lastFrame: 19
+      firstFrame: 1
+      lastFrame: 18
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
