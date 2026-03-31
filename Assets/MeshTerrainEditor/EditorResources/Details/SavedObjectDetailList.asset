@@ -12,4 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faa9f054fa77a8b4bb703d69a77657ca, type: 3}
   m_Name: SavedObjectDetailList
   m_EditorClassIdentifier: 
-  list: []
+  list:
+  - Object: {fileID: 2692123708358951068, guid: 8eeba76698e2eb74aa4f432b82a80a3e, type: 3}
+    MinScale: {x: 1, y: 1, z: 1}
+    MaxScale: {x: 1, y: 1, z: 1}
+    UseUnifiedScale: 1
+  - Object: {fileID: 1831570500290384331, guid: f01d36afc8781b64595cf3ed977f5dc1, type: 3}
+    MinScale: {x: 1, y: 1, z: 1}
+    MaxScale: {x: 1, y: 1, z: 1}
+    UseUnifiedScale: 1

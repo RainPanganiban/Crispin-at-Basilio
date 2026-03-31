@@ -1111,8 +1111,8 @@ MonoBehaviour:
     currentValue: 100
   stamina:
     name: Stamina
-    maxValue: 100
-    currentValue: 100
+    maxValue: 1000
+    currentValue: 1000
   staminaRegenRate: 10
   healthRegenRate: 0
 --- !u!114 &6217625082249385771
