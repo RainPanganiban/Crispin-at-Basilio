@@ -34,7 +34,11 @@ public class VineSnareAttack : BaseAttack
 
     public override void Server_Execute()
     {
-        // Animation-driven
+        // Imbes na boss.animator, gamitin natin ang function na ito:
+        if (boss != null && !string.IsNullOrEmpty(animationTriggerName))
+        {
+            boss.Server_PlayTrigger(animationTriggerName);
+        }
     }
 
     public override void Server_OnAnimationEvent(string eventName)
