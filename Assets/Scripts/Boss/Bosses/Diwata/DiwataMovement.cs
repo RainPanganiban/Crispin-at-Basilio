@@ -47,13 +47,13 @@ public class DiwataMovement : BossMovementBase
     [ServerCallback]
     void Update()
     {
-        if (!movementEnabled)
+        // Force animator speed to 1 regardless of movement
+        if (animator != null)
         {
-            syncedMovementSpeed = 0f;
-            if (animator != null && animator.runtimeAnimatorController != null)
-                animator.SetFloat(SpeedHash, 0f);
-            return;
+            animator.speed = 1f;
         }
+
+        if (!movementEnabled) return;
 
         Server_HandleDrift();
         Server_HandleHoverBob();

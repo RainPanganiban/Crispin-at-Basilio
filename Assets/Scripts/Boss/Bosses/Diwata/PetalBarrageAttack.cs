@@ -37,20 +37,43 @@ public class PetalBarrageAttack : BaseAttack
         vulnerabilityManager = bossController != null ? bossController.GetComponent<DiwataVulnerabilityManager>() : null;
     }
 
+    public override bool Server_CanExecute()
+    {
+        if (boss == null || !isServer) return false;
+
+        // Hanapin ang player gamit ang Tag
+        GameObject player = GameObject.FindWithTag("Player");
+
+        if (player != null)
+        {
+            float dist = Vector3.Distance(transform.position, player.transform.position);
+            // Siguraduhin na ang Max Range sa Inspector ay malaki (e.g., 15-20)
+            return dist <= maxRange;
+        }
+
+        return false;
+    }
+
+    // --- ITO ANG DINAGDAG NA FIX ---
     public override void Server_Execute()
     {
-        // Animation-driven
+        // Kung walang utos dito, hindi magpe-play ang Attack1 sa Animator
+        if (boss != null && !string.IsNullOrEmpty(animationTriggerName))
+        {
+            boss.Server_PlayTrigger(animationTriggerName);
+        }
     }
 
     public override void Server_OnAnimationEvent(string eventName)
     {
+        // Tandaan: Sa Animation window, dapat ang function name ay "AnimationEvent" 
+        // at ang string parameter ay "FirePetals" base sa Relay script mo.
         if (eventName == Event_FirePetals)
         {
             int count = Server_GetPetalCount();
             Server_SpawnSpiralPetals(count);
             Rpc_OnPetalsFired();
 
-            // Count toward vulnerability
             if (vulnerabilityManager != null)
                 vulnerabilityManager.Server_OnAttackCompleted();
         }
@@ -70,7 +93,11 @@ public class PetalBarrageAttack : BaseAttack
     [Server]
     void Server_SpawnSpiralPetals(int count)
     {
-        if (petalPrefab == null) return;
+        if (petalPrefab == null)
+        {
+            Debug.LogWarning($"[PetalBarrage] Petal Prefab is missing on {gameObject.name}!");
+            return;
+        }
 
         Transform origin = spawnOrigin != null ? spawnOrigin : transform;
         float angleStep = spiralSpread;
@@ -103,6 +130,5 @@ public class PetalBarrageAttack : BaseAttack
 
     public override void Server_Stop()
     {
-        // Nothing persistent to stop
     }
 }

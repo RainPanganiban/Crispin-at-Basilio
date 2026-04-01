@@ -198,127 +198,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1266105803
-PrefabInstance:
+--- !u!1 &463874704
+GameObject:
   m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 463874705}
+  m_Layer: 0
+  m_Name: SpawnPoint_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &463874705
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463874704}
   serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1120197735599768708, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1120197735599768708, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: arenaCenter
-      value: 
-      objectReference: {fileID: 1895177474}
-    - target: {fileID: 1120197735599768708, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: hoverHeight
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1763037232701644203, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: cooldown
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1763037232701644203, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: maxRange
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 1763037232701644203, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: attackName
-      value: PetalBarrage
-      objectReference: {fileID: 0}
-    - target: {fileID: 1763037232701644203, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: animationTriggerName
-      value: PetalBarrage
-      objectReference: {fileID: 0}
-    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4445531958615690861, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: m_Name
-      value: Diwata
-      objectReference: {fileID: 0}
-    - target: {fileID: 6196041851639489252, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: m_ApplyRootMotion
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7671506956600284580, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: phases.Array.data[0].allowedAttacks.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8044141190622913945, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: maxHealth
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542820687180936648, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: cooldown
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542820687180936648, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: maxRange
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542820687180936648, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: attackName
-      value: VineSnare
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542820687180936648, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: animationTriggerName
-      value: VineSnare
-      objectReference: {fileID: 0}
-    - target: {fileID: 8671135333036763877, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: sceneId
-      value: 4197972355
-      objectReference: {fileID: 0}
-    - target: {fileID: 8934656448057782840, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
-      propertyPath: globalCooldownBetweenAttacks
-      value: 0.5
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -7.26, y: -2.29, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1895177474}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1266609624
 GameObject:
   m_ObjectHideFlags: 0
@@ -440,6 +350,214 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!1 &1376408167
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1376408168}
+  m_Layer: 0
+  m_Name: SpawnPoint_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1376408168
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1376408167}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -2.75, z: 7.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1895177474}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1669039485
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 327661629350915891, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: thinkInterval
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 1120197735599768708, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: arenaCenter
+      value: 
+      objectReference: {fileID: 1895177474}
+    - target: {fileID: 1120197735599768708, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: hoverHeight
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1763037232701644203, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: cooldown
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1763037232701644203, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: maxRange
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1763037232701644203, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: attackName
+      value: PetalBarrage
+      objectReference: {fileID: 0}
+    - target: {fileID: 1763037232701644203, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: animationTriggerName
+      value: PetalBarrage
+      objectReference: {fileID: 0}
+    - target: {fileID: 3754177926930371036, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: cooldown
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3754177926930371036, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: maxRange
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3754177926930371036, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: attackName
+      value: SwarmCSummon
+      objectReference: {fileID: 0}
+    - target: {fileID: 3754177926930371036, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: tyanakPrefab
+      value: 
+      objectReference: {fileID: 3060605970339348292, guid: d2be532c84583984e95079a2946b8271, type: 3}
+    - target: {fileID: 3754177926930371036, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: phase1SpawnCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3754177926930371036, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: phase2SpawnCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3754177926930371036, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: phase3SpawnCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3754177926930371036, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: bungisngisAnimrefab
+      value: 
+      objectReference: {fileID: 3537072694383074113, guid: b9d5914c522c45d489516cfbcdb597d8, type: 3}
+    - target: {fileID: 3754177926930371036, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: animationTriggerName
+      value: SwarmSummon
+      objectReference: {fileID: 0}
+    - target: {fileID: 3754177926930371036, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: swarmSpawnPoints.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3754177926930371036, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: 'swarmSpawnPoints.Array.data[0]'
+      value: 
+      objectReference: {fileID: 463874705}
+    - target: {fileID: 3754177926930371036, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: 'swarmSpawnPoints.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1376408168}
+    - target: {fileID: 4313390737703135535, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: attacksBeforeFall
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313390737703135535, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: swarmKillsBeforeFall
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313839619742991061, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4445531958615690861, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: m_Name
+      value: Diwata
+      objectReference: {fileID: 0}
+    - target: {fileID: 4933477418656660600, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.468
+      objectReference: {fileID: 0}
+    - target: {fileID: 4933477418656660600, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 8044141190622913945, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: maxHealth
+      value: 2000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8542820687180936648, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: cooldown
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8542820687180936648, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: maxRange
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8542820687180936648, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: attackName
+      value: VineSnare
+      objectReference: {fileID: 0}
+    - target: {fileID: 8542820687180936648, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: animationTriggerName
+      value: VineSnare
+      objectReference: {fileID: 0}
+    - target: {fileID: 8671135333036763877, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: sceneId
+      value: 75507938
+      objectReference: {fileID: 0}
+    - target: {fileID: 8934656448057782840, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
+      propertyPath: globalCooldownBetweenAttacks
+      value: 0.75
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 21788db117e75eb4a9964598a6ff250d, type: 3}
 --- !u!1 &1749358860
 GameObject:
   m_ObjectHideFlags: 0
@@ -610,7 +728,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 463874705}
+  - {fileID: 1376408168}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
@@ -621,4 +741,4 @@ SceneRoots:
   - {fileID: 1749358864}
   - {fileID: 131958787}
   - {fileID: 1895177474}
-  - {fileID: 1266105803}
+  - {fileID: 1669039485}
