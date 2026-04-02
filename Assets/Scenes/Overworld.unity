@@ -71381,7 +71381,7 @@ MonoBehaviour:
     - Optional 3
   - levelId: Level 3
     sceneName: Level 3
-    startUnlocked: 0
+    startUnlocked: 1
     isMainPath: 1
     isArena: 0
     unlocksOnComplete: []
