@@ -5,9 +5,14 @@ using Mirror;
 /// Aerial floating movement for Diwata.
 /// Drifts around an arena center at a configurable hover height,
 /// occasionally teleports to new positions on phase changes.
+/// Includes an activation trigger to enable attacks only when player is near.
 /// </summary>
 public class DiwataMovement : BossMovementBase
 {
+    [Header("Activation Settings")]
+    public float activationDistance = 12f; // Gaano kalapit ang player bago siya mag-start
+    private bool isPlayerDetected = false;
+
     [Header("Hover")]
     public float hoverHeight = 6f;
     public float hoverBobAmplitude = 0.3f;
@@ -55,9 +60,57 @@ public class DiwataMovement : BossMovementBase
 
         if (!movementEnabled) return;
 
+        // --- PROXIMITY CHECK & AUTO-ACTIVATION ---
+        if (!isPlayerDetected)
+        {
+            Transform targetPlayer = Server_FindClosestPlayer();
+            if (targetPlayer != null)
+            {
+                float dist = Vector3.Distance(transform.position, targetPlayer.position);
+                if (dist <= activationDistance)
+                {
+                    isPlayerDetected = true;
+                    Server_ActivateBossLogic();
+                }
+                else
+                {
+                    // Look at player maski malayo, pero wag gagalaw o aatake
+                    Server_FaceClosestPlayer();
+                    return;
+                }
+            }
+            else
+            {
+                return; // Wait hanggang may player
+            }
+        }
+
+        // --- MOVEMENT LOGIC (Gagana lang kapag Detected na) ---
         Server_HandleDrift();
         Server_HandleHoverBob();
         Server_FaceClosestPlayer();
+    }
+
+    [Server]
+    void Server_ActivateBossLogic()
+    {
+        // 1. I-enable ang BossController (Brain)
+        if (TryGetComponent<BossController>(out var controller))
+        {
+            controller.enabled = true;
+            Debug.Log($"[DiwataMovement] Boss Controller activated for {gameObject.name}");
+        }
+
+        // 2. I-enable lahat ng script na may "Attack" sa pangalan (Vine Snare, etc.)
+        MonoBehaviour[] allScripts = GetComponents<MonoBehaviour>();
+        foreach (MonoBehaviour script in allScripts)
+        {
+            if (script.GetType().Name.Contains("Attack"))
+            {
+                script.enabled = true;
+                Debug.Log($"[DiwataMovement] Attack script activated: {script.GetType().Name}");
+            }
+        }
     }
 
     [Server]
@@ -123,7 +176,6 @@ public class DiwataMovement : BossMovementBase
     [Server]
     void Server_PickNewDriftDirection()
     {
-        // Pick a random direction in XZ plane
         float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
         driftDirection = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
     }
@@ -149,13 +201,9 @@ public class DiwataMovement : BossMovementBase
     [ClientRpc]
     void Rpc_OnTeleport(Vector3 position)
     {
-        // Client-side teleport feedback (VFX, SFX)
         Debug.Log($"[DiwataMovement] Diwata teleported to {position}");
     }
 
-    /// <summary>
-    /// Called during vulnerability phase to bring Diwata to the ground.
-    /// </summary>
     [Server]
     public void Server_FallToGround()
     {
@@ -165,9 +213,6 @@ public class DiwataMovement : BossMovementBase
         transform.position = pos;
     }
 
-    /// <summary>
-    /// Called after vulnerability ends to return Diwata to hover height.
-    /// </summary>
     [Server]
     public void Server_ReturnToAir()
     {
@@ -212,7 +257,6 @@ public class DiwataMovement : BossMovementBase
         if (phase == null) return;
         phaseSpeedMultiplier = phase.movementSpeedMultiplier;
 
-        // Teleport on phase change for dramatic effect
         if (phase.specialBehaviorFlag)
             Server_TeleportToRandomPosition();
     }

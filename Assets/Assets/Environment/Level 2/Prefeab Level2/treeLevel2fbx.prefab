@@ -64,6 +64,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: treeLevel2fbx
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 58b95e20dbcafef48843da42d39df12f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1317096748807912397, guid: 58b95e20dbcafef48843da42d39df12f, type: 3}
       propertyPath: m_Materials.Array.size
       value: 2
@@ -76,6 +80,14 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: 7ee1e89adeeaeb447920bd177e84a225, type: 2}
+    - target: {fileID: 6458959887991638322, guid: 58b95e20dbcafef48843da42d39df12f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8458600449935990956, guid: 58b95e20dbcafef48843da42d39df12f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

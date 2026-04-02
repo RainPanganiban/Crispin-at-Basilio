@@ -1,10 +1,7 @@
 using UnityEngine;
 using Mirror;
+using System.Collections.Generic;
 
-/// <summary>
-/// Light spears appear around arena edges and fire toward the center.
-/// Forces players to dodge between projectile lanes.
-/// </summary>
 public class SpiritLanceAttack : BaseAttack
 {
     public const string Event_SpawnLances = "SpawnLances";
@@ -15,9 +12,14 @@ public class SpiritLanceAttack : BaseAttack
     public Transform arenaCenter;
     public LayerMask playerLayer;
 
-    [Header("Spawn")]
-    public float arenaEdgeRadius = 14f;
-    public float spawnHeight = 2f;
+    // PINALITAN: List para sa maraming spawn points
+    [Tooltip("Dito ilalagay ang mga Transforms kung saan magsisimula ang lances.")]
+    public List<Transform> spawnOrigins = new List<Transform>();
+
+    [Header("Spawn Logic")]
+    [Tooltip("Ilang spawn points ang gagamitin nang sabay-sabay?")]
+    [Range(1, 10)]
+    public int spawnPointCountToUse = 4;
 
     [Header("Projectile")]
     public float lanceDamage = 25f;
@@ -40,77 +42,84 @@ public class SpiritLanceAttack : BaseAttack
 
     public override void Server_Execute()
     {
-        // Animation-driven
+        if (boss != null && !string.IsNullOrEmpty(animationTriggerName))
+        {
+            boss.Server_PlayTrigger(animationTriggerName);
+        }
     }
 
     public override void Server_OnAnimationEvent(string eventName)
     {
         if (eventName == Event_FireLances)
         {
-            int count = Server_GetLanceCount();
-            Server_SpawnLances(count);
+            // Pumili ng random spawn points mula sa listahan
+            List<Transform> selectedOrigins = Server_GetRandomSpawnPoints();
+
+            foreach (Transform origin in selectedOrigins)
+            {
+                Server_SpawnLanceAtPoint(origin);
+            }
+
+            Rpc_OnLancesFired();
 
             if (vulnerabilityManager != null)
                 vulnerabilityManager.Server_OnAttackCompleted();
         }
     }
 
-    int Server_GetLanceCount()
+    // Logic para pumili ng random points sa listahan
+    List<Transform> Server_GetRandomSpawnPoints()
     {
-        int idx = phaseManager != null ? phaseManager.GetCurrentPhaseIndex() : 0;
-        return idx switch
+        List<Transform> picked = new List<Transform>();
+
+        if (spawnOrigins == null || spawnOrigins.Count == 0)
         {
-            0 => phase2Lances, // In case used early
-            1 => phase2Lances,
-            _ => phase3Lances,
-        };
+            picked.Add(transform);
+            return picked;
+        }
+
+        List<Transform> pool = new List<Transform>(spawnOrigins);
+        int countToPick = Mathf.Min(spawnPointCountToUse, pool.Count);
+
+        for (int i = 0; i < countToPick; i++)
+        {
+            int randomIndex = Random.Range(0, pool.Count);
+            picked.Add(pool[randomIndex]);
+            pool.RemoveAt(randomIndex);
+        }
+
+        return picked;
     }
 
     [Server]
-    void Server_SpawnLances(int count)
+    void Server_SpawnLanceAtPoint(Transform origin)
     {
         if (lancePrefab == null) return;
 
         Vector3 center = arenaCenter != null ? arenaCenter.position : transform.position;
-        float angleStep = 360f / count;
-        float startAngle = Random.Range(0f, 360f);
 
-        for (int i = 0; i < count; i++)
-        {
-            float angle = (startAngle + angleStep * i) * Mathf.Deg2Rad;
-            Vector3 edgePos = center + new Vector3(
-                Mathf.Cos(angle) * arenaEdgeRadius,
-                spawnHeight,
-                Mathf.Sin(angle) * arenaEdgeRadius
-            );
+        // Ang direction ay laging papunta sa center mula sa spawn point
+        Vector3 direction = (center - origin.position).normalized;
+        direction.y = 0f; // Panatilihing horizontal ang lipad
 
-            Vector3 direction = (center - edgePos).normalized;
-            direction.y = 0f;
+        DiwataSpiritLance lance = Instantiate(lancePrefab, origin.position, Quaternion.identity);
+        lance.Server_Initialize(
+            owner: boss != null ? boss.netIdentity : null,
+            direction: direction,
+            speed: lanceSpeed,
+            damage: lanceDamage,
+            maxDistance: lanceMaxDistance,
+            playerLayer: playerLayer
+        );
 
-            DiwataSpiritLance lance = Instantiate(lancePrefab, edgePos, Quaternion.identity);
-            lance.Server_Initialize(
-                owner: boss != null ? boss.netIdentity : null,
-                direction: direction,
-                speed: lanceSpeed,
-                damage: lanceDamage,
-                maxDistance: lanceMaxDistance,
-                playerLayer: playerLayer
-            );
-
-            NetworkServer.Spawn(lance.gameObject);
-        }
-
-        Rpc_OnLancesFired();
+        NetworkServer.Spawn(lance.gameObject);
     }
 
     [ClientRpc]
     void Rpc_OnLancesFired()
     {
-        Debug.Log("[SpiritLance] Lances fired from arena edges!");
+        Debug.Log("[SpiritLance] Lances fired from selected spawn points!");
     }
 
-    public override void Server_Stop()
-    {
-        // Nothing persistent to stop
-    }
+    public override void Server_Stop() { }
 }
