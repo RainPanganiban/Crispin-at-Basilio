@@ -48,9 +48,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -6931320383770493757, guid: 6f3c34e4902b76740a23361347abd640, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: -5778467646836869490, guid: 6f3c34e4902b76740a23361347abd640, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 6f3c34e4902b76740a23361347abd640, type: 3}
       propertyPath: m_Name
       value: palm tree
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6f3c34e4902b76740a23361347abd640, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 2152203661390416708, guid: 6f3c34e4902b76740a23361347abd640, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
