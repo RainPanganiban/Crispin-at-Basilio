@@ -7,15 +7,15 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Material
-  m_Shader: {fileID: -6465566751694194690, guid: 1f8f7e319e9a79a44a033d1c5306165e, type: 3}
-  m_Parent: {fileID: -876546973899608171, guid: 1f8f7e319e9a79a44a033d1c5306165e, type: 3}
-  m_ModifiedSerializedProperties: 12
+  m_Name: LeafLEVEL3
+  m_Shader: {fileID: -6465566751694194690, guid: f2e023803eeda2240bdaa36d561c7858, type: 3}
+  m_Parent: {fileID: -876546973899608171, guid: f2e023803eeda2240bdaa36d561c7858, type: 3}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 1
-  m_DoubleSidedGI: 1
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses:
@@ -23,16 +23,22 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _Texture2D:
+        m_Texture: {fileID: 2800000, guid: 43e1890167f344942925ca70957bb49e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _QueueControl: 0
-    - _WindDensity: -1.69
-    - _WindStregnth: 0.16
-    m_Colors: []
+    - _WindDensity: -2.39
+    - _WindSpeed: 0.26
+    - _WindStregnth: 0.89
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &3403416269194494245
+--- !u!114 &1685300039456470710
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
