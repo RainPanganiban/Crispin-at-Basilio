@@ -316,6 +316,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  activationDistance: 12
   hoverHeight: 2
   hoverBobAmplitude: 0.3
   hoverBobFrequency: 1.2
@@ -369,10 +370,11 @@ MonoBehaviour:
   animationTriggerName: PetalBarrage
   requiresMovementLock: 0
   petalPrefab: {fileID: 1361365814092637503, guid: 6e5cf2eb15937254f95a34ec32277789, type: 3}
-  spawnOrigin: {fileID: 6644071341488428635}
+  spawnOrigins: []
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
+  spawnPointCountToUse: 1
   petalSpeed: 8
   petalDamage: 12
   petalLifetime: 5
@@ -434,8 +436,8 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
-  arenaEdgeRadius: 14
-  spawnHeight: 1.63
+  spawnOrigins: []
+  spawnPointCountToUse: 4
   lanceDamage: 25
   lanceSpeed: 15
   lanceMaxDistance: 30
