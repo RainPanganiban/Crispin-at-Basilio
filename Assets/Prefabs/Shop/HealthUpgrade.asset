@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: MaxHealth_1
   displayName: Health +20
+  itemIcon: {fileID: -942248147, guid: e09943f74658bcf4daf4ccd43a41a61d, type: 3}
   cost: 10
   type: 0
   statToUpgrade: MaxHealth

@@ -13,6 +13,9 @@ public class ShopItemButton : MonoBehaviour
     [SerializeField] private TMP_Text levelText;
     [SerializeField] private Button buyButton;
 
+    // --- ETO LANG ANG DINAGDAG NA VARIABLE ---
+    [SerializeField] private Image itemIconImage;
+
     private ShopItemData itemData;
     private System.Action<string> onPurchaseCallback;
 
@@ -27,13 +30,24 @@ public class ShopItemButton : MonoBehaviour
         if (costText != null)
             costText.text = $"{data.cost} coins";
 
+        // --- ETO LANG ANG DINAGDAG NA LOGIC PARA SA ICON ---
+        if (itemIconImage != null && data.itemIcon != null)
+        {
+            itemIconImage.sprite = data.itemIcon;
+        }
+
         // Show level for upgrades
         if (levelText != null)
         {
             if (data.type == ShopItemType.Upgrade && data.maxLevel > 0)
+            {
+                levelText.gameObject.SetActive(true); // Siguraduhin nating active kung upgrade
                 levelText.text = $"Lv. {currentLevel}/{data.maxLevel}";
+            }
             else
+            {
                 levelText.gameObject.SetActive(false);
+            }
         }
 
         // Enable/disable based on affordability and max level
