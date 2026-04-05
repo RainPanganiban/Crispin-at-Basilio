@@ -719,7 +719,7 @@ MonoBehaviour:
   cooldown: 0
   duration: 1
   attackSound: {fileID: 8300000, guid: 66f14da08ba97ac4fb64e3bb3849efb1, type: 3}
-  projectilePrefab: {fileID: 4164222620869133773, guid: c4f150202dec5514ea02ae0f3129a675, type: 3}
+  projectilePrefab: {fileID: 4164222620869133773, guid: 6aa0c565168e7db42ba597a2162377d0, type: 3}
   firePoint: {fileID: 3420219565809902925}
   damage: 10
   projectileSpeed: 15
