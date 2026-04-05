@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4988172537831857675
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 10
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: soulc 3
+  m_Shader: {fileID: -6465566751694194690, guid: 7bb957d002ece6b4eb61eeb004c40e4d, type: 3}
+  m_Parent: {fileID: -876546973899608171, guid: 7bb957d002ece6b4eb61eeb004c40e4d, type: 3}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _Alpha: -7.8
+    - _Alpha_threshhold: 3.44
+    - _Brightness: 16.94
+    - _Flame_Height: 0.87
+    - _QueueControl: 0
+    - _Speed: 0.21
+    m_Colors:
+    - _Background_Color: {r: 0.17167068, g: 1, b: 0, a: 0}
+    - _BasedColor: {r: 0.89576554, g: 1, b: 0, a: 0}
+    - _Highlights_Color: {r: 0, g: 0.4113207, b: 0.038589362, a: 0}
+    - _Scroll_Direction_B: {r: 0.83, g: 0.5, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
