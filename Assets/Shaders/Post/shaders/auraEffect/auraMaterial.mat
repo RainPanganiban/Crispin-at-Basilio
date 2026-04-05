@@ -14,7 +14,7 @@ Material:
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -33,7 +33,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _base_texture:
-        m_Texture: {fileID: 2800000, guid: 26806ad24cfd747419c24a3447de433c, type: 3}
+        m_Texture: {fileID: 2800000, guid: 02b6d4e90f71ec44eb67da131316bc0c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _foam_taxture:
@@ -58,14 +58,14 @@ Material:
     - _QueueOffset: 0
     - _Scalar_Bias: 0
     - _edge_threshold: 3.1
-    - _fading_amount: 2
-    - _fading_speed: 2
+    - _fading_amount: 1
+    - _fading_speed: 1
     - _wobble_frequency: 2
     - _wobble_speed: 0.5
     m_Colors:
-    - _aura_base_color: {r: 0, g: 0, b: 0, a: 0}
+    - _aura_base_color: {r: 0.0067950487, g: 1, b: 0, a: 0}
     - _base_color: {r: 0, g: 0, b: 0, a: 0}
-    - _glow_color: {r: 2.1185474, g: 0, b: 0.03293461, a: 0}
+    - _glow_color: {r: 0, g: 2.828427, b: 0.19190505, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &7972110635937092140

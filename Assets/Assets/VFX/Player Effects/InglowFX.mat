@@ -48,7 +48,7 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _Erode: 0
-    - _FresnelPower: 1.08
+    - _FresnelPower: 1.23
     - _QueueControl: 0
     - _QueueOffset: 0
     - _SrcBlend: 1

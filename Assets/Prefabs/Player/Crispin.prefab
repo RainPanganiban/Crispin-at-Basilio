@@ -1260,8 +1260,8 @@ MonoBehaviour:
   syncInterval: 0
   health:
     name: Health
-    maxValue: 100
-    currentValue: 100
+    maxValue: 1000
+    currentValue: 1000
   stamina:
     name: Stamina
     maxValue: 100
