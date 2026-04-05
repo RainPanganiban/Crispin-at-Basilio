@@ -144,8 +144,8 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4674919}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Avatar: {fileID: 9000000, guid: 3bac62215baecdf45ae38902bb164f27, type: 3}
+  m_Controller: {fileID: 9100000, guid: dc3c33e57ca1a9f4d95f5dd35be49b40, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -157,6 +157,29 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!136 &4674927
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4674919}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &131958784
 GameObject:
   m_ObjectHideFlags: 0
@@ -707,6 +730,12 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 722961898477026401, guid: 54a215fce3a198a438fe75fece490f4c, type: 3}
+      propertyPath: m_text
+      value: 'BAKUNAWA
+
+'
+      objectReference: {fileID: 0}
     - target: {fileID: 2184586786455542456, guid: 54a215fce3a198a438fe75fece490f4c, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -719,6 +748,10 @@ PrefabInstance:
       propertyPath: bossHealth
       value: 
       objectReference: {fileID: 4674924}
+    - target: {fileID: 5320597026601074970, guid: 54a215fce3a198a438fe75fece490f4c, type: 3}
+      propertyPath: activationRange
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 7677964951262675322, guid: 54a215fce3a198a438fe75fece490f4c, type: 3}
       propertyPath: animator
       value: 
@@ -774,6 +807,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8363082192117108240, guid: 54a215fce3a198a438fe75fece490f4c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4674926}
+    - targetCorrespondingSourceObject: {fileID: 8363082192117108240, guid: 54a215fce3a198a438fe75fece490f4c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4674927}
   m_SourcePrefab: {fileID: 100100000, guid: 54a215fce3a198a438fe75fece490f4c, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
