@@ -1260,12 +1260,12 @@ MonoBehaviour:
   syncInterval: 0
   health:
     name: Health
-    maxValue: 1000
-    currentValue: 1000
+    maxValue: 100
+    currentValue: 100
   stamina:
     name: Stamina
-    maxValue: 1000
-    currentValue: 1000
+    maxValue: 100
+    currentValue: 100
   staminaRegenRate: 10
   healthRegenRate: 0
 --- !u!114 &6217625082249385771
