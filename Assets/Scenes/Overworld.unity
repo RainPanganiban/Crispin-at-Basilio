@@ -261907,7 +261907,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 106.038, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 38.44, y: 4.67}
+  m_AnchoredPosition: {x: 38.44, y: 7.76}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1787231328
@@ -314678,6 +314678,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5559719263454133051, guid: cc4fde4ce16a97c4e8e475d6f072393e, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 2056011888843434940}
     - target: {fileID: 5816217895474492040, guid: cc4fde4ce16a97c4e8e475d6f072393e, type: 3}
       propertyPath: sceneId
       value: 1183177054
@@ -314691,6 +314695,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cc4fde4ce16a97c4e8e475d6f072393e, type: 3}
+--- !u!95 &2056011888843434940 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 1306197827532112305, guid: cc4fde4ce16a97c4e8e475d6f072393e, type: 3}
+  m_PrefabInstance: {fileID: 2056011888843434939}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2887883687236496802
 PrefabInstance:
   m_ObjectHideFlags: 0

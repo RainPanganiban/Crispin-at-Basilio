@@ -57,9 +57,9 @@ Material:
     - _glow_speed: 0.88
     - _glow_spread: 1.9
     - _wobble_amount: 0.2
-    - _wobble_distance: 0
-    - _wobble_frequency: 0
-    - _wobble_speed: 0
+    - _wobble_distance: 0.35
+    - _wobble_frequency: 0.45
+    - _wobble_speed: 0.93
     m_Colors:
     - _Color: {r: 0, g: 2.327571, b: 1.8430328, a: 1}
     - _Vector3: {r: 0, g: 0, b: 0, a: 0}

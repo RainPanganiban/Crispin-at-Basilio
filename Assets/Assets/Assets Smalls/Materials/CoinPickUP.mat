@@ -45,12 +45,15 @@ Material:
     m_Floats:
     - _QueueControl: 0
     - _edge_threshold: 6.18
-    - _wobble_amount: 0.263
+    - _fresnel_power: 1.71
+    - _glow_spread: 6.69
+    - _wobble_amount: 0.074
+    - _wobble_distance: 0.69
     - _wobble_frequency: 2.07
     - _wobble_speed: 0.55
     m_Colors:
-    - _Color: {r: 0, g: 0.20702887, b: 1, a: 1}
+    - _Color: {r: 0, g: 1, b: 0.9573624, a: 1}
     - _interiorPos: {r: 0.06, g: 0.01, b: 0, a: 0}
-    - _interior_color: {r: 0, g: 1, b: 0.9985628, a: 0}
+    - _interior_color: {r: 0, g: 0.01006138, b: 0.48235294, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
