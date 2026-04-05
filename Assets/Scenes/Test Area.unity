@@ -176,10 +176,27 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 1
+  m_Radius: 2.79
+  m_Height: 43.47
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 10.97, z: -1.58}
+--- !u!114 &4674928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4674919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 2238145179
+  _assetId: 2122072491
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &131958784
 GameObject:
   m_ObjectHideFlags: 0
@@ -745,6 +762,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5320597026601074970, guid: 54a215fce3a198a438fe75fece490f4c, type: 3}
+      propertyPath: bossName
+      value: BAKUNAWA
+      objectReference: {fileID: 0}
+    - target: {fileID: 5320597026601074970, guid: 54a215fce3a198a438fe75fece490f4c, type: 3}
       propertyPath: bossHealth
       value: 
       objectReference: {fileID: 4674924}
@@ -810,6 +831,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8363082192117108240, guid: 54a215fce3a198a438fe75fece490f4c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4674927}
+    - targetCorrespondingSourceObject: {fileID: 8363082192117108240, guid: 54a215fce3a198a438fe75fece490f4c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4674928}
   m_SourcePrefab: {fileID: 100100000, guid: 54a215fce3a198a438fe75fece490f4c, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
