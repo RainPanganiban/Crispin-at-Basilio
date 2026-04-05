@@ -1260,8 +1260,8 @@ MonoBehaviour:
   syncInterval: 0
   health:
     name: Health
-    maxValue: 1000
-    currentValue: 1000
+    maxValue: 100
+    currentValue: 100
   stamina:
     name: Stamina
     maxValue: 100
@@ -1294,6 +1294,7 @@ MonoBehaviour:
   minSpeed: 10
   maxSpeed: 30
   maxLifetime: 5
+  attackCooldown: 0.5
 --- !u!114 &7561837180419223251
 MonoBehaviour:
   m_ObjectHideFlags: 0

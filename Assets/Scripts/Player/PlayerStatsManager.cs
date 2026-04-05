@@ -10,33 +10,27 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     public Stat stamina = new Stat("Stamina", 100f);
 
     [Header("Regeneration")]
-    public float staminaRegenRate = 10f; // per second
-    public float healthRegenRate = 0f;   // optional
+    public float staminaRegenRate = 10f;
+    public float healthRegenRate = 0f;
 
     public event Action OnStatsReady;
 
-    // SyncVars for multiplayer UI syncing
     [SyncVar(hook = nameof(OnHealthChanged))] private float syncedHealth;
     [SyncVar(hook = nameof(OnMaxHealthChanged))] private float syncedMaxHealth;
     [SyncVar(hook = nameof(OnStaminaChanged))] private float syncedStamina;
 
-    // Death & Revive
     [SyncVar(hook = nameof(OnDeadChanged))]
     private bool isDead = false;
     public bool IsDead => isDead;
     public event Action<bool> OnDeadStateChanged;
 
-    // Bonus damage from upgrades (synced so combat scripts can read it)
     [SyncVar]
     private float bonusAttackDamage = 0f;
     public float BonusAttackDamage => bonusAttackDamage;
 
     private PlayerMovement playerMovement;
     private PlayerSoundManager playerSoundManager;
-
-    // When true, Start() will NOT reset health to max (session data already applied)
     private bool healthSetFromSession = false;
-
     private Coroutine activeStaggerCoroutine;
     private Dictionary<Renderer, Color[]> originalColorsMap = new Dictionary<Renderer, Color[]>();
     private bool colorsCached = false;
@@ -45,56 +39,57 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     {
         if (isServer)
         {
-            // Only reset health to max if session data hasn't already set it
-            if (!healthSetFromSession)
+            isDead = false;
+
+            // FIX 3: Siguraduhin na laging may HP kung hindi galing sa portal
+            if (!healthSetFromSession || syncedHealth <= 0)
             {
                 health.SetValue(health.maxValue);
+                syncedHealth = health.maxValue;
             }
-            stamina.SetValue(stamina.maxValue);
 
+            stamina.SetValue(stamina.maxValue);
             syncedMaxHealth = health.maxValue;
-            syncedHealth = health.currentValue;
             syncedStamina = stamina.currentValue;
         }
 
         playerMovement = GetComponent<PlayerMovement>();
         playerSoundManager = GetComponent<PlayerSoundManager>();
 
+        // Force sync local objects sa synced values
+        health.SetMax(syncedMaxHealth > 0 ? syncedMaxHealth : 100f);
+        health.SetValue(syncedHealth > 0 ? syncedHealth : health.maxValue);
+        stamina.SetValue(syncedStamina);
+
         OnStatsReady?.Invoke();
     }
 
     private void Update()
     {
-        if (!isServer) return; // Only server modifies values
-        if (isDead) return;    // No regen while dead
+        if (!isServer) return;
+        if (isDead) return;
 
         bool running = playerMovement != null && playerMovement.IsRunning;
 
-        // Drain stamina on server while running (authoritative drain)
         if (running && stamina.currentValue > 0f)
         {
             float drainRate = playerMovement != null ? playerMovement.staminaCostPerSecondRunning : staminaRegenRate;
             stamina.ChangeValue(-drainRate * Time.deltaTime);
             syncedStamina = stamina.currentValue;
         }
-        // Only regen when NOT running
         else if (!running && stamina.currentValue < stamina.maxValue)
         {
             stamina.ChangeValue(staminaRegenRate * Time.deltaTime);
-            syncedStamina = stamina.currentValue; // Sync
+            syncedStamina = stamina.currentValue;
         }
 
-        // Optional health regen
         if (health.currentValue < health.maxValue)
         {
             health.ChangeValue(healthRegenRate * Time.deltaTime);
-            syncedHealth = health.currentValue; // Sync
+            syncedHealth = health.currentValue;
         }
     }
 
-    // ===============================
-    // IDamageable Implementation
-    // ===============================
     [Server]
     public void TakeDamage(float amount, Transform attacker)
     {
@@ -102,7 +97,7 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         if (health.currentValue <= 0) return;
 
         health.ChangeValue(-amount);
-        syncedHealth = health.currentValue; // sync with clients
+        syncedHealth = health.currentValue;
 
         if (health.currentValue <= 0)
         {
@@ -121,16 +116,118 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     void RpcOnTookDamage(Vector3 attackerPos)
     {
         if (!colorsCached) CacheOriginalColors();
-        
-        if (activeStaggerCoroutine != null)
-        {
-            StopCoroutine(activeStaggerCoroutine);
-        }
+
+        if (activeStaggerCoroutine != null) StopCoroutine(activeStaggerCoroutine);
         activeStaggerCoroutine = StartCoroutine(HitStaggerRoutine(attackerPos));
 
-        // Play hurt sound on all clients for this player
         if (playerSoundManager != null) playerSoundManager.PlayHurt();
     }
+
+    // --- DEATH & REVIVE LOGIC ---
+
+    [Server]
+    void Die()
+    {
+        if (isDead) return;
+        isDead = true;
+
+        // FIX 1: Force sync death state sa lahat ng clients para itago ang model/tag
+        RpcNotifyDeath();
+        CheckGameOver();
+    }
+
+    [ClientRpc]
+    void RpcNotifyDeath()
+    {
+        gameObject.tag = "Untagged";
+
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+
+        Transform modelTransform = transform.Find("Model");
+        if (modelTransform != null) modelTransform.gameObject.SetActive(false);
+
+        if (playerSoundManager != null) playerSoundManager.PlayDeath();
+    }
+
+    [Server]
+    void CheckGameOver()
+    {
+        PlayerStatsManager[] allPlayers = FindObjectsByType<PlayerStatsManager>(FindObjectsSortMode.None);
+        int deadCount = 0;
+
+        foreach (var p in allPlayers)
+        {
+            if (p.isDead) deadCount++;
+        }
+
+        if (deadCount >= allPlayers.Length && allPlayers.Length > 0)
+        {
+            GameOverUI ui = FindFirstObjectByType<GameOverUI>();
+            if (ui != null) ui.RpcShowGameOver();
+        }
+    }
+
+    [Server]
+    public void ServerRevive()
+    {
+        // FIX 2: I-reset ang stats at i-sync sa lahat para sa "Try Again"
+        isDead = false;
+        health.SetValue(health.maxValue);
+        syncedHealth = health.maxValue;
+        stamina.SetValue(stamina.maxValue);
+        syncedStamina = stamina.maxValue;
+
+        RpcNotifyRevive();
+    }
+
+    [ClientRpc]
+    void RpcNotifyRevive()
+    {
+        gameObject.tag = "Player";
+
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = true;
+
+        Transform modelTransform = transform.Find("Model");
+        if (modelTransform != null) modelTransform.gameObject.SetActive(true);
+
+        if (playerMovement != null) playerMovement.enabled = true;
+
+        Animator anim = GetComponent<Animator>();
+        if (anim != null) anim.enabled = true;
+
+        // I-reset ang visual properties
+        if (anim != null) anim.speed = 1f;
+    }
+
+    // --- SYNCVAR HOOKS ---
+
+    void OnHealthChanged(float oldValue, float newValue)
+    {
+        health.SetValue(newValue);
+    }
+
+    void OnMaxHealthChanged(float oldValue, float newValue)
+    {
+        health.SetMax(newValue);
+    }
+
+    void OnStaminaChanged(float oldValue, float newValue)
+    {
+        stamina.SetValue(newValue);
+    }
+
+    void OnDeadChanged(bool oldValue, bool newValue)
+    {
+        OnDeadStateChanged?.Invoke(newValue);
+
+        // Fallback protection para sa late-joiners
+        if (newValue) RpcNotifyDeath();
+        else RpcNotifyRevive();
+    }
+
+    // --- UTILITIES ---
 
     private void CacheOriginalColors()
     {
@@ -140,14 +237,8 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
             Color[] colors = new Color[r.materials.Length];
             for (int i = 0; i < r.materials.Length; i++)
             {
-                if (r.materials[i].HasProperty("_Color"))
-                {
-                    colors[i] = r.materials[i].color;
-                }
-                else if (r.materials[i].HasProperty("_BaseColor"))
-                {
-                    colors[i] = r.materials[i].GetColor("_BaseColor");
-                }
+                if (r.materials[i].HasProperty("_Color")) colors[i] = r.materials[i].color;
+                else if (r.materials[i].HasProperty("_BaseColor")) colors[i] = r.materials[i].GetColor("_BaseColor");
             }
             originalColorsMap[r] = colors;
         }
@@ -156,7 +247,6 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
 
     private System.Collections.IEnumerator HitStaggerRoutine(Vector3 attackerPos)
     {
-        // 1. 50% White flash on material
         foreach (var kvp in originalColorsMap)
         {
             if (kvp.Key != null)
@@ -165,102 +255,45 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
                 {
                     Color originalColor = kvp.Value[i];
                     Color flashColor = Color.Lerp(originalColor, Color.white, 0.5f);
-
-                    if (kvp.Key.materials[i].HasProperty("_Color"))
-                    {
-                        kvp.Key.materials[i].color = flashColor;
-                    }
-                    else if (kvp.Key.materials[i].HasProperty("_BaseColor"))
-                    {
-                        kvp.Key.materials[i].SetColor("_BaseColor", flashColor);
-                    }
+                    if (kvp.Key.materials[i].HasProperty("_Color")) kvp.Key.materials[i].color = flashColor;
+                    else if (kvp.Key.materials[i].HasProperty("_BaseColor")) kvp.Key.materials[i].SetColor("_BaseColor", flashColor);
                 }
             }
         }
 
-        // 2. Small knockback (impulse)
         if (playerMovement != null)
         {
             Vector3 pushDir = (transform.position - attackerPos).normalized;
-            pushDir.y = 0; // Keep it horizontal
-            
-            // If direction is zero (e.g. attacker is exactly at same spot), push back locally
+            pushDir.y = 0;
             if (pushDir.sqrMagnitude < 0.01f) pushDir = -transform.forward;
-
-            playerMovement.ApplyKnockback(pushDir * 3f, 0.15f); // 3 units speed for 0.15s
+            playerMovement.ApplyKnockback(pushDir * 3f, 0.15f);
         }
 
-        // 3. Briefly slow animator to simulate impact weight
         Animator anim = GetComponent<Animator>();
-        if (anim != null) 
-        {
-            anim.speed = 0.5f; 
-        }
+        if (anim != null) anim.speed = 0.5f;
 
         yield return new WaitForSeconds(0.15f);
 
-        // Restore colors
         foreach (var kvp in originalColorsMap)
         {
             if (kvp.Key != null)
             {
                 for (int i = 0; i < kvp.Key.materials.Length; i++)
                 {
-                    if (kvp.Key.materials[i].HasProperty("_Color"))
-                    {
-                        kvp.Key.materials[i].color = kvp.Value[i];
-                    }
-                    else if (kvp.Key.materials[i].HasProperty("_BaseColor"))
-                    {
-                        kvp.Key.materials[i].SetColor("_BaseColor", kvp.Value[i]);
-                    }
+                    if (kvp.Key.materials[i].HasProperty("_Color")) kvp.Key.materials[i].color = kvp.Value[i];
+                    else if (kvp.Key.materials[i].HasProperty("_BaseColor")) kvp.Key.materials[i].SetColor("_BaseColor", kvp.Value[i]);
                 }
             }
         }
-
-        if (anim != null)
-        {
-            anim.speed = 1f;
-        }
-        
+        if (anim != null) anim.speed = 1f;
         activeStaggerCoroutine = null;
+        yield return null;
     }
 
-    // ===============================
-    // SyncVar Hooks
-    // ===============================
-    void OnHealthChanged(float oldValue, float newValue)
-    {
-        health.SetValue(newValue); // updates UI via Stat events
-    }
-
-    void OnMaxHealthChanged(float oldValue, float newValue)
-    {
-        health.SetMax(newValue); 
-    }
-
-    void OnStaminaChanged(float oldValue, float newValue)
-    {
-        float previous = stamina.currentValue;
-        stamina.SetValue(newValue); // fires OnValueChanged
-    }
-
-    void OnDeadChanged(bool oldValue, bool newValue)
-    {
-        OnDeadStateChanged?.Invoke(newValue);
-    }
-
-    // ===============================
-    // Stamina Methods
-    // ===============================
     public void UseStamina(float amount)
     {
         stamina.ChangeValue(-amount);
-
-        if (isServer)
-        {
-            syncedStamina = stamina.currentValue; // sync to all clients
-        }
+        if (isServer) syncedStamina = stamina.currentValue;
     }
 
     public void RestoreHealth(float amount)
@@ -269,10 +302,6 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         if (isServer) syncedHealth = health.currentValue;
     }
 
-    /// <summary>
-    /// Sets health to specific values. Used by CustomNetworkManager
-    /// to restore persistent health from session data after a scene change.
-    /// </summary>
     [Server]
     public void ServerSetHealth(float current, float max)
     {
@@ -289,88 +318,10 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         if (isServer) syncedStamina = stamina.currentValue;
     }
 
-    [Command]
-    public void CmdUseStamina(float amount)
-    {
-        UseStamina(amount);
-    }
+    [Command] public void CmdUseStamina(float amount) { UseStamina(amount); }
+    [Command] public void CmdRestoreHealth(float amount) { RestoreHealth(amount); }
+    [Command] public void CmdRestoreStamina(float amount) { RestoreStamina(amount); }
 
-    [Command]
-    public void CmdRestoreHealth(float amount)
-    {
-        RestoreHealth(amount);
-    }
-
-    [Command]
-    public void CmdRestoreStamina(float amount)
-    {
-        RestoreStamina(amount);
-    }
-
-    // ===============================
-    // Death & Revive
-    // ===============================
-    [Server]
-    void Die()
-    {
-        isDead = true;
-        Debug.Log($"Player {gameObject.name} died.");
-        RpcOnPlayerDied();
-    }
-
-    [ClientRpc]
-    void RpcOnPlayerDied()
-    {
-        // Disable movement and combat on all clients
-        PlayerMovement movement = GetComponent<PlayerMovement>();
-        if (movement != null) movement.enabled = false;
-
-        // Disable combat handlers
-        MeleeCombat melee = GetComponent<MeleeCombat>();
-        if (melee != null) melee.enabled = false;
-
-        RangedAttack ranged = GetComponent<RangedAttack>();
-        if (ranged != null) ranged.enabled = false;
-
-        // Play death sound
-        if (playerSoundManager != null) playerSoundManager.PlayDeath();
-    }
-
-    [Server]
-    public void ServerRevive()
-    {
-        if (!isDead) return;
-
-        isDead = false;
-        health.SetValue(health.maxValue);
-        syncedHealth = health.currentValue;
-
-        Debug.Log($"Player {gameObject.name} revived.");
-        RpcOnPlayerRevived();
-    }
-
-    [ClientRpc]
-    void RpcOnPlayerRevived()
-    {
-        // Re-enable movement and combat on all clients
-        PlayerMovement movement = GetComponent<PlayerMovement>();
-        if (movement != null) movement.enabled = true;
-
-        MeleeCombat melee = GetComponent<MeleeCombat>();
-        if (melee != null) melee.enabled = true;
-
-        RangedAttack ranged = GetComponent<RangedAttack>();
-        if (ranged != null) ranged.enabled = true;
-    }
-
-    // ===============================
-    // Upgrades
-    // ===============================
-
-    /// <summary>
-    /// Apply a single upgrade by stat name.
-    /// Called by ShopManager when purchasing an upgrade.
-    /// </summary>
     [Server]
     public void ServerApplyUpgrade(string statName, float amount)
     {
@@ -381,33 +332,21 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
                 syncedMaxHealth = health.maxValue;
                 syncedHealth = health.currentValue;
                 break;
-
             case "MaxStamina":
                 stamina.maxValue += amount;
-                stamina.SetValue(stamina.currentValue); // re-clamp
+                stamina.SetValue(stamina.currentValue);
                 syncedStamina = stamina.currentValue;
                 break;
-
             case "AttackDamage":
                 bonusAttackDamage += amount;
-                break;
-
-            default:
-                Debug.LogWarning($"[PlayerStatsManager] Unknown upgrade stat: {statName}");
                 break;
         }
     }
 
-    /// <summary>
-    /// Applied when spawning a player from persistent session data.
-    /// Re-applies all previously purchased upgrades.
-    /// </summary>
     [Server]
     public void ServerApplyPersistentData(int coins, List<string> purchasedUpgrades)
     {
         if (purchasedUpgrades == null) return;
-
-        // Find the shop manager to look up upgrade values
         ShopManager shop = ShopManager.Instance;
         if (shop == null) return;
 
