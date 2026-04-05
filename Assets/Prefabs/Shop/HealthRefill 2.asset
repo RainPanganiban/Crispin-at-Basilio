@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e281861ecd2e5334daa4d482eb16121b, type: 3}
-  m_Name: DamageUpgrade
+  m_Name: HealthRefill 2
   m_EditorClassIdentifier: 
-  id: AttackDamage_1
-  displayName: Attack +5
-  itemIcon: {fileID: 1761716388, guid: 4d798b5d5f977404db394ae98e1ac4f0, type: 3}
-  cost: 20
-  type: 0
-  statToUpgrade: AttackDamage
-  upgradeAmount: 5
-  maxLevel: 9
+  id: HealthRefill2
+  displayName: Health Refill
+  itemIcon: {fileID: -960957956, guid: 156acb369aef66843a245d1e0a851ca7, type: 3}
+  cost: 15
+  type: 1
+  statToUpgrade: 
+  upgradeAmount: 0
+  maxLevel: 0
   isRevive: 0
-  isHealthRefill: 0
+  isHealthRefill: 1

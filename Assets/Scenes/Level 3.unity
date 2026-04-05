@@ -3149,6 +3149,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shokoy (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -29607,6 +29619,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shokoy (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -34230,6 +34254,18 @@ PrefabInstance:
     - target: {fileID: 7406274326523654080, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
       propertyPath: m_Name
       value: Shokoy (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -43619,6 +43655,18 @@ PrefabInstance:
     - target: {fileID: 4980800522457749207, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
       propertyPath: m_Name
       value: Balbal (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -102465,6 +102513,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shokoy (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -141661,6 +141721,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Balbal (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -148314,6 +148386,18 @@ PrefabInstance:
     - target: {fileID: 7406274326523654080, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
       propertyPath: m_Name
       value: Shokoy (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -157519,6 +157603,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Balbal (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -164024,6 +164120,18 @@ PrefabInstance:
     - target: {fileID: 4980800522457749207, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
       propertyPath: m_Name
       value: Balbal (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -189169,6 +189277,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Balbal (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -211343,6 +211463,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shokoy (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583437412268399838, guid: e87e3620d4517314080c8b0279cdb73b, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -214188,6 +214320,18 @@ PrefabInstance:
     - target: {fileID: 4980800522457749207, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
       propertyPath: m_Name
       value: Balbal (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842861676938002713, guid: a4753c5f7aeabc041b7a81ac405087f9, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
