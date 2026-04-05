@@ -19,6 +19,6 @@ MonoBehaviour:
   type: 0
   statToUpgrade: MaxStamina
   upgradeAmount: 15
-  maxLevel: 3
+  maxLevel: 9
   isRevive: 0
   isHealthRefill: 0

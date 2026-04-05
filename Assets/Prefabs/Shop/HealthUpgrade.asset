@@ -19,6 +19,6 @@ MonoBehaviour:
   type: 0
   statToUpgrade: MaxHealth
   upgradeAmount: 20
-  maxLevel: 3
+  maxLevel: 9
   isRevive: 0
   isHealthRefill: 0
