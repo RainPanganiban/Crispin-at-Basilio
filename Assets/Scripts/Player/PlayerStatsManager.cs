@@ -39,13 +39,19 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     {
         if (isServer)
         {
-            isDead = false;
-
-            // FIX 3: Siguraduhin na laging may HP kung hindi galing sa portal
-            if (!healthSetFromSession || syncedHealth <= 0)
+            // PERSISTENT DEATH CHECK:
+            if (syncedHealth <= 0 && healthSetFromSession)
+            {
+                isDead = true;
+                health.SetValue(0);
+                syncedHealth = 0;
+                RpcNotifyDeath();
+            }
+            else if (!healthSetFromSession || syncedHealth <= 0)
             {
                 health.SetValue(health.maxValue);
                 syncedHealth = health.maxValue;
+                isDead = false;
             }
 
             stamina.SetValue(stamina.maxValue);
@@ -56,12 +62,15 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         playerMovement = GetComponent<PlayerMovement>();
         playerSoundManager = GetComponent<PlayerSoundManager>();
 
-        // Force sync local objects sa synced values
         health.SetMax(syncedMaxHealth > 0 ? syncedMaxHealth : 100f);
-        health.SetValue(syncedHealth > 0 ? syncedHealth : health.maxValue);
+        health.SetValue(syncedHealth);
         stamina.SetValue(syncedStamina);
 
         OnStatsReady?.Invoke();
+
+        // FIX (1 & 2): Force visual state base sa current synced value ng isDead.
+        // Ito ang sisiguro na itatago agad ang body pagka-load ng scene.
+        UpdateVisualState(isDead);
     }
 
     private void Update()
@@ -131,7 +140,6 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         if (isDead) return;
         isDead = true;
 
-        // FIX 1: Force sync death state sa lahat ng clients para itago ang model/tag
         RpcNotifyDeath();
         CheckGameOver();
     }
@@ -139,15 +147,45 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     [ClientRpc]
     void RpcNotifyDeath()
     {
-        gameObject.tag = "Untagged";
-
-        Collider col = GetComponent<Collider>();
-        if (col != null) col.enabled = false;
-
-        Transform modelTransform = transform.Find("Model");
-        if (modelTransform != null) modelTransform.gameObject.SetActive(false);
-
+        UpdateVisualState(true);
         if (playerSoundManager != null) playerSoundManager.PlayDeath();
+    }
+
+    // NEW FUNCTION: Centralized visual toggle para sa death/revive
+    private void UpdateVisualState(bool dead)
+    {
+        if (dead)
+        {
+            gameObject.tag = "Untagged";
+            gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+
+            Collider col = GetComponent<Collider>();
+            if (col != null) col.enabled = false;
+
+            CharacterController cc = GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false;
+
+            Transform modelTransform = transform.Find("Model");
+            if (modelTransform != null) modelTransform.gameObject.SetActive(false);
+
+            if (playerMovement != null) playerMovement.enabled = false;
+        }
+        else
+        {
+            gameObject.tag = "Player";
+            gameObject.layer = LayerMask.NameToLayer("Player");
+
+            Collider col = GetComponent<Collider>();
+            if (col != null) col.enabled = true;
+
+            CharacterController cc = GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = true;
+
+            Transform modelTransform = transform.Find("Model");
+            if (modelTransform != null) modelTransform.gameObject.SetActive(true);
+
+            if (playerMovement != null) playerMovement.enabled = true;
+        }
     }
 
     [Server]
@@ -171,7 +209,6 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     [Server]
     public void ServerRevive()
     {
-        // FIX 2: I-reset ang stats at i-sync sa lahat para sa "Try Again"
         isDead = false;
         health.SetValue(health.maxValue);
         syncedHealth = health.maxValue;
@@ -184,21 +221,14 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     [ClientRpc]
     void RpcNotifyRevive()
     {
-        gameObject.tag = "Player";
-
-        Collider col = GetComponent<Collider>();
-        if (col != null) col.enabled = true;
-
-        Transform modelTransform = transform.Find("Model");
-        if (modelTransform != null) modelTransform.gameObject.SetActive(true);
-
-        if (playerMovement != null) playerMovement.enabled = true;
+        UpdateVisualState(false);
 
         Animator anim = GetComponent<Animator>();
-        if (anim != null) anim.enabled = true;
-
-        // I-reset ang visual properties
-        if (anim != null) anim.speed = 1f;
+        if (anim != null)
+        {
+            anim.enabled = true;
+            anim.speed = 1f;
+        }
     }
 
     // --- SYNCVAR HOOKS ---
@@ -221,10 +251,7 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     void OnDeadChanged(bool oldValue, bool newValue)
     {
         OnDeadStateChanged?.Invoke(newValue);
-
-        // Fallback protection para sa late-joiners
-        if (newValue) RpcNotifyDeath();
-        else RpcNotifyRevive();
+        UpdateVisualState(newValue);
     }
 
     // --- UTILITIES ---

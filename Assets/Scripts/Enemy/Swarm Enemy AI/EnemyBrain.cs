@@ -73,10 +73,21 @@ public class EnemyBrain : NetworkBehaviour
     protected void UpdateTarget()
     {
         currentTarget = aggroSystem.GetCurrentTarget();
+
+        // FIX: Kung may target, i-check kung patay na ito sa PlayerStatsManager
+        if (currentTarget != null)
+        {
+            PlayerStatsManager targetStats = currentTarget.GetComponent<PlayerStatsManager>();
+            if (targetStats != null && targetStats.IsDead)
+            {
+                currentTarget = null; // Bitawan ang target para huminto ang enemy
+            }
+        }
+
         if (currentTarget == null)
         {
             currentState = EnemyState.Idle;
-            agent.ResetPath();
+            if (agent.hasPath) agent.ResetPath();
         }
     }
 
