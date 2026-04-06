@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using System.Linq; // Idagdag ito para sa filtering ng list
 
 [RequireComponent(typeof(Collider))]
 public class LevelNode : NetworkBehaviour
@@ -62,8 +63,13 @@ public class LevelNode : NetworkBehaviour
         if (identity == null || identity.connectionToClient == null)
             return;
 
-        playersInside.Add(identity);
-        TryStartCountdown();
+        // Siguraduhin na ang pumapasok ay buhay na player
+        var stats = identity.GetComponent<PlayerStatsManager>();
+        if (stats != null && !stats.IsDead)
+        {
+            playersInside.Add(identity);
+            TryStartCountdown();
+        }
     }
 
     void OnTriggerExit(Collider other)
@@ -83,11 +89,30 @@ public class LevelNode : NetworkBehaviour
         }
     }
 
+    // --- ITO ANG BINAGO ---
     bool HasAllRequiredPlayers()
     {
-        // Require all connected players to be inside this node.
-        int connectedPlayers = NetworkServer.connections.Count;
-        return isUnlocked && connectedPlayers > 0 && playersInside.Count >= connectedPlayers;
+        if (!isUnlocked) return false;
+
+        // 1. Kunin lahat ng connected players na BUHAY (hindi isDead)
+        var alivePlayers = FindObjectsByType<PlayerStatsManager>(FindObjectsSortMode.None)
+                            .Where(p => !p.IsDead)
+                            .ToList();
+
+        int aliveCount = alivePlayers.Count;
+
+        // Walang buhay na player? Wag mag-start.
+        if (aliveCount <= 0) return false;
+
+        // 2. Linisin ang playersInside (tanggalin ang mga nadisconnect o biglang namatay habang nasa loob)
+        playersInside.RemoveWhere(identity => {
+            if (identity == null) return true;
+            var stats = identity.GetComponent<PlayerStatsManager>();
+            return stats == null || stats.IsDead;
+        });
+
+        // 3. I-check kung lahat ng buhay na players ay nasa loob na ng zone
+        return playersInside.Count >= aliveCount;
     }
 
     void TryStartCountdown()
@@ -119,6 +144,7 @@ public class LevelNode : NetworkBehaviour
         {
             yield return new WaitForSeconds(0.1f);
 
+            // Re-check kung andun pa rin lahat ng buhay na players
             if (!HasAllRequiredPlayers())
             {
                 StopCountdown();
@@ -143,7 +169,6 @@ public class LevelNode : NetworkBehaviour
         }
     }
 
-    // Called server-side by LevelProgressionManager when progression changes.
     [Server]
     public void ServerSetUnlocked(bool unlocked)
     {
@@ -157,32 +182,16 @@ public class LevelNode : NetworkBehaviour
 
     void OnUnlockedChanged(bool oldValue, bool newValue)
     {
-        // Client-side visuals for locked vs unlocked state go here.
-        // Example: enable/disable highlight, collider, icon, etc.
         Collider col = GetComponent<Collider>();
-        col.enabled = newValue;
+        if (col != null) col.enabled = newValue;
     }
 
     void OnCountdownChanged(float oldValue, float newValue)
     {
-        // Client-side UI update based on countdownRemaining.
-        // Hook this up to a world-space progress bar or HUD element.
+        // UI implementation here
     }
 
-    // Public getters for UI components to read SyncVar values
-    public bool IsUnlocked()
-    {
-        return isUnlocked;
-    }
-
-    public float GetCountdownRemaining()
-    {
-        return countdownRemaining;
-    }
-
-    public float GetRequiredHoldTime()
-    {
-        return requiredHoldTime;
-    }
+    public bool IsUnlocked() => isUnlocked;
+    public float GetCountdownRemaining() => countdownRemaining;
+    public float GetRequiredHoldTime() => requiredHoldTime;
 }
-

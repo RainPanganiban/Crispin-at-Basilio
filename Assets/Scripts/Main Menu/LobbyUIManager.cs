@@ -3,17 +3,21 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement; // Importante para sa paglipat ng Scene
 
 public class LobbyUIManager : MonoBehaviour
 {
     public LobbyPlayer localPlayer;
 
+    [Header("UI Elements")]
     public TMP_InputField nameInput;
     public Button crispinButton;
     public Button basilioButton;
     public Button readyButton;
     public Button startGameButton;
+    public Button backButton; // I-drag ang iyong bagong Back Button dito sa Inspector
 
+    [Header("Player Slots")]
     public TMP_Text leftNameText;
     public TMP_Text leftClassText;
     public TMP_Text leftReadyText;
@@ -22,6 +26,7 @@ public class LobbyUIManager : MonoBehaviour
     public TMP_Text rightClassText;
     public TMP_Text rightReadyText;
 
+    [Header("Prefabs")]
     public GameObject gameplayPlayerPrefab;
     public GameObject lobbyPlayerPrefab;
 
@@ -33,12 +38,38 @@ public class LobbyUIManager : MonoBehaviour
         crispinButton.interactable = false;
         basilioButton.interactable = false;
         readyButton.interactable = false;
+
+        // Setup Back Button click listener
+        if (backButton != null)
+        {
+            backButton.onClick.AddListener(BackToMainMenu);
+        }
     }
 
     public void StartGame()
     {
         if (!NetworkServer.active) return; // only host can start
         NetworkManager.singleton.ServerChangeScene("Overworld");
+    }
+
+    // FUNCTION PARA SA BACK BUTTON
+    public void BackToMainMenu()
+    {
+        if (NetworkManager.singleton != null)
+        {
+            // Tinitigil ang connection base kung host o client ang player
+            if (NetworkServer.active && NetworkClient.isConnected)
+            {
+                NetworkManager.singleton.StopHost();
+            }
+            else
+            {
+                NetworkManager.singleton.StopClient();
+            }
+        }
+
+        // Siguraduhin na "Main Menu" ang eksaktong pangalan ng scene mo sa Build Settings
+        SceneManager.LoadScene("Main Menu");
     }
 
     IEnumerator WaitForLocalPlayer()
