@@ -6,6 +6,9 @@ public class bossRotation : BossMovementBase
     [Header("Rotation")]
     public float rotationSpeed = 5f;
 
+    [Header("Movement")]
+    public float moveSpeed = 1.2f; // Slow movement speed
+
     [Header("Footstep tremor (optional)")]
     public bool enableFootstepTremor = true;
     public float tremorInterval = 1.1f;
@@ -70,17 +73,21 @@ public class bossRotation : BossMovementBase
 
         if (lookDir.sqrMagnitude > 0.001f)
         {
+            // Rotate toward player
             transform.forward = Vector3.Slerp(
                 transform.forward,
                 lookDir.normalized,
                 rotationSpeed * Time.deltaTime
             );
+
+            // Slow forward movement
+            transform.position += transform.forward * moveSpeed * Time.deltaTime;
         }
 
-        syncedMovementSpeed = 0f;
+        syncedMovementSpeed = moveSpeed;
 
         if (animator != null && animator.runtimeAnimatorController != null)
-            animator.SetFloat(SpeedHash, 0f);
+            animator.SetFloat(SpeedHash, syncedMovementSpeed);
     }
 
     [Server]
