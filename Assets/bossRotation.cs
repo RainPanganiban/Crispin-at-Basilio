@@ -8,6 +8,7 @@ public class bossRotation : BossMovementBase
 
     [Header("Movement")]
     public float moveSpeed = 1.2f; // Slow movement speed
+    public float detectionRadius = 10f; // Boss stops if player is beyond this radius
 
     [Header("Footstep tremor (optional)")]
     public bool enableFootstepTremor = true;
@@ -37,10 +38,8 @@ public class bossRotation : BossMovementBase
         if (!movementEnabled)
         {
             syncedMovementSpeed = 0f;
-
             if (animator != null && animator.runtimeAnimatorController != null)
                 animator.SetFloat(SpeedHash, 0f);
-
             return;
         }
 
@@ -61,10 +60,8 @@ public class bossRotation : BossMovementBase
         if (target == null)
         {
             syncedMovementSpeed = 0f;
-
             if (animator != null && animator.runtimeAnimatorController != null)
                 animator.SetFloat(SpeedHash, 0f);
-
             return;
         }
 
@@ -80,14 +77,20 @@ public class bossRotation : BossMovementBase
                 rotationSpeed * Time.deltaTime
             );
 
-            // Slow forward movement
-            transform.position += transform.forward * moveSpeed * Time.deltaTime;
+            // Move only if player is within detection radius
+            if (lookDir.magnitude <= detectionRadius)
+            {
+                transform.position += transform.forward * moveSpeed * Time.deltaTime;
+                syncedMovementSpeed = moveSpeed;
+            }
+            else
+            {
+                syncedMovementSpeed = 0f;
+            }
+
+            if (animator != null && animator.runtimeAnimatorController != null)
+                animator.SetFloat(SpeedHash, syncedMovementSpeed);
         }
-
-        syncedMovementSpeed = moveSpeed;
-
-        if (animator != null && animator.runtimeAnimatorController != null)
-            animator.SetFloat(SpeedHash, syncedMovementSpeed);
     }
 
     [Server]
