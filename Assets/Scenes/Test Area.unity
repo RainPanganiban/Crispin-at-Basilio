@@ -913,14 +913,14 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3418191222807997035, guid: 74c8bdf7f3dc50943b359695c16707df, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5324563418662300492}
-    - targetCorrespondingSourceObject: {fileID: 3418191222807997035, guid: 74c8bdf7f3dc50943b359695c16707df, type: 3}
-      insertIndex: -1
+      insertIndex: 2
       addedObject: {fileID: 5324563418662300493}
     - targetCorrespondingSourceObject: {fileID: 3418191222807997035, guid: 74c8bdf7f3dc50943b359695c16707df, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 5324563418662300496}
+    - targetCorrespondingSourceObject: {fileID: 3418191222807997035, guid: 74c8bdf7f3dc50943b359695c16707df, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5324563418662300495}
+      addedObject: {fileID: 5324563418662300497}
     - targetCorrespondingSourceObject: {fileID: 6925182443011599722, guid: 74c8bdf7f3dc50943b359695c16707df, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2265415642622704887}
@@ -938,37 +938,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 667446972453337118, guid: 74c8bdf7f3dc50943b359695c16707df, type: 3}
   m_PrefabInstance: {fileID: 5324563418662300489}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5324563418662300492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+--- !u!4 &5324563418662300492 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7308762169210729023, guid: 74c8bdf7f3dc50943b359695c16707df, type: 3}
+  m_PrefabInstance: {fileID: 5324563418662300489}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5324563418662300490}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5420f7639f7fa2c49a2c34be7787cb8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  cooldown: 2
-  duration: 1
-  attackSound: {fileID: 0}
-  laserBeamPrefab: {fileID: 7123666503054923054, guid: c7b7a3dbfcc368044a6d67caa02df621, type: 3}
-  firePoint: {fileID: 5324563418662300491}
-  laserDamage: 15
-  laserDistance: 25
-  laserLifetime: 2
-  laserWidth: 0.5
-  tickInterval: 0.25
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  trackingSpeed: 5
-  networkAnimator: {fileID: 5324563418662300493}
-  attackTrigger: EyeLaser
 --- !u!114 &5324563418662300493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -991,22 +965,74 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 8011193510919273437, guid: 74c8bdf7f3dc50943b359695c16707df, type: 3}
   m_PrefabInstance: {fileID: 5324563418662300489}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5324563418662300495
+--- !u!114 &5324563418662300496
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5324563418662300490}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36da51e81078e7c45815fff6fde6399d, type: 3}
+  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 5324563418662300492}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  onlySyncOnChangeCorrectionMultiplier: 2
+  useFixedUpdate: 0
+  rotationSensitivity: 0.01
+  positionPrecision: 0.01
+  scalePrecision: 0.01
+--- !u!114 &5324563418662300497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5324563418662300490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9370497608a85a41b8f5da7bbfc75cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  lineRenderer: {fileID: 0}
+  cooldown: 2
+  duration: 1
+  attackSound: {fileID: 0}
+  laserBeamPrefab: {fileID: 7123666503054923054, guid: c7b7a3dbfcc368044a6d67caa02df621, type: 3}
+  firePoint: {fileID: 5324563418662300491}
+  laserDamage: 15
+  laserDistance: 25
+  laserLifetime: 2
+  laserWidth: 0.5
+  tickInterval: 0.25
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  initialTrackingSpeed: 5
+  trackingAcceleration: 15
+  initialAimOffsetAngle: 25
+  targetVerticalOffset: 1
+  networkAnimator: {fileID: 5324563418662300493}
+  attackTrigger: EyeLaser
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
