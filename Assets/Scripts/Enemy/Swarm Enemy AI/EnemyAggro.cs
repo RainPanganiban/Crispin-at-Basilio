@@ -16,7 +16,6 @@ public class EnemyAggro : NetworkBehaviour
     [SerializeField] private AggroType aggroType = AggroType.DamagePriority;
 
     [Header("Targeting Preferences")]
-    [Tooltip("The name of the child object on the Player prefab that enemies should look at (e.g., 'Model', 'Head', 'Base'). Leave empty to target the Root.")]
     public string targetChildName = "Model";
 
     [Header("Surround Settings")]
@@ -25,8 +24,8 @@ public class EnemyAggro : NetworkBehaviour
 
     [Header("Distance Settings")]
     [SerializeField] private float aggroRadius = 15f;
-    [SerializeField] private float aggroSwitchDistance = 1.5f;  // How much closer new target must be to switch
-    [SerializeField] private float similarDistanceThreshold = 0.2f; // Only chaos-switch when distances within this ratio
+    [SerializeField] private float aggroSwitchDistance = 1.5f;
+    [SerializeField] private float similarDistanceThreshold = 0.2f;
 
     [Header("Timing")]
     [SerializeField] private float aggroUpdateInterval = 0.6f;
@@ -34,7 +33,7 @@ public class EnemyAggro : NetworkBehaviour
 
     [Header("Chaos Settings")]
     [Range(0f, 1f)]
-    [SerializeField] private float chaosChance = 0.15f; // Chance to switch when targets are similarly distant
+    [SerializeField] private float chaosChance = 0.15f;
 
     [Header("Swarm Settings")]
     [SerializeField] private float swarmShareRadius = 8f;
@@ -57,10 +56,21 @@ public class EnemyAggro : NetworkBehaviour
         allEnemies.Remove(this);
     }
 
+    // DAGDAG: Ito ang sasagot sa SendMessage mula sa PlayerStatsManager
+    [Server]
+    public void OnTargetDead(GameObject deadPlayer)
+    {
+        // Kung ang target ngayon ay ang player na namatay, i-null agad
+        if (currentTarget != null && (currentTarget.gameObject == deadPlayer || currentTarget.IsChildOf(deadPlayer.transform)))
+        {
+            currentTarget = null;
+        }
+    }
+
     [Server]
     private IEnumerator AggroRoutine()
     {
-        yield return new WaitForSeconds(Random.Range(0f, 0.5f)); // Desync swarm timing
+        yield return new WaitForSeconds(Random.Range(0f, 0.5f));
 
         while (true)
         {
@@ -68,10 +78,6 @@ public class EnemyAggro : NetworkBehaviour
             yield return new WaitForSeconds(aggroUpdateInterval);
         }
     }
-
-    // ===============================
-    // CORE TARGET SELECTION
-    // ===============================
 
     [Server]
     private void ChooseTarget()
@@ -91,6 +97,13 @@ public class EnemyAggro : NetworkBehaviour
         {
             if (player == null) continue;
 
+            // FIX: I-check kung patay na ang player
+            PlayerStatsManager stats = player.GetComponent<PlayerStatsManager>();
+            if (stats != null && stats.IsDead) continue; // Skip kapag patay na
+
+            // FIX: I-check din ang Tag (para sigurado)
+            if (!player.CompareTag("Player")) continue;
+
             Transform playerRoot = player.transform;
             float distance = Vector3.Distance(transform.position, playerRoot.position);
 
@@ -99,7 +112,6 @@ public class EnemyAggro : NetworkBehaviour
 
             float score = distance;
 
-            // Chaos: randomly bias score only when comparing similar distances
             if (Random.value < chaosChance)
                 score *= Random.Range(0.9f, 1.15f);
 
@@ -110,22 +122,25 @@ public class EnemyAggro : NetworkBehaviour
             }
         }
 
-        // Clear target if current is invalid (destroyed, left radius) or no valid targets
-        if (currentTarget != null && (currentTarget.gameObject == null || !currentTarget.CompareTag("Player")))
-            currentTarget = null;
-
-        if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.position) > aggroRadius)
-            currentTarget = null;
+        // VALIDATION: Siguraduhin na ang currentTarget ay hindi naging invalid habang tumatakbo
+        if (currentTarget != null)
+        {
+            PlayerStatsManager currentStats = currentTarget.GetComponentInParent<PlayerStatsManager>();
+            if (currentStats != null && currentStats.IsDead)
+            {
+                currentTarget = null;
+            }
+        }
 
         if (bestTarget == null)
+        {
+            // Kung wala nang makitang buhay, i-clear ang target
+            currentTarget = null;
             return;
+        }
 
         TrySwitchTarget(bestTarget);
     }
-
-    // ===============================
-    // SWITCH LOGIC
-    // ===============================
 
     [Server]
     private void TrySwitchTarget(Transform newTarget)
@@ -146,8 +161,6 @@ public class EnemyAggro : NetworkBehaviour
         float newDistance = Vector3.Distance(transform.position, newTarget.position);
 
         bool significantlyCloser = newDistance + aggroSwitchDistance < currentDistance;
-
-        // Chaos: only switch when distances are similar (avoid erratic long-range switches)
         bool distancesSimilar = Mathf.Abs(currentDistance - newDistance) / (currentDistance + 0.01f) < similarDistanceThreshold;
         bool chaosSwitch = distancesSimilar && Random.value < chaosChance;
 
@@ -160,10 +173,8 @@ public class EnemyAggro : NetworkBehaviour
     [Server]
     private void SetTarget(Transform target)
     {
-        // Try to target the actual player visual model rather than the root
-        // This stops enemies from looking at the camera pivot or feet.
         Transform actualTarget = target;
-        
+
         if (!string.IsNullOrEmpty(targetChildName))
         {
             Transform modelTransform = target.Find(targetChildName);
@@ -182,38 +193,29 @@ public class EnemyAggro : NetworkBehaviour
         }
     }
 
-    // ===============================
-    // DAMAGE PULL (Option 1)
-    // ===============================
-
     [Server]
     public void ForceTarget(Transform attacker)
     {
-        Debug.Log($"{name} forced to target {attacker.name}");
-        
         if (aggroType == AggroType.ClosestOnly)
             return;
 
+        // Huwag payagan ang force target kung patay na ang attacker
+        PlayerStatsManager stats = attacker.GetComponentInParent<PlayerStatsManager>();
+        if (stats != null && stats.IsDead) return;
+
         SetTarget(attacker);
     }
-
-    // ===============================
-    // SWARM SHARE (Option 2)
-    // ===============================
 
     [Server]
     private void ShareTargetWithSwarm(Transform target)
     {
         foreach (var enemy in allEnemies)
         {
-            if (enemy == this)
-                continue;
-
+            if (enemy == this) continue;
             float distance = Vector3.Distance(transform.position, enemy.transform.position);
-
             if (distance <= swarmShareRadius)
             {
-                if (Random.value > 0.3f) // Not 100% adoption → keeps chaos
+                if (Random.value > 0.3f)
                 {
                     enemy.ReceiveSwarmTarget(target);
                 }
@@ -224,16 +226,16 @@ public class EnemyAggro : NetworkBehaviour
     [Server]
     public void ReceiveSwarmTarget(Transform target)
     {
+        // Check kung buhay pa bago tanggapin ang swarm target
+        PlayerStatsManager stats = target.GetComponentInParent<PlayerStatsManager>();
+        if (stats != null && stats.IsDead) return;
+
         if (currentTarget == null || Random.value > 0.5f)
         {
             SetTarget(target);
         }
     }
 
-    /// <summary>
-    /// Get a surround position around the current target. Use maxRadius to ensure
-    /// slots are within attack range (e.g. pass EnemyBrain.attackRange).
-    /// </summary>
     public Vector3 GetSurroundPosition(float maxRadius = -1f)
     {
         if (currentTarget == null)
@@ -243,9 +245,7 @@ public class EnemyAggro : NetworkBehaviour
         if (maxRadius > 0f)
             radius = Mathf.Min(radius, maxRadius);
 
-        // Get only enemies attacking same target
         List<EnemyAggro> sameTarget = new List<EnemyAggro>();
-
         foreach (var enemy in allEnemies)
         {
             if (enemy.currentTarget == currentTarget)
@@ -255,22 +255,15 @@ public class EnemyAggro : NetworkBehaviour
         int index = sameTarget.IndexOf(this);
         int count = sameTarget.Count;
 
-        if (count == 0)
+        if (count == 0 || index == -1)
             return currentTarget.position + (transform.position - currentTarget.position).normalized * Mathf.Min(radius, 1f);
 
         float angleStep = 360f / count;
         float angle = angleStep * index;
-
         angle += Random.Range(-15f, 15f);
-
         float radians = angle * Mathf.Deg2Rad;
 
-        Vector3 offset = new Vector3(
-            Mathf.Cos(radians),
-            0,
-            Mathf.Sin(radians)
-        ) * radius;
-
+        Vector3 offset = new Vector3(Mathf.Cos(radians), 0, Mathf.Sin(radians)) * radius;
         offset += Random.insideUnitSphere * surroundJitter;
         offset.y = 0;
 
@@ -281,7 +274,6 @@ public class EnemyAggro : NetworkBehaviour
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, aggroRadius);
-
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, swarmShareRadius);
     }
