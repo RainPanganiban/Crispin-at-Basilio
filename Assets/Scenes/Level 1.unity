@@ -311683,6 +311683,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2124231710}
     m_Modifications:
+    - target: {fileID: 297684915432520228, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 3082055868530467007, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
       propertyPath: m_Name
       value: Onglo (1)
@@ -311690,6 +311694,10 @@ PrefabInstance:
     - target: {fileID: 3082055868530467007, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3082055868530467007, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 3244163360590821156, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
       propertyPath: sceneId

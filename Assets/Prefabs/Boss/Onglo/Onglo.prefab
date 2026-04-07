@@ -399,7 +399,7 @@ GameObject:
   - component: {fileID: 4676619450491215623}
   m_Layer: 0
   m_Name: Onglo
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1302,6 +1302,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 60255071ae0961d49ad8659a2ec9c82a, type: 3}
       propertyPath: m_Name
       value: ongglo-1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 60255071ae0961d49ad8659a2ec9c82a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 1630794972795428178, guid: 60255071ae0961d49ad8659a2ec9c82a, type: 3}
       propertyPath: m_Materials.Array.size

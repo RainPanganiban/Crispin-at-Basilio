@@ -20313,6 +20313,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Diwata n32
       objectReference: {fileID: 0}
+    - target: {fileID: 835382408267739349, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 1250461814049305488, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: arenaCenter
       value: 
@@ -20418,10 +20422,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4812855404122033223, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
-      propertyPath: spawnOrigin
-      value: 
-      objectReference: {fileID: 1255864302}
-    - target: {fileID: 4812855404122033223, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: spawnPointCountToUse
       value: 5
       objectReference: {fileID: 0}
@@ -20509,10 +20509,6 @@ PrefabInstance:
       propertyPath: 'swarmSpawnPoints.Array.data[0]'
       value: 
       objectReference: {fileID: 789355349}
-    - target: {fileID: 6405400774946895610, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7168334085329538488, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: maxHealth
       value: 50

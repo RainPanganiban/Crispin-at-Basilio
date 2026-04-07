@@ -40,6 +40,20 @@ public class SpiritLanceAttack : BaseAttack
         vulnerabilityManager = bossController != null ? bossController.GetComponent<DiwataVulnerabilityManager>() : null;
     }
 
+    // FIX: Dinagdagan ng check para hindi umatake kung malayo o kung hindi active ang server
+    public override bool Server_CanExecute()
+    {
+        if (!isServer || boss == null || !NetworkServer.active) return false;
+
+        Transform targetPlayer = Server_FindClosestPlayer();
+        if (targetPlayer != null)
+        {
+            float dist = Vector3.Distance(transform.position, targetPlayer.position);
+            return dist <= maxRange;
+        }
+        return false;
+    }
+
     public override void Server_Execute()
     {
         if (boss != null && !string.IsNullOrEmpty(animationTriggerName))
@@ -50,6 +64,9 @@ public class SpiritLanceAttack : BaseAttack
 
     public override void Server_OnAnimationEvent(string eventName)
     {
+        // FIX: Siniguro na server-only at active ang network bago mag-fire
+        if (!isServer || !NetworkServer.active) return;
+
         if (eventName == Event_FireLances)
         {
             // Pumili ng random spawn points mula sa listahan
@@ -60,7 +77,11 @@ public class SpiritLanceAttack : BaseAttack
                 Server_SpawnLanceAtPoint(origin);
             }
 
-            Rpc_OnLancesFired();
+            // FIX: Guard for ClientRpc
+            if (NetworkServer.active)
+            {
+                Rpc_OnLancesFired();
+            }
 
             if (vulnerabilityManager != null)
                 vulnerabilityManager.Server_OnAttackCompleted();
@@ -119,6 +140,25 @@ public class SpiritLanceAttack : BaseAttack
     void Rpc_OnLancesFired()
     {
         Debug.Log("[SpiritLance] Lances fired from selected spawn points!");
+    }
+
+    // Helper para mahanap ang pinakamalapit na player para sa distance check
+    Transform Server_FindClosestPlayer()
+    {
+        Transform best = null;
+        float bestSqr = float.PositiveInfinity;
+
+        foreach (var conn in NetworkServer.connections.Values)
+        {
+            if (conn == null || conn.identity == null) continue;
+            float d = (conn.identity.transform.position - transform.position).sqrMagnitude;
+            if (d < bestSqr)
+            {
+                bestSqr = d;
+                best = conn.identity.transform;
+            }
+        }
+        return best;
     }
 
     public override void Server_Stop() { }
