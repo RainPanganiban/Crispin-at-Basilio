@@ -5,8 +5,8 @@ using System.Collections;
 public class AtomicBreath : EnemyAttack
 {
     [Header("Laser Setup")]
-    [SerializeField] private GameObject laserBeamPrefab;
-    [SerializeField] private Transform firePoint;
+    [SerializeField] private GameObject laserBeamPrefab;   // Drag your laser prefab here
+    [SerializeField] private Transform firePoint;          // Drag your FirePoint here
 
     [Header("Laser Stats")]
     [SerializeField] private float laserDamage = 15f;
@@ -41,35 +41,31 @@ public class AtomicBreath : EnemyAttack
         }
     }
 
-    // =========================
-    // ANIMATION EVENT: CHARGE
-    // =========================
+    // ?? Animation Event (optional charge phase)
+    [ServerCallback]
     public void StartCharge()
     {
         Debug.Log("Laser charging...");
     }
 
-    // =========================
-    // ANIMATION EVENT: FIRE
-    // =========================
+    // ?? Animation Event (spawn laser)
+    [ServerCallback]
     public void FireLaser()
     {
-        if (!isServer) return;
-
         if (laserBeamPrefab == null || firePoint == null)
         {
             Debug.LogError("Missing laser prefab or firepoint!");
             return;
         }
 
+        // Spawn laser at firepoint
         activeLaser = Instantiate(
             laserBeamPrefab,
             firePoint.position,
             firePoint.rotation
         );
 
-        NetworkServer.Spawn(activeLaser);
-
+        // Initialize laser if script exists
         var beam = activeLaser.GetComponent<BungisngisLaserBeam>();
         if (beam != null)
         {
@@ -85,64 +81,42 @@ public class AtomicBreath : EnemyAttack
             );
         }
 
+        // Network spawn
+        NetworkServer.Spawn(activeLaser);
+
+        // Start tracking
         StartCoroutine(TrackLaser());
     }
 
-    // =========================
-    // ANIMATION EVENT: END
-    // =========================
+    // ?? Animation Event (destroy laser)
+    [ServerCallback]
     public void EndLaser()
     {
-        if (!isServer) return;
-
         if (activeLaser != null)
         {
             NetworkServer.Destroy(activeLaser);
         }
     }
 
-    // =========================
-    // NEAREST PLAYER FINDER
-    // =========================
-    private Transform GetNearestPlayer()
-    {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-
-        Transform nearest = null;
-        float minDist = Mathf.Infinity;
-
-        foreach (GameObject p in players)
-        {
-            float dist = Vector3.Distance(transform.position, p.transform.position);
-
-            if (dist < minDist)
-            {
-                minDist = dist;
-                nearest = p.transform;
-            }
-        }
-
-        return nearest;
-    }
-
-    // =========================
-    // TRACKING + AIM FIX
-    // =========================
+    // ?? Simple tracking
     private IEnumerator TrackLaser()
     {
+        EnemyAggro aggro = GetComponent<EnemyAggro>();
+
         while (activeLaser != null && firePoint != null)
         {
+            // Stick to firepoint
             activeLaser.transform.position = firePoint.position;
 
-            Transform target = GetNearestPlayer();
-
-            if (target != null)
+            // Track player
+            if (aggro != null && aggro.GetCurrentTarget() != null)
             {
+                Transform target = aggro.GetCurrentTarget();
+
                 Vector3 dir = (target.position - firePoint.position).normalized;
+                Quaternion targetRot = Quaternion.LookRotation(dir);
 
-                Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
-
-                activeLaser.transform.rotation = Quaternion.Slerp(
+                activeLaser.transform.rotation = Quaternion.Lerp(
                     activeLaser.transform.rotation,
                     targetRot,
                     trackingSpeed * Time.deltaTime
