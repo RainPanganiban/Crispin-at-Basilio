@@ -2251,12 +2251,12 @@ MonoBehaviour:
   syncInterval: 0
   health:
     name: Health
-    maxValue: 100
-    currentValue: 100
+    maxValue: 10000
+    currentValue: 10000
   stamina:
     name: Stamina
-    maxValue: 1000
-    currentValue: 1000
+    maxValue: 10000
+    currentValue: 10000
   staminaRegenRate: 5
   healthRegenRate: 0
 --- !u!114 &1964418824019641932
@@ -2276,12 +2276,11 @@ MonoBehaviour:
   syncInterval: 0
   lightDamage: 10
   heavyDamage: 25
-  attackRadius: 1.8
-  attackRange: 3
+  attackRadius: 6
+  attackRange: 0
   hitLayers:
     serializedVersion: 2
     m_Bits: 64
-  comboResetTime: 1.2
   attackPoint: {fileID: 8707195137671282715}
 --- !u!114 &4406393203481131743
 MonoBehaviour:

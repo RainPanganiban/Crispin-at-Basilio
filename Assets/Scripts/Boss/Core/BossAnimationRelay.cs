@@ -9,16 +9,16 @@ public class BossAnimationRelay : NetworkBehaviour
 
     void Awake()
     {
+        // Awtomatikong hahanapin ang scripts sa parent kung sakaling makalimutang i-drag sa Inspector
         if (attackManager == null) attackManager = GetComponentInParent<BossAttackManager>();
         if (controller == null) controller = GetComponentInParent<BossController>();
     }
 
-    // Called by Unity Animation Events.
-    // IMPORTANT: Animation events can fire on clients too; only the server applies gameplay results.
-    public void AnimationEvent(string eventName)
+    // PINALITAN: Dati ay AnimationEvent, ngayon ay Server_OnAnimationEvent para mag-match sa Animator
+    public void Server_OnAnimationEvent(string eventName)
     {
         Debug.Log($"[BossAnimationRelay] Received event: {eventName} (isServer: {isServer})");
-        
+
         if (!isServer)
             return;
 
@@ -29,18 +29,17 @@ public class BossAnimationRelay : NetworkBehaviour
             attackManager.Server_OnAnimationEvent(eventName);
     }
 
-    public void AttackAnimationComplete()
+    // PINALITAN: Dati ay AttackAnimationComplete, ngayon ay Server_OnAttackAnimationComplete
+    public void Server_OnAttackAnimationComplete()
     {
         Debug.Log($"[BossAnimationRelay] AttackAnimationComplete fired (isServer: {isServer})");
-        
+
         if (!isServer)
             return;
 
-        // Force refresh if null
+        // Siguraduhin na may reference pa rin bago tawagin
         if (attackManager == null) attackManager = GetComponentInParent<BossAttackManager>();
         if (controller == null) controller = GetComponentInParent<BossController>();
-
-        Debug.Log($"[BossAnimationRelay] Refs: controller={controller != null}, attackManager={attackManager != null}");
 
         if (attackManager != null)
         {
@@ -58,4 +57,3 @@ public class BossAnimationRelay : NetworkBehaviour
         }
     }
 }
-

@@ -7,150 +7,113 @@ public class MeleeCombat : NetworkBehaviour, ICombatHandler
     [Header("Attack Settings")]
     public float lightDamage = 10f;
     public float heavyDamage = 25f;
-
-    public float attackRadius = 1.5f;
+    public float attackRadius = 5f;
     public float attackRange = 1.5f;
     public LayerMask hitLayers;
 
-    [Header("Combo Settings")]
-    public float comboResetTime = 1.2f;
-
-    private int comboStep = 0;
-    private float lastAttackTime;
-
     [Header("References")]
     public Transform attackPoint;
-    private BasilioAnimation basilioAnimation;
     private PlayerStatsManager statsManager;
 
     void Awake()
     {
-        basilioAnimation = GetComponent<BasilioAnimation>();
         statsManager = GetComponent<PlayerStatsManager>();
     }
 
-    public void OnLightAttack(InputAction.CallbackContext context)
+    // ================================================================
+    // ANIMATION EVENT BRIDGES
+    // ================================================================
+
+    public void AnimationEvent_Hit(int currentComboStep)
     {
-        if (!isLocalPlayer) return; // Make sure only local player triggers it
-        if (!context.started) return;
-
-        // Orient Basilio towards the camera crosshair immediately upon attacking
-        Transform camTransform = GetComponent<PlayerMovement>()?.PlayerCamera;
-        if (camTransform != null)
-        {
-            Vector3 camForward = camTransform.forward;
-            camForward.y = 0; // Keep the rotation perfectly flat on the ground
-            if (camForward.sqrMagnitude > 0.01f)
-            {
-                transform.rotation = Quaternion.LookRotation(camForward);
-            }
-        }
-
-        // Call your existing LightAttack logic
-        GetComponent<CharacterAnimationController>()?.PlayAttack();
-    }
-
-    // Called by the Animation Event "AnimationEvent_Hit"
-    public void ApplyDamageLocalClient(int currentComboStep)
-    {
+        // Gagamit lang ng Log para sa local tracking
         if (isLocalPlayer)
         {
             CmdApplyDamage(currentComboStep);
         }
     }
 
-    // ===============================
-    // SERVER AUTHORITATIVE ATTACK
-    // ===============================
+    public void ApplyDamageLocalClient(int currentComboStep)
+    {
+        AnimationEvent_Hit(currentComboStep);
+    }
+
+    // ================================================================
+    // SERVER-SIDE DAMAGE LOGIC
+    // ================================================================
     [Command]
     void CmdApplyDamage(int animationComboStep)
     {
-        // Sync combo step based on client's animation to ensure damage matches visuals.
-        comboStep = animationComboStep;
-        lastAttackTime = Time.time; 
+        // Ang center ay nasa harap ni Basilio
+        Vector3 center = transform.position + (transform.forward * attackRange);
 
-        float bonus = statsManager != null ? statsManager.BonusAttackDamage : 0f;
-        float damage = ((comboStep == 3) ? heavyDamage : lightDamage) + bonus;
-
-        Vector3 center =
-            attackPoint.position +
-            attackPoint.forward * attackRange;
-
-        Collider[] hits = Physics.OverlapSphere(
-            center,
-            attackRadius,
-            hitLayers
-        );
-
-        bool hitAnything = false;
+        // Gagamit ng Physics filter para optimized
+        Collider[] hits = Physics.OverlapSphere(center, attackRadius, hitLayers);
 
         foreach (Collider hit in hits)
         {
-            if (hit.TryGetComponent(out IDamageable damageable))
-            {
-                // Friendly Fire Protection (If attacker is player and target is player, ignore)
-                // Assuming MeleeCombat is always on a player character
-                bool isTargetPlayer = hit.GetComponent<PlayerMovement>() != null;
+            // Siguraduhin na hindi tinatamaan ang sarili
+            if (hit.transform.root == transform.root) continue;
 
-                if (!isTargetPlayer)
-                {
-                    damageable.TakeDamage(damage, transform);
-                    hitAnything = true;
-                }
+            // 1. Hanapin ang BossHealth
+            BossHealth bossHP = hit.GetComponentInParent<BossHealth>();
+
+            if (bossHP != null)
+            {
+                var vulnMgr = bossHP.GetComponent<DiwataVulnerabilityManager>();
+                float multiplier = (vulnMgr != null) ? vulnMgr.GetDamageMultiplier() : 1f;
+
+                float bonus = statsManager != null ? statsManager.BonusAttackDamage : 0f;
+                float finalDamage = ((animationComboStep == 3) ? heavyDamage : lightDamage) + bonus;
+                finalDamage *= multiplier;
+
+                bossHP.Server_TakeDamage(finalDamage);
+
+                // GINAWANG LOG LANG PARA HINDI PULA SA CONSOLE
+                Debug.Log($"[SERVER] Damage Success: {finalDamage} HP to {hit.name}");
+                continue;
+            }
+
+            // 2. Ordinaryong Enemy/Swarm
+            IDamageable damageable = hit.GetComponentInParent<IDamageable>();
+            if (damageable != null)
+            {
+                float bonus = statsManager != null ? statsManager.BonusAttackDamage : 0f;
+                float damageValue = ((animationComboStep == 3) ? heavyDamage : lightDamage) + bonus;
+
+                damageable.TakeDamage(damageValue, transform);
+                Debug.Log($"[SERVER] Swarm Damage: {damageValue} to {hit.name}");
             }
         }
-
-        RpcOnAttack(comboStep, hitAnything);
     }
 
-    // ===============================
-    // COMBO LOGIC (SERVER)
-    // ===============================
-    // Note: comboStep is now purely driven by the client's animation comboCount to stay perfectly synced.
+    public void OnLightAttack(InputAction.CallbackContext context)
+    {
+        if (!isLocalPlayer || !context.started) return;
 
-    // ===============================
-    // VISUAL FEEDBACK (ALL CLIENTS)
-    // ===============================
+        // Iharap ang player sa camera direction
+        Transform camTransform = GetComponent<PlayerMovement>()?.PlayerCamera;
+        if (camTransform != null)
+        {
+            Vector3 camForward = camTransform.forward;
+            camForward.y = 0;
+            if (camForward.sqrMagnitude > 0.01f)
+                transform.rotation = Quaternion.LookRotation(camForward);
+        }
+
+        GetComponent<CharacterAnimationController>()?.PlayAttack();
+    }
+
     [ClientRpc]
-    void RpcOnAttack(int step, bool hitAnything)
+    void RpcOnAttack(bool hitAnything)
     {
-        Debug.Log($"Melee Attack Hit Event (Step: {step}, Hit Anything: {hitAnything})");
-
-        // Hit Stop / Freeze Frame
-        if (hitAnything)
-        {
-            StartCoroutine(HitStopRoutine(0.08f)); // Freeze for 80ms for nice crunchy impact
-        }
+        // Iniwan nating blanko para smooth ang animation speed
     }
 
-    private System.Collections.IEnumerator HitStopRoutine(float duration)
-    {
-        Animator anim = GetComponent<Animator>();
-        if (anim != null)
-        {
-            float originalSpeed = anim.speed;
-            anim.speed = 0f;
-            yield return new WaitForSecondsRealtime(duration);
-            
-            // Only unfreeze if it hasn't been destroyed
-            if (anim != null)
-            {
-                anim.speed = originalSpeed;
-            }
-        }
-    }
-
-    // ===============================
-    // DEBUG GIZMOS
-    // ===============================
     void OnDrawGizmosSelected()
     {
-        if (attackPoint == null) return;
-
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(
-            attackPoint.position + attackPoint.forward * attackRange,
-            attackRadius
-        );
+        Vector3 center = transform.position + (transform.forward * attackRange);
+        Gizmos.DrawWireSphere(center, attackRadius);
     }
 }
