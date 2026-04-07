@@ -5,8 +5,8 @@ using System.Collections;
 public class AtomicBreath : EnemyAttack
 {
     [Header("Laser Setup")]
-    [SerializeField] private GameObject laserBeamPrefab;   // Drag your laser prefab here
-    [SerializeField] private Transform firePoint;          // Drag your FirePoint here
+    [SerializeField] private GameObject laserBeamPrefab;
+    [SerializeField] private Transform firePoint;
 
     [Header("Laser Stats")]
     [SerializeField] private float laserDamage = 15f;
@@ -41,16 +41,38 @@ public class AtomicBreath : EnemyAttack
         }
     }
 
-    // ?? Animation Event (optional charge phase)
-    [ServerCallback]
+    // =========================
+    // ANIMATION EVENT: CHARGE
+    // =========================
     public void StartCharge()
     {
         Debug.Log("Laser charging...");
     }
 
-    // ?? Animation Event (spawn laser)
-    [ServerCallback]
+    // =========================
+    // ANIMATION EVENT: FIRE
+    // =========================
     public void FireLaser()
+    {
+        Debug.Log("FireLaser called | isServer: " + isServer);
+
+        if (isServer)
+        {
+            SpawnLaser();
+        }
+        else
+        {
+            CmdFireLaser();
+        }
+    }
+
+    [Command]
+    private void CmdFireLaser()
+    {
+        SpawnLaser();
+    }
+
+    private void SpawnLaser()
     {
         if (laserBeamPrefab == null || firePoint == null)
         {
@@ -58,14 +80,14 @@ public class AtomicBreath : EnemyAttack
             return;
         }
 
-        // Spawn laser at firepoint
         activeLaser = Instantiate(
             laserBeamPrefab,
             firePoint.position,
             firePoint.rotation
         );
 
-        // Initialize laser if script exists
+        NetworkServer.Spawn(activeLaser);
+
         var beam = activeLaser.GetComponent<BungisngisLaserBeam>();
         if (beam != null)
         {
@@ -81,16 +103,31 @@ public class AtomicBreath : EnemyAttack
             );
         }
 
-        // Network spawn
-        NetworkServer.Spawn(activeLaser);
-
-        // Start tracking
         StartCoroutine(TrackLaser());
     }
 
-    // ?? Animation Event (destroy laser)
-    [ServerCallback]
+    // =========================
+    // ANIMATION EVENT: END
+    // =========================
     public void EndLaser()
+    {
+        if (isServer)
+        {
+            DestroyLaser();
+        }
+        else
+        {
+            CmdEndLaser();
+        }
+    }
+
+    [Command]
+    private void CmdEndLaser()
+    {
+        DestroyLaser();
+    }
+
+    private void DestroyLaser()
     {
         if (activeLaser != null)
         {
@@ -98,25 +135,48 @@ public class AtomicBreath : EnemyAttack
         }
     }
 
-    // ?? Simple tracking
+    // =========================
+    // NEAREST PLAYER FINDER
+    // =========================
+    private Transform GetNearestPlayer()
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+        Transform nearest = null;
+        float minDist = Mathf.Infinity;
+
+        foreach (GameObject p in players)
+        {
+            float dist = Vector3.Distance(transform.position, p.transform.position);
+
+            if (dist < minDist)
+            {
+                minDist = dist;
+                nearest = p.transform;
+            }
+        }
+
+        return nearest;
+    }
+
+    // =========================
+    // TRACKING + AIM FIX
+    // =========================
     private IEnumerator TrackLaser()
     {
-        EnemyAggro aggro = GetComponent<EnemyAggro>();
-
         while (activeLaser != null && firePoint != null)
         {
-            // Stick to firepoint
             activeLaser.transform.position = firePoint.position;
 
-            // Track player
-            if (aggro != null && aggro.GetCurrentTarget() != null)
+            Transform target = GetNearestPlayer();
+
+            if (target != null)
             {
-                Transform target = aggro.GetCurrentTarget();
-
                 Vector3 dir = (target.position - firePoint.position).normalized;
-                Quaternion targetRot = Quaternion.LookRotation(dir);
 
-                activeLaser.transform.rotation = Quaternion.Lerp(
+                Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
+
+                activeLaser.transform.rotation = Quaternion.Slerp(
                     activeLaser.transform.rotation,
                     targetRot,
                     trackingSpeed * Time.deltaTime
