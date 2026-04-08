@@ -2276,7 +2276,7 @@ MonoBehaviour:
   syncInterval: 0
   lightDamage: 10
   heavyDamage: 25
-  attackRadius: 6
+  attackRadius: 3
   attackRange: 0
   hitLayers:
     serializedVersion: 2

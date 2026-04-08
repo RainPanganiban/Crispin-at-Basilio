@@ -603,7 +603,7 @@ MonoBehaviour:
   syncInterval: 0
   chaseSpeed: 3.5
   chaseStopDistance: 3
-  chaseStartDistance: 6
+  chaseStartDistance: 8
   arenaCenter: {fileID: 0}
   preferredRadius: 4
   walkSpeed: 1.2
@@ -638,7 +638,7 @@ MonoBehaviour:
   syncInterval: 0
   attackName: Attack
   cooldown: 2
-  maxRange: 5
+  maxRange: 8
   animationTriggerName: Onglo_Stomp
   requiresMovementLock: 1
   ringOrigin: {fileID: 422022761598987747}
@@ -672,7 +672,7 @@ MonoBehaviour:
   syncInterval: 0
   attackName: Attack
   cooldown: 2
-  maxRange: 5
+  maxRange: 20
   animationTriggerName: Onglo_GroundSplit
   requiresMovementLock: 1
   fissureOrigin: {fileID: 4231949332098844287}
@@ -703,7 +703,7 @@ MonoBehaviour:
   syncInterval: 0
   attackName: Attack
   cooldown: 2
-  maxRange: 5
+  maxRange: 25
   animationTriggerName: Onglo_BoulderBarrage
   requiresMovementLock: 1
   boulderSpawnPoints:
@@ -721,7 +721,7 @@ MonoBehaviour:
   lifetime: 6
   forwardSpeed: 10
   upSpeed: 9
-  throwShakeIntensity: 1.5
+  throwShakeIntensity: 2
   phase1Throws: 3
   phase2Throws: 5
   phase3Throws: 8
