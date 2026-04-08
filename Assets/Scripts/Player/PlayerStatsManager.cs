@@ -133,7 +133,7 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         isDead = true;
 
         // Uutusan lahat ng entities na bitawan ang target na ito
-        var allEntities = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+        var allEntities = GameObject.FindObjectsOfType<MonoBehaviour>();
         foreach (var entity in allEntities)
         {
             entity.SendMessage("OnTargetDead", gameObject, SendMessageOptions.DontRequireReceiver);
@@ -154,7 +154,6 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     {
         if (dead)
         {
-            // 1. Tanggalin ang Tag at Physics
             gameObject.tag = "Untagged";
             gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
 
@@ -164,11 +163,9 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
             CharacterController cc = GetComponent<CharacterController>();
             if (cc != null) cc.enabled = false;
 
-            // 2. Itago ang visual
             Transform modelTransform = transform.Find("Model");
             if (modelTransform != null) modelTransform.gameObject.SetActive(false);
 
-            // 3. I-disable ang lahat ng Combat at Movement
             if (playerMovement != null) playerMovement.enabled = false;
 
             var ranged = GetComponent<RangedAttack>();
@@ -182,7 +179,6 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
         }
         else
         {
-            // Ibalik ang lahat kapag nabuhay
             gameObject.tag = "Player";
             gameObject.layer = LayerMask.NameToLayer("Player");
 
@@ -211,16 +207,29 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     [Server]
     void CheckGameOver()
     {
-        PlayerStatsManager[] allPlayers = FindObjectsByType<PlayerStatsManager>(FindObjectsSortMode.None);
+        // Ginamit ang compatible na version ng FindObjects
+        PlayerStatsManager[] allPlayers = GameObject.FindObjectsOfType<PlayerStatsManager>();
         int deadCount = 0;
         foreach (var p in allPlayers)
         {
             if (p.isDead) deadCount++;
         }
+
+        Debug.Log($"[Server] Players Dead: {deadCount}/{allPlayers.Length}");
+
         if (deadCount >= allPlayers.Length && allPlayers.Length > 0)
         {
-            GameOverUI ui = FindFirstObjectByType<GameOverUI>();
-            if (ui != null) ui.RpcShowGameOver();
+            // Ginamit ang FindObjectOfType(true) para mahanap kahit hidden
+            GameOverUI ui = GameObject.FindObjectOfType<GameOverUI>();
+            if (ui != null)
+            {
+                Debug.Log("[Server] GameOverUI found, calling Rpc.");
+                ui.RpcShowGameOver();
+            }
+            else
+            {
+                Debug.LogError("[Server] GameOverUI NOT FOUND!");
+            }
         }
     }
 
@@ -319,6 +328,7 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
     [Command] public void CmdUseStamina(float amount) { UseStamina(amount); }
     [Command] public void CmdRestoreHealth(float amount) { RestoreHealth(amount); }
     [Command] public void CmdRestoreStamina(float amount) { RestoreStamina(amount); }
+
     [Server]
     public void ServerApplyUpgrade(string statName, float amount)
     {
@@ -329,5 +339,5 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
             case "AttackDamage": bonusAttackDamage += amount; break;
         }
     }
-    [Server] public void ServerApplyPersistentData(int coins, List<string> purchasedUpgrades) { /* Shop logic stays the same */ }
+    [Server] public void ServerApplyPersistentData(int coins, List<string> purchasedUpgrades) { }
 }
