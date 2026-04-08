@@ -21202,9 +21202,29 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6155749117630386765, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: phase3SpawnCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6155749117630386765, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: swarmSpawnPoints.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6155749117630386765, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: 'swarmSpawnPoints.Array.data[0]'
       value: 
       objectReference: {fileID: 789355349}
+    - target: {fileID: 6155749117630386765, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: 'swarmSpawnPoints.Array.data[1]'
+      value: 
+      objectReference: {fileID: 687360269}
+    - target: {fileID: 6155749117630386765, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: 'swarmSpawnPoints.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1602918813}
+    - target: {fileID: 6155749117630386765, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: 'swarmSpawnPoints.Array.data[3]'
+      value: 
+      objectReference: {fileID: 595169823}
     - target: {fileID: 6211491385224992538, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: m_Layer
       value: 6

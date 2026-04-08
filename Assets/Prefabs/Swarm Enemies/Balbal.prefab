@@ -742,6 +742,7 @@ MonoBehaviour:
   syncInterval: 0
   cooldown: 2
   duration: 1
+  attackSound: {fileID: 0}
   waveProjectilePrefab: {fileID: 3600918741046071812, guid: 30d0aa7cc56778c43a352fecf0818459, type: 3}
   projectileDamage: 10
   projectileSpeed: 12
@@ -766,6 +767,7 @@ MonoBehaviour:
   syncInterval: 0
   cooldown: 2
   duration: 1
+  attackSound: {fileID: 0}
   directDamage: 10
   leapSpeed: 15
   leapDistance: 5
@@ -792,9 +794,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkClip: {fileID: 0}
-  attackClip: {fileID: 0}
+  walkVolume: 1
+  attackVolume: 1
   hurtClip: {fileID: 0}
+  hurtVolume: 1
   deathClip: {fileID: 0}
+  deathVolume: 1
+  walkInterval: 0.5
 --- !u!1 &5751458865682228948
 GameObject:
   m_ObjectHideFlags: 0
