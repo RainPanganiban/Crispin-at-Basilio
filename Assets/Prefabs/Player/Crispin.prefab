@@ -1296,6 +1296,8 @@ MonoBehaviour:
   minY: -30
   maxY: 60
   distance: 3
+  rotationSmoothTime: 0.12
+  inputSmoothSpeed: 15
   aimSensitivity: 15
   zoomDistance: 0.5
   zoomSpeed: 1
@@ -1951,10 +1953,14 @@ MonoBehaviour:
   moveSpeed: 5
   runSpeed: 8
   rotationSpeed: 10
-  gravity: -9.81
-  jumpHeight: 1
   rollDistance: 5
   rollDuration: 0.3
+  jumpHeight: 1
+  gravity: -9.81
+  fallMultiplier: 2.5
+  bhopSpeedMultiplier: 1.05
+  maxBhopSpeed: 12
+  airControl: 0.4
   isAiming: 0
   cameraTransform: {fileID: 7300475583470436408}
   staminaCostPerSecondRunning: 15

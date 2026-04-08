@@ -281,7 +281,7 @@ public class PlayerStatsManager : NetworkBehaviour, IDamageable
                 for (int i = 0; i < kvp.Key.materials.Length; i++)
                 {
                     Color originalColor = kvp.Value[i];
-                    Color flashColor = Color.Lerp(originalColor, Color.white, 0.5f);
+                    Color flashColor = Color.Lerp(originalColor, Color.red, 0.5f);
                     if (kvp.Key.materials[i].HasProperty("_Color")) kvp.Key.materials[i].color = flashColor;
                     else if (kvp.Key.materials[i].HasProperty("_BaseColor")) kvp.Key.materials[i].SetColor("_BaseColor", flashColor);
                 }
