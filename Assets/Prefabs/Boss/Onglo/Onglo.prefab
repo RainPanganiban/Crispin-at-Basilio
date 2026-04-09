@@ -306,8 +306,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2b69017ca5bb78c4da08053c75c3b798, type: 2}
+  m_sharedMaterial: {fileID: 947614168408602927, guid: 2b69017ca5bb78c4da08053c75c3b798, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -331,8 +331,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -397,9 +397,10 @@ GameObject:
   - component: {fileID: 7588404998804003397}
   - component: {fileID: 6419518730580939671}
   - component: {fileID: 4676619450491215623}
+  - component: {fileID: 7345347866901024932}
   m_Layer: 0
   m_Name: Onglo
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -535,6 +536,7 @@ MonoBehaviour:
     - {fileID: 2917712239413616872}
     - {fileID: 3413062229324071752}
     transitionTriggerName: Onglo_Phase2
+    transitionSFX: {fileID: 8300000, guid: d49fa60994fb5094f89789df914071f9, type: 3}
     movementSpeedMultiplier: 0
     specialBehaviorFlag: 0
   - enterAtHealthPercent: 0.6
@@ -542,6 +544,7 @@ MonoBehaviour:
     - {fileID: 7588404998804003397}
     - {fileID: 3413062229324071752}
     transitionTriggerName: Onglo_Phase3
+    transitionSFX: {fileID: 8300000, guid: 03469d581ab63c040ad4cbdf503a87e1, type: 3}
     movementSpeedMultiplier: 0
     specialBehaviorFlag: 0
   - enterAtHealthPercent: 0.3
@@ -550,6 +553,7 @@ MonoBehaviour:
     - {fileID: 3413062229324071752}
     - {fileID: 7588404998804003397}
     transitionTriggerName: 
+    transitionSFX: {fileID: 0}
     movementSpeedMultiplier: 0
     specialBehaviorFlag: 1
 --- !u!114 &3219410304514427177
@@ -603,7 +607,7 @@ MonoBehaviour:
   syncInterval: 0
   chaseSpeed: 3.5
   chaseStopDistance: 3
-  chaseStartDistance: 6
+  chaseStartDistance: 8
   arenaCenter: {fileID: 0}
   preferredRadius: 4
   walkSpeed: 1.2
@@ -638,7 +642,7 @@ MonoBehaviour:
   syncInterval: 0
   attackName: Attack
   cooldown: 2
-  maxRange: 5
+  maxRange: 8
   animationTriggerName: Onglo_Stomp
   requiresMovementLock: 1
   ringOrigin: {fileID: 422022761598987747}
@@ -655,6 +659,7 @@ MonoBehaviour:
   ringInterval: 0.18
   shakeIntensity: 5
   shakeDuration: 0.5
+  stompClip: {fileID: 8300000, guid: ef844b9a75f172c469e9fec6714b0855, type: 3}
 --- !u!114 &3413062229324071752
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -672,7 +677,7 @@ MonoBehaviour:
   syncInterval: 0
   attackName: Attack
   cooldown: 2
-  maxRange: 5
+  maxRange: 20
   animationTriggerName: Onglo_GroundSplit
   requiresMovementLock: 1
   fissureOrigin: {fileID: 4231949332098844287}
@@ -686,6 +691,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   impactShakeIntensity: 3
+  splitImpactClip: {fileID: 8300000, guid: ef844b9a75f172c469e9fec6714b0855, type: 3}
 --- !u!114 &7588404998804003397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -703,7 +709,7 @@ MonoBehaviour:
   syncInterval: 0
   attackName: Attack
   cooldown: 2
-  maxRange: 5
+  maxRange: 25
   animationTriggerName: Onglo_BoulderBarrage
   requiresMovementLock: 1
   boulderSpawnPoints:
@@ -721,10 +727,12 @@ MonoBehaviour:
   lifetime: 6
   forwardSpeed: 10
   upSpeed: 9
-  throwShakeIntensity: 1.5
+  throwShakeIntensity: 2
   phase1Throws: 3
   phase2Throws: 5
   phase3Throws: 8
+  windUpClip: {fileID: 8300000, guid: 11c56e99045995f458c9996135e4c23c, type: 3}
+  throwClip: {fileID: 8300000, guid: e9998410ffa96ba4d90008f33c5d5e2e, type: 3}
 --- !u!54 &6419518730580939671
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -775,6 +783,31 @@ CapsuleCollider:
   m_Height: 10.103774
   m_Direction: 1
   m_Center: {x: -0.0073127747, y: -1.3619404, z: 0.8146331}
+--- !u!114 &7345347866901024932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3082055868530467007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b1004b98b2f72d4ca41c9a6150a49f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkClip: {fileID: 8300000, guid: a1e52ef3ffbf4e748a8830dac472dc60, type: 3}
+  walkVolume: 1
+  attackVolume: 1
+  hurtClip: {fileID: 0}
+  hurtVolume: 1
+  deathClip: {fileID: 0}
+  deathVolume: 1
+  walkInterval: 0.5
+  ambientClips:
+  - {fileID: 8300000, guid: 9940b3f12a441ba4783b1e71ca8c7ea3, type: 3}
+  ambientVolume: 0.7
+  minAmbientDelay: 5
+  maxAmbientDelay: 20
 --- !u!1 &3719147965005311678
 GameObject:
   m_ObjectHideFlags: 0
@@ -966,14 +999,14 @@ RectTransform:
   m_GameObject: {fileID: 4405314044485984311}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1979982, y: 1.889, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7969593528349309115}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.000022888184}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3864654322083659258
@@ -1004,8 +1037,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 888465631, guid: ff604ed8152e71e49afabeacf5055122, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1302,6 +1335,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 60255071ae0961d49ad8659a2ec9c82a, type: 3}
       propertyPath: m_Name
       value: ongglo-1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 60255071ae0961d49ad8659a2ec9c82a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 1630794972795428178, guid: 60255071ae0961d49ad8659a2ec9c82a, type: 3}
       propertyPath: m_Materials.Array.size

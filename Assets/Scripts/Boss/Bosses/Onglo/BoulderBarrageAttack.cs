@@ -29,17 +29,28 @@ public class BoulderBarrageAttack : BaseAttack
     public int phase2Throws = 5;
     public int phase3Throws = 8; // “rain”
 
+    // --- DAGDAG NA SOUND SETTINGS ---
+    [Header("Audio")]
+    public AudioClip windUpClip;   // Tunog habang bumebwelo
+    public AudioClip throwClip;    // Tunog habang binabato
+    private EnemySoundManager enemySound;
+    // --------------------------------
+
     private BossPhaseManager phaseManager;
 
     public override void Initialize(BossController bossController)
     {
         base.Initialize(bossController);
         phaseManager = bossController != null ? bossController.GetComponent<BossPhaseManager>() : null;
+
+        // Kunin ang reference para sa sound manager
+        enemySound = bossController != null ? bossController.GetComponent<EnemySoundManager>() : null;
     }
 
     public override void Server_Execute()
     {
-        // Telegraph is animation-driven.
+        // Kapag nagsimula ang attack (Bebwelo stage)
+        Rpc_PlayWindUpSound();
     }
 
     public override void Server_OnAnimationEvent(string eventName)
@@ -50,7 +61,7 @@ public class BoulderBarrageAttack : BaseAttack
         int throws = Server_GetThrowsForCurrentPhase();
         for (int i = 0; i < throws; i++)
             Server_SpawnBoulder(i);
-            
+
         Rpc_OnBoulderThrow();
     }
 
@@ -61,7 +72,24 @@ public class BoulderBarrageAttack : BaseAttack
         {
             CameraShake.Instance.Shake(0.3f, throwShakeIntensity * 0.05f);
         }
+
+        // DAGDAG: Patunugin ang throw sound
+        if (enemySound != null && throwClip != null)
+        {
+            enemySound.PlaySpecificAttack(throwClip);
+        }
     }
+
+    // --- DAGDAG NA RPC PARA SA BEBWELO ---
+    [ClientRpc]
+    void Rpc_PlayWindUpSound()
+    {
+        if (enemySound != null && windUpClip != null)
+        {
+            enemySound.PlaySpecificAttack(windUpClip);
+        }
+    }
+    // ------------------------------------
 
     int Server_GetThrowsForCurrentPhase()
     {
@@ -111,4 +139,3 @@ public class BoulderBarrageAttack : BaseAttack
         // Nothing persistent to stop in MVP.
     }
 }
-

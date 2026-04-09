@@ -47,6 +47,9 @@ public class DiwataMovement : BossMovementBase
 
         if (arenaCenter == null)
             Debug.LogWarning($"[DiwataMovement] Arena Center not assigned on {gameObject.name}.");
+
+        // Siguraduhin na naka-reset ang detection sa simula ng server
+        Server_ResetDetection();
     }
 
     [ServerCallback]
@@ -92,6 +95,20 @@ public class DiwataMovement : BossMovementBase
     }
 
     [Server]
+    public void Server_ResetDetection()
+    {
+        isPlayerDetected = false;
+
+        // I-disable ang controller para huminto ang pag-atake kapag malayo
+        if (TryGetComponent<BossController>(out var controller))
+        {
+            controller.enabled = false;
+        }
+
+        Debug.Log($"[DiwataMovement] Detection reset for {gameObject.name}. Waiting for players.");
+    }
+
+    [Server]
     void Server_ActivateBossLogic()
     {
         // 1. I-enable ang BossController (Brain)
@@ -101,16 +118,31 @@ public class DiwataMovement : BossMovementBase
             Debug.Log($"[DiwataMovement] Boss Controller activated for {gameObject.name}");
         }
 
-        // 2. I-enable lahat ng script na may "Attack" sa pangalan (Vine Snare, etc.)
+        // 2. I-enable lahat ng script na may "Attack" o "Health" sa pangalan
         MonoBehaviour[] allScripts = GetComponents<MonoBehaviour>();
         foreach (MonoBehaviour script in allScripts)
         {
-            if (script.GetType().Name.Contains("Attack"))
+            string scriptName = script.GetType().Name;
+            if (scriptName.Contains("Attack") || scriptName.Contains("Health"))
             {
                 script.enabled = true;
-                Debug.Log($"[DiwataMovement] Attack script activated: {script.GetType().Name}");
+                Debug.Log($"[DiwataMovement] Script activated: {scriptName}");
             }
         }
+    }
+
+    // --- FIX: ANIMATION EVENT RECEIVERS ---
+    // Inilagay ito dito para mawala ang error sa console mo
+    public void Server_OnAnimationEvent(string eventName)
+    {
+        if (!isServer) return;
+        Debug.Log($"[Diwata Animation Event] {eventName} triggered.");
+    }
+
+    public void Server_OnAttackAnimationComplete()
+    {
+        if (!isServer) return;
+        Debug.Log("[Diwata Animation] Attack animation completed.");
     }
 
     [Server]

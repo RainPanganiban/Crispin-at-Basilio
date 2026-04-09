@@ -700,7 +700,7 @@ MonoBehaviour:
   syncInterval: 0
   cooldown: 1
   duration: 1
-  attackSound: {fileID: 0}
+  attackSound: {fileID: 8300000, guid: ea95a45f7e3e04248968211289988a0b, type: 3}
   damage: 3
   hitRadius: 1.5
   playerLayer:
@@ -828,11 +828,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkClip: {fileID: 8300000, guid: 1c7210c1cb0857d4b993fb41d7eb92d1, type: 3}
-  walkVolume: 0.4
-  attackVolume: 1
-  hurtClip: {fileID: 8300000, guid: a44ae72bab58c48488abdd371931c376, type: 3}
-  hurtVolume: 1
-  deathClip: {fileID: 8300000, guid: b585a96d1f071514f84dc13f7bad0b81, type: 3}
+  walkVolume: 0.516
+  attackVolume: 0.85
+  hurtClip: {fileID: 8300000, guid: aab155c21b7d7b4459350691a4312053, type: 3}
+  hurtVolume: 0.472
+  deathClip: {fileID: 8300000, guid: 6660db17eae2eb845a519c34b42c9b20, type: 3}
   deathVolume: 1
   walkInterval: 0.5
 --- !u!1 &7648058361784440064

@@ -26,10 +26,10 @@ public class EnemyBrain : NetworkBehaviour
     public EnemyAttackController attackController;
 
     [Header("Distance Settings")]
-    public float attackRange = 2f;        // distance to start attack
-    public float combatDistance = 2.5f;   // distance to start combat phase
-    public float backOffDistance = 3f;     // distance to step back after attack
-    public float repositionTimeout = 2f;  // max time in Repositioning before giving up
+    public float attackRange = 2f;
+    public float combatDistance = 2.5f;
+    public float backOffDistance = 3f;
+    public float repositionTimeout = 2f;
 
     [Header("Strafing Settings")]
     public float strafeDurationMin = 1f;
@@ -54,11 +54,10 @@ public class EnemyBrain : NetworkBehaviour
         if (!isServer) return;
         currentState = EnemyState.Idle;
 
-        // Sync stopping distance with attack range so we don't overshoot when closing in
         if (agent != null)
         {
             agent.stoppingDistance = Mathf.Min(attackRange * 0.4f, 0.6f);
-            agent.updateRotation = false; // We handle rotation manually in FaceTarget()
+            agent.updateRotation = false;
         }
     }
 
@@ -72,11 +71,23 @@ public class EnemyBrain : NetworkBehaviour
 
     protected void UpdateTarget()
     {
+        if (aggroSystem == null) return;
+
         currentTarget = aggroSystem.GetCurrentTarget();
+
+        if (currentTarget != null)
+        {
+            PlayerStatsManager targetStats = currentTarget.GetComponent<PlayerStatsManager>();
+            if (targetStats != null && targetStats.IsDead)
+            {
+                currentTarget = null;
+            }
+        }
+
         if (currentTarget == null)
         {
             currentState = EnemyState.Idle;
-            agent.ResetPath();
+            if (agent != null && agent.hasPath) agent.ResetPath();
         }
     }
 
@@ -97,7 +108,6 @@ public class EnemyBrain : NetworkBehaviour
                 break;
 
             case EnemyState.Attacking:
-                // Agent is stopped during attack; handled in HandleCombat
                 break;
 
             case EnemyState.Repositioning:
@@ -105,7 +115,6 @@ public class EnemyBrain : NetworkBehaviour
                 break;
         }
 
-        // Combat logic triggers automatically when within combatDistance
         if (currentState == EnemyState.Chasing && distance <= combatDistance)
         {
             currentState = EnemyState.Attacking;
@@ -122,13 +131,16 @@ public class EnemyBrain : NetworkBehaviour
 
         if (distance > attackRange)
         {
-            agent.isStopped = false;
-            Vector3 surroundPos = aggroSystem.GetSurroundPosition(attackRange);
-            agent.SetDestination(surroundPos);
+            if (agent != null)
+            {
+                agent.isStopped = false;
+                Vector3 surroundPos = aggroSystem.GetSurroundPosition(attackRange);
+                agent.SetDestination(surroundPos);
+            }
         }
         else
         {
-            agent.ResetPath();
+            if (agent != null) agent.ResetPath();
             currentState = EnemyState.Attacking;
             combatPhase = CombatPhase.Positioning;
         }
@@ -137,9 +149,10 @@ public class EnemyBrain : NetworkBehaviour
     void HandleCombat()
     {
         FaceTarget();
+
+        if (currentTarget == null) return;
         float distance = Vector3.Distance(transform.position, currentTarget.position);
 
-        // Too far → go back to chasing
         if (distance > combatDistance)
         {
             currentState = EnemyState.Chasing;
@@ -167,27 +180,29 @@ public class EnemyBrain : NetworkBehaviour
         if (distance > attackRange)
         {
             Vector3 surroundPos = aggroSystem.GetSurroundPosition(attackRange);
-            agent.isStopped = false;
-            agent.SetDestination(surroundPos);
+            if (agent != null)
+            {
+                agent.isStopped = false;
+                agent.SetDestination(surroundPos);
+            }
         }
         else
         {
-            agent.ResetPath();
+            if (agent != null) agent.ResetPath();
             combatPhase = CombatPhase.Attacking;
         }
     }
 
     void HandleAttacking()
     {
-        agent.ResetPath();
+        if (agent != null) agent.ResetPath();
 
-        if (attackController.CanAttack())
+        if (attackController != null && attackController.CanAttack())
         {
             StartAttack();
             return;
         }
 
-        // If attack is on cooldown → begin strafing
         if (combatPhase != CombatPhase.Strafing)
         {
             BeginStrafe();
@@ -197,6 +212,8 @@ public class EnemyBrain : NetworkBehaviour
 
     void BeginStrafe()
     {
+        if (currentTarget == null) return;
+
         Vector3 toPlayer = (currentTarget.position - transform.position).normalized;
         strafeDirection = Vector3.Cross(Vector3.up, toPlayer).normalized;
 
@@ -210,9 +227,12 @@ public class EnemyBrain : NetworkBehaviour
     {
         strafeTimer -= Time.deltaTime;
 
-        agent.isStopped = false;
-        Vector3 targetPos = transform.position + strafeDirection * strafeDistance;
-        agent.SetDestination(targetPos);
+        if (agent != null)
+        {
+            agent.isStopped = false;
+            Vector3 targetPos = transform.position + strafeDirection * strafeDistance;
+            agent.SetDestination(targetPos);
+        }
 
         if (strafeTimer <= 0f)
         {
@@ -222,6 +242,8 @@ public class EnemyBrain : NetworkBehaviour
 
     void HandleReposition()
     {
+        if (agent == null) return;
+
         bool arrived = !agent.pathPending && agent.remainingDistance <= 0.2f;
         bool timeout = Time.time >= repositionStartTime + repositionTimeout;
 
@@ -235,10 +257,15 @@ public class EnemyBrain : NetworkBehaviour
     {
         Debug.Log("Starting Attack");
         currentState = EnemyState.Attacking;
-        agent.isStopped = true;
-        agent.ResetPath();
+
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+
         FaceTarget();
-        attackController.ExecuteRandomAttack();
+        if (attackController != null) attackController.ExecuteRandomAttack();
     }
 
     [Server]
@@ -259,33 +286,45 @@ public class EnemyBrain : NetworkBehaviour
 
     void StartBackOff()
     {
+        // FIX: Proteksyon kung wala nang target sa frame na ito
+        if (currentTarget == null)
+        {
+            currentState = EnemyState.Idle;
+            return;
+        }
+
         currentState = EnemyState.Repositioning;
         repositionStartTime = Time.time;
 
         Vector3 dirAway = (transform.position - currentTarget.position).normalized;
         dirAway.y = 0;
+
         if (dirAway.sqrMagnitude < 0.001f)
             dirAway = -transform.forward;
 
-        // Add slight perpendicular offset so swarm doesn't all back off in same line
         Vector3 perp = Vector3.Cross(Vector3.up, dirAway).normalized;
         perp *= (Random.value - 0.5f) * 1.5f;
         Vector3 dirWithJitter = (dirAway + perp).normalized;
 
         Vector3 idealBackPoint = transform.position + dirWithJitter * backOffDistance;
 
-        // Find valid NavMesh position (avoids backing through walls / off mesh)
         NavMeshHit hit;
         Vector3 backPoint = idealBackPoint;
         if (NavMesh.SamplePosition(idealBackPoint, out hit, backOffDistance * 0.5f, NavMesh.AllAreas))
             backPoint = hit.position;
 
-        agent.isStopped = false;
-        agent.SetDestination(backPoint);
+        if (agent != null && agent.isActiveAndEnabled)
+        {
+            agent.isStopped = false;
+            agent.SetDestination(backPoint);
+        }
     }
 
     void FaceTarget()
     {
+        // FIX: Proteksyon para sa FaceTarget
+        if (currentTarget == null) return;
+
         Vector3 direction = (currentTarget.position - transform.position).normalized;
         direction.y = 0;
 
@@ -300,6 +339,6 @@ public class EnemyBrain : NetworkBehaviour
     public virtual void Die()
     {
         currentState = EnemyState.Dead;
-        agent.isStopped = true;
+        if (agent != null) agent.isStopped = true;
     }
 }

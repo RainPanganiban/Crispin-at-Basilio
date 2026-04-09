@@ -40,18 +40,26 @@ public class SwarmSummonAttack : BaseAttack
 
     public override bool Server_CanExecute()
     {
-        // Swarm summon should always be available regardless of range
-        if (boss == null || !boss.isServer) return false;
-        return true;
+        // FIX: Added NetworkServer.active check
+        if (!isServer || boss == null || !NetworkServer.active) return false;
+
+        // Siguraduhin na may player muna bago mag-summon ng minions
+        return Server_HasActivePlayers();
     }
 
     public override void Server_Execute()
     {
-        // Animation-driven
+        if (boss != null && !string.IsNullOrEmpty(animationTriggerName))
+        {
+            boss.Server_PlayTrigger(animationTriggerName);
+        }
     }
 
     public override void Server_OnAnimationEvent(string eventName)
     {
+        // FIX: Guard for server execution
+        if (!isServer || !NetworkServer.active) return;
+
         if (eventName == Event_SpawnSwarm)
         {
             Server_SpawnSwarmEnemies();
@@ -75,6 +83,8 @@ public class SwarmSummonAttack : BaseAttack
         {
             Vector3 spawnPos = Server_GetSpawnPosition(i);
             GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
+
+            // FIX: Spawn using Mirror networking
             NetworkServer.Spawn(enemy);
 
             // Register with vulnerability manager for kill tracking
@@ -82,11 +92,9 @@ public class SwarmSummonAttack : BaseAttack
             {
                 vulnerabilityManager.Server_RegisterSwarmEnemy(enemy);
 
-                // Hook into the enemy's death to notify the vulnerability manager
-                EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
-                if (enemyHealth != null)
+                // Hook into the enemy's death
+                if (enemy.TryGetComponent<EnemyHealth>(out var enemyHealth))
                 {
-                    // Use a simple callback — when this enemy dies, notify manager
                     var manager = vulnerabilityManager;
                     enemyHealth.OnDeath += () =>
                     {
@@ -97,7 +105,20 @@ public class SwarmSummonAttack : BaseAttack
             }
         }
 
-        Rpc_OnSwarmSummoned(count);
+        // FIX: RPC Guard
+        if (NetworkServer.active)
+        {
+            Rpc_OnSwarmSummoned(count);
+        }
+    }
+
+    bool Server_HasActivePlayers()
+    {
+        foreach (var conn in NetworkServer.connections.Values)
+        {
+            if (conn != null && conn.identity != null) return true;
+        }
+        return false;
     }
 
     int Server_GetSpawnCount(int phaseIndex)
@@ -112,9 +133,6 @@ public class SwarmSummonAttack : BaseAttack
 
     GameObject Server_GetPrefabForPhase(int phaseIndex)
     {
-        // Phase 1: Tyanak only
-        // Phase 2: Mix (Bungisngis if available, else Tyanak)
-        // Phase 3: Bungisngis primarily
         return phaseIndex switch
         {
             0 => tyanakPrefab,
@@ -129,17 +147,12 @@ public class SwarmSummonAttack : BaseAttack
         {
             Transform point = swarmSpawnPoints[index % swarmSpawnPoints.Count];
             Vector2 offset = Random.insideUnitCircle * spawnRadius;
-            return point.position + new Vector3(offset.x, 0f, offset.y);
+            return point.position + new Vector3(offset.x, 0.1f, offset.y); // Bahagyang angat sa floor
         }
 
-        // Fallback: spawn around the boss
         float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
         float radius = Random.Range(5f, 10f);
-        return transform.position + new Vector3(
-            Mathf.Cos(angle) * radius,
-            0f,
-            Mathf.Sin(angle) * radius
-        );
+        return transform.position + new Vector3(Mathf.Cos(angle) * radius, 0.1f, Mathf.Sin(angle) * radius);
     }
 
     [ClientRpc]
@@ -148,8 +161,5 @@ public class SwarmSummonAttack : BaseAttack
         Debug.Log($"[SwarmSummon] Diwata summoned {count} swarm enemies!");
     }
 
-    public override void Server_Stop()
-    {
-        // Nothing persistent to stop — spawned enemies are independent
-    }
+    public override void Server_Stop() { }
 }

@@ -39,6 +39,16 @@ public class PlayerCurrencyManager : NetworkBehaviour
     }
 
     /// <summary>
+    /// Resets the player's coins to zero. Call this when both players die.
+    /// </summary>
+    [Server]
+    public void ResetCoins()
+    {
+        coins = 0;
+        Debug.Log($"{gameObject.name}'s currency has been reset to 0.");
+    }
+
+    /// <summary>
     /// Try to spend coins. Returns true if successful.
     /// </summary>
     [Server]

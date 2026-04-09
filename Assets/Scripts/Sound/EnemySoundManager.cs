@@ -1,17 +1,6 @@
 using UnityEngine;
+using System.Collections.Generic; // DAGDAG: Para sa listahan ng clips
 
-/// <summary>
-/// Manages sound effects for an individual enemy.
-/// Attach this component to each enemy prefab so every instance
-/// plays its own positional audio independently.
-/// 
-/// Uses PlayOneShot so multiple SFX can overlap (e.g. attack + death).
-/// Volume is driven by SoundManager's Master × SFX volume settings.
-/// 
-/// Usage:
-///   Assign AudioClips in the Inspector per enemy type, then call
-///   the Play___() methods from AI scripts or animation events.
-/// </summary>
 public class EnemySoundManager : MonoBehaviour
 {
     // ============================
@@ -20,23 +9,33 @@ public class EnemySoundManager : MonoBehaviour
     [Header("Movement")]
     [Tooltip("Sound played when the enemy walks / patrols.")]
     [SerializeField] private AudioClip walkClip;
-    [Range(0f, 1f)] [SerializeField] private float walkVolume = 1f;
+    [Range(0f, 1f)][SerializeField] private float walkVolume = 1f;
 
     [Header("Combat")]
     [Tooltip("Global multiplier for all attack sounds triggered by attack scripts.")]
-    [Range(0f, 1f)] [SerializeField] private float attackVolume = 1f;
+    [Range(0f, 1f)][SerializeField] private float attackVolume = 1f;
 
     [Tooltip("Sound played when the enemy takes damage.")]
     [SerializeField] private AudioClip hurtClip;
-    [Range(0f, 1f)] [SerializeField] private float hurtVolume = 1f;
+    [Range(0f, 1f)][SerializeField] private float hurtVolume = 1f;
 
     [Tooltip("Sound played when the enemy dies.")]
     [SerializeField] private AudioClip deathClip;
-    [Range(0f, 1f)] [SerializeField] private float deathVolume = 1f;
+    [Range(0f, 1f)][SerializeField] private float deathVolume = 1f;
 
     [Header("Interval Settings")]
     [Tooltip("How often to play the walk sound (seconds) while moving.")]
     [SerializeField] private float walkInterval = 0.5f;
+
+    // --- DAGDAG: AMBIENT / CHATTER SETTINGS ---
+    [Header("Ambient / Chatter")]
+    [Tooltip("Mga sounds na random na gagana (sigaw, growls, dialogue).")]
+    [SerializeField] private List<AudioClip> ambientClips = new List<AudioClip>();
+    [Range(0f, 1f)][SerializeField] private float ambientVolume = 0.7f;
+    public float minAmbientDelay = 5f;
+    public float maxAmbientDelay = 10f;
+    private float ambientTimer;
+    // ------------------------------------------
 
     // ============================
     // State Tracking
@@ -56,8 +55,11 @@ public class EnemySoundManager : MonoBehaviour
             sfxSource = gameObject.AddComponent<AudioSource>();
 
         ConfigureSFXSource(sfxSource);
-        
+
         lastPosition = transform.position;
+
+        // DAGDAG: Initial delay para sa ambient
+        ambientTimer = Random.Range(minAmbientDelay, maxAmbientDelay);
     }
 
     private void Update()
@@ -82,6 +84,18 @@ public class EnemySoundManager : MonoBehaviour
         {
             footstepTimer = 0; // Ready to play immediately when starting to move
         }
+
+        // --- DAGDAG: AMBIENT LOGIC ---
+        if (ambientClips.Count > 0)
+        {
+            ambientTimer -= Time.deltaTime;
+            if (ambientTimer <= 0)
+            {
+                PlayRandomAmbient();
+                ambientTimer = Random.Range(minAmbientDelay, maxAmbientDelay);
+            }
+        }
+        // -----------------------------
     }
 
     // ============================
@@ -111,6 +125,15 @@ public class EnemySoundManager : MonoBehaviour
     {
         PlayClip(deathClip, deathVolume);
     }
+
+    // --- DAGDAG: BAGONG METHOD PARA SA RANDOM AMBIENT ---
+    public void PlayRandomAmbient()
+    {
+        if (ambientClips.Count == 0) return;
+        int index = Random.Range(0, ambientClips.Count);
+        PlayClip(ambientClips[index], ambientVolume);
+    }
+    // ----------------------------------------------------
 
     // ============================
     // Internal Helpers

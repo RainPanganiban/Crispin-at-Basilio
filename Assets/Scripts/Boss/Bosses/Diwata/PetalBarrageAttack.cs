@@ -10,14 +10,13 @@ public class PetalBarrageAttack : BaseAttack
     [Header("Petal Settings")]
     public DiwataPetal petalPrefab;
 
-    // PINALITAN: List na ito para sa maraming spawn points
     [Tooltip("Dito ilalagay ang mga Transforms kung saan pwedeng lumabas ang petals.")]
     public List<Transform> spawnOrigins = new List<Transform>();
 
     public LayerMask playerLayer;
 
     [Header("Multi-Spawn Logic")]
-    [Tooltip("Ilan sa mga spawn points ang gagamitin nang sabay-sabay?")]
+    [Tooltip("Ilan sa mga spawn points ang gagamitim nang sabay-sabay?")]
     [Range(1, 5)]
     public int spawnPointCountToUse = 1;
 
@@ -44,12 +43,13 @@ public class PetalBarrageAttack : BaseAttack
 
     public override bool Server_CanExecute()
     {
-        if (boss == null || !isServer) return false;
+        // FIX: Siguraduhin na may server at may boss identity
+        if (!isServer || boss == null || !NetworkServer.active) return false;
 
-        GameObject player = GameObject.FindWithTag("Player");
-        if (player != null)
+        Transform targetPlayer = Server_FindClosestPlayer();
+        if (targetPlayer != null)
         {
-            float dist = Vector3.Distance(transform.position, player.transform.position);
+            float dist = Vector3.Distance(transform.position, targetPlayer.position);
             return dist <= maxRange;
         }
         return false;
@@ -69,45 +69,43 @@ public class PetalBarrageAttack : BaseAttack
         {
             int totalPetalCount = Server_GetPetalCount();
 
-            // --- BAGONG LOGIC PARA SA MULTIPLE SPAWN POINTS ---
             List<Transform> selectedOrigins = Server_GetRandomSpawnPoints();
 
             foreach (Transform origin in selectedOrigins)
             {
-                // Hahatiin natin ang total petals sa dami ng napiling spawn points
                 int petalsPerPoint = totalPetalCount / selectedOrigins.Count;
                 Server_SpawnSpiralPetals(origin, petalsPerPoint);
             }
 
-            Rpc_OnPetalsFired();
+            // FIX: Check kung active ang server bago tawagin ang RPC para iwas error
+            if (NetworkServer.active)
+            {
+                Rpc_OnPetalsFired();
+            }
 
             if (vulnerabilityManager != null)
                 vulnerabilityManager.Server_OnAttackCompleted();
         }
     }
 
-    // Pumipili ng random spawn points base sa "spawnPointCountToUse"
     List<Transform> Server_GetRandomSpawnPoints()
     {
         List<Transform> picked = new List<Transform>();
 
         if (spawnOrigins == null || spawnOrigins.Count == 0)
         {
-            picked.Add(transform); // Fallback sa main transform kung walang nilagay
+            picked.Add(transform);
             return picked;
         }
 
-        // Kopyahin ang listahan para hindi masira ang original
         List<Transform> pool = new List<Transform>(spawnOrigins);
-
-        // Siguraduhin na hindi lalampas sa kung anong meron tayo
         int countToPick = Mathf.Min(spawnPointCountToUse, pool.Count);
 
         for (int i = 0; i < countToPick; i++)
         {
             int randomIndex = Random.Range(0, pool.Count);
             picked.Add(pool[randomIndex]);
-            pool.RemoveAt(randomIndex); // Para hindi ma-pick ulit ang parehong point
+            pool.RemoveAt(randomIndex);
         }
 
         return picked;
@@ -155,6 +153,25 @@ public class PetalBarrageAttack : BaseAttack
     void Rpc_OnPetalsFired()
     {
         Debug.Log("[PetalBarrage] Petals fired from multiple points!");
+    }
+
+    // Helper para mahanap ang pinakamalapit na player
+    Transform Server_FindClosestPlayer()
+    {
+        Transform best = null;
+        float bestSqr = float.PositiveInfinity;
+
+        foreach (var conn in NetworkServer.connections.Values)
+        {
+            if (conn == null || conn.identity == null) continue;
+            float d = (conn.identity.transform.position - transform.position).sqrMagnitude;
+            if (d < bestSqr)
+            {
+                bestSqr = d;
+                best = conn.identity.transform;
+            }
+        }
+        return best;
     }
 
     public override void Server_Stop() { }

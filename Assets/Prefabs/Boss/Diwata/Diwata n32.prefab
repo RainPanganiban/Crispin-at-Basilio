@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 4046677210916150963}
   - component: {fileID: 4847706136097945286}
   - component: {fileID: 1492749735099251994}
-  - component: {fileID: 6057249891288276911}
   - component: {fileID: 6405400774946895610}
   - component: {fileID: 7168334085329538488}
   - component: {fileID: 9154938173037259198}
@@ -23,16 +22,18 @@ GameObject:
   - component: {fileID: 1250461814049305488}
   - component: {fileID: 3221108664040823642}
   - component: {fileID: 4812855404122033223}
+  - component: {fileID: 6155749117630386765}
   - component: {fileID: 4605829407600288029}
   - component: {fileID: 2260300378793522656}
   - component: {fileID: 7867205111603011884}
   - component: {fileID: 762526023467346407}
   - component: {fileID: 6486996177433005962}
   - component: {fileID: 9064289221627822410}
-  - component: {fileID: 6155749117630386765}
+  - component: {fileID: 6057249891288276911}
+  - component: {fileID: 5747106931141218594}
   m_Layer: 0
   m_Name: Diwata n32
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -129,29 +130,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!136 &6057249891288276911
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 835382408267739349}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 3.12
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6405400774946895610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,7 +167,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 300
+  maxHealth: 2000
 --- !u!114 &9154938173037259198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,13 +188,12 @@ MonoBehaviour:
     allowedAttacks:
     - {fileID: 2260300378793522656}
     - {fileID: 4812855404122033223}
-    - {fileID: 4605829407600288029}
     transitionTriggerName: Diwata_Phase2
     movementSpeedMultiplier: 0
     specialBehaviorFlag: 0
   - enterAtHealthPercent: 0.7
     allowedAttacks:
-    - {fileID: 2260300378793522656}
+    - {fileID: 4812855404122033223}
     - {fileID: 4605829407600288029}
     - {fileID: 6155749117630386765}
     transitionTriggerName: Diwata_Phase3
@@ -316,14 +293,14 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  activationDistance: 12
-  hoverHeight: 2
+  activationDistance: 30
+  hoverHeight: 2.5
   hoverBobAmplitude: 0.3
   hoverBobFrequency: 1.2
   driftSpeed: 1.5
   driftChangeInterval: 3
   arenaCenter: {fileID: 0}
-  arenaRadius: 12
+  arenaRadius: 50
   teleportCooldown: 8
   turnSpeed: 5
 --- !u!114 &3221108664040823642
@@ -356,7 +333,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 835382408267739349}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6104d93fe6d98684886edc8c8ec80c81, type: 3}
   m_Name: 
@@ -366,15 +343,26 @@ MonoBehaviour:
   syncInterval: 0
   attackName: PetalBarrage
   cooldown: 3
-  maxRange: 9
+  maxRange: 30
   animationTriggerName: PetalBarrage
   requiresMovementLock: 0
   petalPrefab: {fileID: 1361365814092637503, guid: 6e5cf2eb15937254f95a34ec32277789, type: 3}
-  spawnOrigins: []
+  spawnOrigins:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
-  spawnPointCountToUse: 1
+  spawnPointCountToUse: 5
   petalSpeed: 8
   petalDamage: 12
   petalLifetime: 5
@@ -382,6 +370,34 @@ MonoBehaviour:
   phase1Petals: 6
   phase2Petals: 10
   phase3Petals: 16
+--- !u!114 &6155749117630386765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835382408267739349}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27fc2169deaeaeb4aae39064362e8156, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attackName: SwarmCSummon
+  cooldown: 10
+  maxRange: 15
+  animationTriggerName: SwarmSummon
+  requiresMovementLock: 0
+  tyanakPrefab: {fileID: 3060605970339348292, guid: d2be532c84583984e95079a2946b8271, type: 3}
+  bungisngisAnimrefab: {fileID: 3537072694383074113, guid: b9d5914c522c45d489516cfbcdb597d8, type: 3}
+  swarmSpawnPoints:
+  - {fileID: 0}
+  phase1SpawnCount: 0
+  phase2SpawnCount: 1
+  phase3SpawnCount: 1
+  spawnRadius: 2
 --- !u!114 &4605829407600288029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,7 +405,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 835382408267739349}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9dc81d7055db8a459e10e808e5a04eb, type: 3}
   m_Name: 
@@ -399,7 +415,7 @@ MonoBehaviour:
   syncInterval: 0
   attackName: VineSnare
   cooldown: 3
-  maxRange: 7
+  maxRange: 20
   animationTriggerName: VineSnare
   requiresMovementLock: 0
   vineAttackPrefab: {fileID: 7347794123305069028, guid: c4a786ec34f321847bcb67ddc51563bb, type: 3}
@@ -407,7 +423,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   vineDamage: 20
-  vineRadius: 2.5
+  vineRadius: 3
   telegraphDuration: 1.2
   vineCount: 3
   spawnOffsetRadius: 2
@@ -418,7 +434,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 835382408267739349}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf3b45693f579674992aadb8683e78e6, type: 3}
   m_Name: 
@@ -428,7 +444,7 @@ MonoBehaviour:
   syncInterval: 0
   attackName: SpiritLance
   cooldown: 2
-  maxRange: 5
+  maxRange: 30
   animationTriggerName: SpiritLance
   requiresMovementLock: 0
   lancePrefab: {fileID: 7574140319921097983, guid: 1d639da618f939f4ab3bc4bd40f461ed, type: 3}
@@ -436,7 +452,15 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
-  spawnOrigins: []
+  spawnOrigins:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   spawnPointCountToUse: 10
   lanceDamage: 25
   lanceSpeed: 15
@@ -570,34 +594,56 @@ MonoBehaviour:
   maxDistance: 30
   phase3Spears: 4
   defaultSpears: 2
---- !u!114 &6155749117630386765
-MonoBehaviour:
+--- !u!136 &6057249891288276911
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 835382408267739349}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27fc2169deaeaeb4aae39064362e8156, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  attackName: SwarmCSummon
-  cooldown: 10
-  maxRange: 4
-  animationTriggerName: SwarmSummon
-  requiresMovementLock: 0
-  tyanakPrefab: {fileID: 3060605970339348292, guid: d2be532c84583984e95079a2946b8271, type: 3}
-  bungisngisAnimrefab: {fileID: 3537072694383074113, guid: b9d5914c522c45d489516cfbcdb597d8, type: 3}
-  swarmSpawnPoints:
-  - {fileID: 0}
-  phase1SpawnCount: 0
-  phase2SpawnCount: 1
-  phase3SpawnCount: 2
-  spawnRadius: 2
+  serializedVersion: 2
+  m_Radius: 0.34
+  m_Height: 3.6284747
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.2542374, z: 0.17}
+--- !u!54 &5747106931141218594
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835382408267739349}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1858122984573298185
 GameObject:
   m_ObjectHideFlags: 0
@@ -625,7 +671,7 @@ RectTransform:
   m_GameObject: {fileID: 1858122984573298185}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.197998, y: 1.889, z: 1.24}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7795364101676683872}
@@ -663,8 +709,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 888465631, guid: ff604ed8152e71e49afabeacf5055122, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -904,8 +950,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2b69017ca5bb78c4da08053c75c3b798, type: 2}
+  m_sharedMaterial: {fileID: 947614168408602927, guid: 2b69017ca5bb78c4da08053c75c3b798, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1308,15 +1354,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 3521118841f5ae2449526441f29b667a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3521118841f5ae2449526441f29b667a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.99
+      value: -1.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3521118841f5ae2449526441f29b667a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.05
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3521118841f5ae2449526441f29b667a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1346,14 +1392,42 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -4819223349682164798, guid: 3521118841f5ae2449526441f29b667a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: -1884904272197429112, guid: 3521118841f5ae2449526441f29b667a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: -86660355763864230, guid: 3521118841f5ae2449526441f29b667a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 3521118841f5ae2449526441f29b667a, type: 3}
       propertyPath: m_Name
       value: diwata_animation (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3521118841f5ae2449526441f29b667a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 3350606693808230577, guid: 3521118841f5ae2449526441f29b667a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 3521118841f5ae2449526441f29b667a, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 63ff58ba222935340bedcf8305999978, type: 2}
+    - target: {fileID: 6829485909940997511, guid: 3521118841f5ae2449526441f29b667a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8553526582279879926, guid: 3521118841f5ae2449526441f29b667a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
