@@ -718,7 +718,7 @@ MonoBehaviour:
   syncInterval: 0
   cooldown: 0
   duration: 1
-  attackSound: {fileID: 8300000, guid: 66f14da08ba97ac4fb64e3bb3849efb1, type: 3}
+  attackSound: {fileID: 8300000, guid: 1267a869685116e48b316baa5b40df0f, type: 3}
   projectilePrefab: {fileID: 4164222620869133773, guid: 6aa0c565168e7db42ba597a2162377d0, type: 3}
   firePoint: {fileID: 3420219565809902925}
   damage: 10
@@ -784,12 +784,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b1004b98b2f72d4ca41c9a6150a49f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkClip: {fileID: 0}
+  walkClip: {fileID: 8300000, guid: 62fb8b26b95e3f342b807f5a0a394445, type: 3}
   walkVolume: 1
   attackVolume: 1
   hurtClip: {fileID: 0}
   hurtVolume: 1
-  deathClip: {fileID: 0}
+  deathClip: {fileID: 8300000, guid: 6660db17eae2eb845a519c34b42c9b20, type: 3}
   deathVolume: 1
   walkInterval: 0.5
 --- !u!1 &7648058361784440064

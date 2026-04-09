@@ -22,6 +22,19 @@ public class GroundSplitAttack : BaseAttack
     [Header("Feedback")]
     public float impactShakeIntensity = 3f;
 
+    // --- DAGDAG NA SOUND SETTINGS ---
+    [Header("Audio")]
+    public AudioClip splitImpactClip;
+    private EnemySoundManager enemySound;
+
+    public override void Initialize(BossController bossController)
+    {
+        base.Initialize(bossController);
+        // Kunin ang reference para sa sound manager
+        enemySound = bossController != null ? bossController.GetComponent<EnemySoundManager>() : null;
+    }
+    // --------------------------------
+
     public override void Server_Execute()
     {
         // Telegraph is animation-driven.
@@ -34,6 +47,9 @@ public class GroundSplitAttack : BaseAttack
 
         Server_SpawnFissure();
         Rpc_OnImpact();
+
+        // DAGDAG: Patunugin ang split sound sa lahat ng clients
+        Rpc_PlaySplitSound();
     }
 
     [ClientRpc]
@@ -44,6 +60,17 @@ public class GroundSplitAttack : BaseAttack
             CameraShake.Instance.Shake(0.5f, impactShakeIntensity * 0.05f);
         }
     }
+
+    // --- DAGDAG NA RPC PARA SA TUNOG ---
+    [ClientRpc]
+    void Rpc_PlaySplitSound()
+    {
+        if (enemySound != null && splitImpactClip != null)
+        {
+            enemySound.PlaySpecificAttack(splitImpactClip);
+        }
+    }
+    // ----------------------------------
 
     [Server]
     void Server_SpawnFissure()
@@ -77,4 +104,3 @@ public class GroundSplitAttack : BaseAttack
         // Nothing persistent to stop in MVP.
     }
 }
-

@@ -2349,9 +2349,12 @@ MonoBehaviour:
   walkClip: {fileID: 8300000, guid: 1c7210c1cb0857d4b993fb41d7eb92d1, type: 3}
   runClip: {fileID: 8300000, guid: d6fe7f08145ebea44850e24b9d6b1e7e, type: 3}
   rollClip: {fileID: 8300000, guid: 4114ebb9f6078c846af84b12e2fd158f, type: 3}
-  hurtClip: {fileID: 8300000, guid: 0573fd4586f303a499f2cdebef883071, type: 3}
+  hurtClip: {fileID: 8300000, guid: 23195a6024b14074d92a72259981e036, type: 3}
   deathClip: {fileID: 8300000, guid: a44ae72bab58c48488abdd371931c376, type: 3}
-  meleeAttackClips: []
+  meleeAttackClips:
+  - {fileID: 8300000, guid: aa15811f57aa83045bc937d1349b9cc7, type: 3}
+  - {fileID: 8300000, guid: a81ea453ac505ef4891045e9ab9a10e8, type: 3}
+  - {fileID: 8300000, guid: f52786107c815c5459ef5306583e3593, type: 3}
   rangedChargeClip: {fileID: 0}
   rangedReleaseClip: {fileID: 0}
   walkInterval: 0.5

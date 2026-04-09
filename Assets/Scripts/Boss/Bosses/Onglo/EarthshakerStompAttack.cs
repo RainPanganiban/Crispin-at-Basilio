@@ -28,13 +28,22 @@ public class EarthshakerStompAttack : BaseAttack
     public float shakeIntensity = 5f;
     public float shakeDuration = 0.5f;
 
-    private BossPhaseManager phaseManager;
+    // --- DAGDAG NA SOUND SETTINGS ---
+    [Header("Audio")]
+    public AudioClip stompClip;
+    private EnemySoundManager enemySound;
+    // --------------------------------
 
     public override void Initialize(BossController bossController)
     {
         base.Initialize(bossController);
         phaseManager = bossController != null ? bossController.GetComponent<BossPhaseManager>() : null;
+
+        // DAGDAG: Kunin ang sound manager component
+        enemySound = bossController != null ? bossController.GetComponent<EnemySoundManager>() : null;
     }
+
+    private BossPhaseManager phaseManager;
 
     public override void Server_Execute()
     {
@@ -51,9 +60,12 @@ public class EarthshakerStompAttack : BaseAttack
             return;
 
         StartCoroutine(Server_SpawnRings(rings));
-        
+
         // Thrilling: Shakes everyone's screen on impact
         Rpc_TriggerShake();
+
+        // DAGDAG: Trigger ang sound sa lahat ng clients
+        Rpc_PlayStompSound();
     }
 
     [ClientRpc]
@@ -68,6 +80,17 @@ public class EarthshakerStompAttack : BaseAttack
             Debug.Log($"[EarthshakerStomp] CameraShake instance not found. Intensity: {shakeIntensity}");
         }
     }
+
+    // --- DAGDAG NA RPC PARA SA TUNOG ---
+    [ClientRpc]
+    void Rpc_PlayStompSound()
+    {
+        if (enemySound != null && stompClip != null)
+        {
+            enemySound.PlaySpecificAttack(stompClip);
+        }
+    }
+    // ----------------------------------
 
     int Server_GetRingCountForCurrentPhase()
     {
@@ -114,4 +137,3 @@ public class EarthshakerStompAttack : BaseAttack
         StopAllCoroutines();
     }
 }
-

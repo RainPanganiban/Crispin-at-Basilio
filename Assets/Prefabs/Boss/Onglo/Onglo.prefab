@@ -397,6 +397,7 @@ GameObject:
   - component: {fileID: 7588404998804003397}
   - component: {fileID: 6419518730580939671}
   - component: {fileID: 4676619450491215623}
+  - component: {fileID: 7345347866901024932}
   m_Layer: 0
   m_Name: Onglo
   m_TagString: Enemy
@@ -535,6 +536,7 @@ MonoBehaviour:
     - {fileID: 2917712239413616872}
     - {fileID: 3413062229324071752}
     transitionTriggerName: Onglo_Phase2
+    transitionSFX: {fileID: 8300000, guid: d49fa60994fb5094f89789df914071f9, type: 3}
     movementSpeedMultiplier: 0
     specialBehaviorFlag: 0
   - enterAtHealthPercent: 0.6
@@ -542,6 +544,7 @@ MonoBehaviour:
     - {fileID: 7588404998804003397}
     - {fileID: 3413062229324071752}
     transitionTriggerName: Onglo_Phase3
+    transitionSFX: {fileID: 8300000, guid: 03469d581ab63c040ad4cbdf503a87e1, type: 3}
     movementSpeedMultiplier: 0
     specialBehaviorFlag: 0
   - enterAtHealthPercent: 0.3
@@ -550,6 +553,7 @@ MonoBehaviour:
     - {fileID: 3413062229324071752}
     - {fileID: 7588404998804003397}
     transitionTriggerName: 
+    transitionSFX: {fileID: 0}
     movementSpeedMultiplier: 0
     specialBehaviorFlag: 1
 --- !u!114 &3219410304514427177
@@ -655,6 +659,7 @@ MonoBehaviour:
   ringInterval: 0.18
   shakeIntensity: 5
   shakeDuration: 0.5
+  stompClip: {fileID: 8300000, guid: ef844b9a75f172c469e9fec6714b0855, type: 3}
 --- !u!114 &3413062229324071752
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -686,6 +691,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   impactShakeIntensity: 3
+  splitImpactClip: {fileID: 8300000, guid: ef844b9a75f172c469e9fec6714b0855, type: 3}
 --- !u!114 &7588404998804003397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -725,6 +731,8 @@ MonoBehaviour:
   phase1Throws: 3
   phase2Throws: 5
   phase3Throws: 8
+  windUpClip: {fileID: 8300000, guid: 11c56e99045995f458c9996135e4c23c, type: 3}
+  throwClip: {fileID: 8300000, guid: e9998410ffa96ba4d90008f33c5d5e2e, type: 3}
 --- !u!54 &6419518730580939671
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -775,6 +783,31 @@ CapsuleCollider:
   m_Height: 10.103774
   m_Direction: 1
   m_Center: {x: -0.0073127747, y: -1.3619404, z: 0.8146331}
+--- !u!114 &7345347866901024932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3082055868530467007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b1004b98b2f72d4ca41c9a6150a49f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkClip: {fileID: 8300000, guid: a1e52ef3ffbf4e748a8830dac472dc60, type: 3}
+  walkVolume: 1
+  attackVolume: 1
+  hurtClip: {fileID: 0}
+  hurtVolume: 1
+  deathClip: {fileID: 0}
+  deathVolume: 1
+  walkInterval: 0.5
+  ambientClips:
+  - {fileID: 8300000, guid: 9940b3f12a441ba4783b1e71ca8c7ea3, type: 3}
+  ambientVolume: 0.7
+  minAmbientDelay: 5
+  maxAmbientDelay: 20
 --- !u!1 &3719147965005311678
 GameObject:
   m_ObjectHideFlags: 0

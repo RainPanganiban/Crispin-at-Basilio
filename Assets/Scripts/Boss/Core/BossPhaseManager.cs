@@ -17,6 +17,11 @@ public class BossPhaseManager : NetworkBehaviour
         [Header("Transition")]
         public string transitionTriggerName = "";
 
+        // --- DAGDAG NA SOUND PARA SA PHASE ---
+        [Tooltip("Tunog na maririnig kapag pumasok sa phase na ito.")]
+        public AudioClip transitionSFX;
+        // --------------------------------------
+
         [Header("Optional modifiers")]
         public float movementSpeedMultiplier = 1f;
         public bool specialBehaviorFlag = false;
@@ -34,11 +39,17 @@ public class BossPhaseManager : NetworkBehaviour
     private BossMovementBase movement;
     private BossController controller;
 
+    // REFERENCE PARA SA SOUND
+    private EnemySoundManager enemySound;
+
     public override void OnStartServer()
     {
         attackManager = GetComponent<BossAttackManager>();
         movement = GetComponent<BossMovementBase>();
         controller = GetComponent<BossController>();
+
+        // DAGDAG: Kunin ang EnemySoundManager
+        enemySound = GetComponent<EnemySoundManager>();
 
         currentPhaseIndex = 0;
         Server_ApplyCurrentPhase();
@@ -88,8 +99,17 @@ public class BossPhaseManager : NetworkBehaviour
         currentPhaseIndex = Mathf.Clamp(newIndex, 0, phases.Count - 1);
 
         BossPhase phase = GetCurrentPhase();
-        if (phase != null && !string.IsNullOrWhiteSpace(phase.transitionTriggerName))
-            controller.Server_PlayTrigger(phase.transitionTriggerName);
+
+        if (phase != null)
+        {
+            // 1. Play Animation Trigger
+            if (!string.IsNullOrWhiteSpace(phase.transitionTriggerName))
+                controller.Server_PlayTrigger(phase.transitionTriggerName);
+
+            // 2. DAGDAG: Patunugin ang transition SFX sa lahat ng clients
+            if (phase.transitionSFX != null)
+                Rpc_PlayPhaseSFX(newIndex);
+        }
 
         Server_ApplyCurrentPhase();
 
@@ -97,6 +117,23 @@ public class BossPhaseManager : NetworkBehaviour
 
         controller.Server_EndPhaseTransition();
     }
+
+    // --- DAGDAG NA RPC PARA SA PHASE SOUND ---
+    [ClientRpc]
+    void Rpc_PlayPhaseSFX(int phaseIndex)
+    {
+        // Siguraduhin na valid ang index at may sound manager
+        if (enemySound != null && phaseIndex >= 0 && phaseIndex < phases.Count)
+        {
+            AudioClip clip = phases[phaseIndex].transitionSFX;
+            if (clip != null)
+            {
+                // Gagamitin natin ang PlaySpecificAttack para sa transition sound
+                enemySound.PlaySpecificAttack(clip);
+            }
+        }
+    }
+    // -----------------------------------------
 
     [Server]
     void Server_ApplyCurrentPhase()
@@ -112,4 +149,3 @@ public class BossPhaseManager : NetworkBehaviour
             movement.Server_ApplyPhaseModifier(phase);
     }
 }
-
