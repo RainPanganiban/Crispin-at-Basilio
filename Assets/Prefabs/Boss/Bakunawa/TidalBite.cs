@@ -101,22 +101,28 @@ public class TidalBite : BaseAttack
     private void DealBiteDamage()
     {
         if (damageDealt) return;
-        damageDealt = true;
 
-        Vector3 basePos = mouthPoint != null ? mouthPoint.position : transform.position + (transform.forward * 4.0f);
+        Vector3 basePos = mouthPoint != null ? mouthPoint.position : transform.position + (transform.forward * 2.0f);
         Vector3 aoeCenter = basePos + (transform.forward * aoeOffsetForward);
 
+        // Hanapin ang lahat ng colliders (kasama ang Character Controller)
         Collider[] hits = Physics.OverlapSphere(aoeCenter, aoeRadius, playerLayer);
 
         foreach (Collider h in hits)
         {
             if (h.transform == transform) continue;
 
-            var stats = h.GetComponent<PlayerStatsManager>();
+            // Dahil Character Controller ang gamit mo, siguraduhin natin na makuha ang Stats
+            PlayerStatsManager stats = h.GetComponent<PlayerStatsManager>();
+
+            // Kung wala sa main object, baka nasa parent o child (safety check)
+            if (stats == null) stats = h.GetComponentInParent<PlayerStatsManager>();
+
             if (stats != null)
             {
+                damageDealt = true; // Dito lang natin i-set para kung marami silang magkakatabi, lahat sila madadamage
                 stats.TakeDamage(damage, transform);
-                Debug.Log($"<color=green>[TidalBite]</color> Hit {h.name}!");
+                Debug.Log($"<color=green>[TidalBite]</color> Successfully damaged: {h.name}");
             }
         }
     }

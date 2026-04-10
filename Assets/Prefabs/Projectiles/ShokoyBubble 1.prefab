@@ -182,7 +182,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 256
-  lifetime: 0
+  bubbleLifetime: 0
   playerLayer:
     serializedVersion: 2
     m_Bits: 0
