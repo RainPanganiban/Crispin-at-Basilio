@@ -85,24 +85,24 @@ public class BubbleBarrageAttack : BaseAttack
     }
 
     [Server]
-    void SpawnBubbles(Transform origin, int count) // Sinigurado nating may parameters dito
+void SpawnBubbles(Transform origin, int count) // Sinigurado nating may parameters dito
+{
+    if (bubblePrefab == null) return;
+
+    for (int i = 0; i < count; i++)
     {
-        if (bubblePrefab == null) return;
+        // Random offset para hindi magkakapatong ang bubbles
+        Vector3 randomOffset = new Vector3(Random.Range(-1.5f, 1.5f), 0, Random.Range(-1.5f, 1.5f));
+        Vector3 spawnPos = origin.position + randomOffset;
 
-        for (int i = 0; i < count; i++)
-        {
-            // Random offset para hindi magkakapatong ang bubbles
-            Vector3 randomOffset = new Vector3(Random.Range(-1.5f, 1.5f), 0, Random.Range(-1.5f, 1.5f));
-            Vector3 spawnPos = origin.position + randomOffset;
+        ShokoyBubble bubble = Instantiate(bubblePrefab, spawnPos, Quaternion.identity);
 
-            ShokoyBubble bubble = Instantiate(bubblePrefab, spawnPos, Quaternion.identity);
+        // Siniguradong tumutugma sa Initialize ng ShokoyBubble mo
+        bubble.Initialize(boss != null ? boss.GetComponent<Collider>() : null);
 
-            // Siniguradong tumutugma sa Initialize ng ShokoyBubble mo
-            bubble.Initialize(boss != null ? boss.GetComponent<Collider>() : null);
-
-            NetworkServer.Spawn(bubble.gameObject);
-        }
+        NetworkServer.Spawn(bubble.gameObject);
     }
+}
     List<Transform> Server_GetRandomSpawnPoints()
     {
         List<Transform> picked = new List<Transform>();
