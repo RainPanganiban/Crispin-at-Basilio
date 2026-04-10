@@ -724,7 +724,7 @@ MonoBehaviour:
   duration: 1
   attackSound: {fileID: 0}
   waterProjectilePrefab: {fileID: 3216240422717333500, guid: c987039422dd8d94d828059f05310362, type: 3}
-  directDamage: 5
+  directDamage: 15
   projectileSpeed: 10
   arcHeight: 3
   projectilesToFire: 3
@@ -775,6 +775,10 @@ MonoBehaviour:
   deathClip: {fileID: 0}
   deathVolume: 1
   walkInterval: 0.5
+  ambientClips: []
+  ambientVolume: 0.7
+  minAmbientDelay: 5
+  maxAmbientDelay: 10
 --- !u!1 &7422246735395154507
 GameObject:
   m_ObjectHideFlags: 0

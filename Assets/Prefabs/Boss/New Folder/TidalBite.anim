@@ -135123,14 +135123,7 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 3.5416667
-    functionName: Server_OnAnimationEvent
-    data: DealDamage
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 3.625
+  - time: 3.0833333
     functionName: Server_OnAnimationEvent
     data: DealDamage
     objectReferenceParameter: {fileID: 0}
@@ -135139,7 +135132,7 @@ AnimationClip:
     messageOptions: 0
   - time: 6.625
     functionName: Server_OnAnimationEvent
-    data: AttackFinished
+    data: Finish
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0

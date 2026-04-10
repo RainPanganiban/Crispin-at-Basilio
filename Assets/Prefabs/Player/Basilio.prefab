@@ -2171,8 +2171,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  moveSpeed: 5
-  runSpeed: 8
+  moveSpeed: 7
+  runSpeed: 10
   rotationSpeed: 10
   rollDistance: 5
   rollDuration: 0.3
@@ -2185,7 +2185,7 @@ MonoBehaviour:
   isAiming: 0
   cameraTransform: {fileID: 7300475583470436408}
   staminaCostPerSecondRunning: 15
-  rollStaminaCost: 25
+  rollStaminaCost: 20
 --- !u!114 &2228540795863336039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2261,9 +2261,9 @@ MonoBehaviour:
     currentValue: 100
   stamina:
     name: Stamina
-    maxValue: 10000
-    currentValue: 10000
-  staminaRegenRate: 5
+    maxValue: 100
+    currentValue: 100
+  staminaRegenRate: 10
   healthRegenRate: 0
 --- !u!114 &1964418824019641932
 MonoBehaviour:

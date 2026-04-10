@@ -176,12 +176,16 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  damage: 15
+  damage: 20
   explosionRadius: 2.5
   delayBeforeExplosion: 1.5
   targetLayer:
     serializedVersion: 2
     m_Bits: 256
+  bubbleLifetime: 0
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 0
   explosionVFXPrefab: {fileID: 0}
   floatSpeed: 3
   floatAmplitude: 0.2

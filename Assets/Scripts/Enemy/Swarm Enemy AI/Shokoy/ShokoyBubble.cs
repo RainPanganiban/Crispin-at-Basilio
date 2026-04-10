@@ -9,6 +9,8 @@ public class ShokoyBubble : NetworkBehaviour
     public float explosionRadius = 2.5f;
     public float delayBeforeExplosion = 1.5f;
     public LayerMask targetLayer;
+    public float bubbleLifetime;
+    public LayerMask playerLayer; // DAGDAG ITO
     public GameObject explosionVFXPrefab;
 
     [Header("Visual Indicator Settings")]

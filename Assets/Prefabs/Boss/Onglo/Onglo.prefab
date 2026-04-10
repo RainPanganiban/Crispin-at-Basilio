@@ -657,7 +657,7 @@ MonoBehaviour:
   phase2Rings: 1
   phase3Rings: 2
   ringInterval: 0.18
-  shakeIntensity: 5
+  shakeIntensity: 10
   shakeDuration: 0.5
   stompClip: {fileID: 8300000, guid: ef844b9a75f172c469e9fec6714b0855, type: 3}
 --- !u!114 &3413062229324071752
@@ -721,7 +721,7 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
-  boulderDamage: 30
+  boulderDamage: 35
   impactRadius: 2.5
   gravity: 18
   lifetime: 6
