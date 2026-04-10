@@ -374,7 +374,7 @@ MonoBehaviour:
   syncInterval: 0
   cooldown: 2
   duration: 1
-  attackSound: {fileID: 0}
+  attackSound: {fileID: 8300000, guid: 7a0e5955ead866a4ca03c9cb4d7df3e3, type: 3}
   laserBeamPrefab: {fileID: 7123666503054923054, guid: c7b7a3dbfcc368044a6d67caa02df621, type: 3}
   firePoint: {fileID: 1205468937126703889}
   laserDamage: 10

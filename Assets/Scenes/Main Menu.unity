@@ -2685,7 +2685,7 @@ RectTransform:
   m_GameObject: {fileID: 1120907512}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.02, y: 1.02, z: 1.02}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1893405575}
@@ -3138,10 +3138,18 @@ MonoBehaviour:
   - levelName: Level 1
     explorationMusic: {fileID: 8300000, guid: 29c025307ed33d7499b2130d4537d2d2, type: 3}
     swarmMusic: {fileID: 8300000, guid: fc19ff77bf901bf44902dcc829cf22aa, type: 3}
-    bossMusic: {fileID: 8300000, guid: a50251075179f834cb4925c391e28798, type: 3}
+    bossMusic: {fileID: 8300000, guid: a2cff58bc8d8f654ca8cdb45bd8f7ef9, type: 3}
+  - levelName: Level 2
+    explorationMusic: {fileID: 8300000, guid: fd20e5393dc1a724d8ee73212fc25523, type: 3}
+    swarmMusic: {fileID: 8300000, guid: c39e0e46db2a42c419d2088f3f6d6166, type: 3}
+    bossMusic: {fileID: 8300000, guid: 25411a94417123647830f8f72d7925d7, type: 3}
+  - levelName: Level 3
+    explorationMusic: {fileID: 8300000, guid: 8890359ca83fe744097d0d8df41ff6ae, type: 3}
+    swarmMusic: {fileID: 8300000, guid: 85797dd9a2c78a54c8db810c4eafc2c9, type: 3}
+    bossMusic: {fileID: 8300000, guid: 85797dd9a2c78a54c8db810c4eafc2c9, type: 3}
   optionalLevels:
   - levelName: Optional 1
-    backgroundMusic: {fileID: 8300000, guid: a50251075179f834cb4925c391e28798, type: 3}
+    backgroundMusic: {fileID: 8300000, guid: a1d15337bb714b747af00e926e433a30, type: 3}
   masterVolume: 1
   musicVolume: 0.1
   sfxVolume: 1

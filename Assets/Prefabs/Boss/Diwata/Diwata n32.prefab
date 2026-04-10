@@ -31,6 +31,7 @@ GameObject:
   - component: {fileID: 9064289221627822410}
   - component: {fileID: 6057249891288276911}
   - component: {fileID: 5747106931141218594}
+  - component: {fileID: 7006518731394738114}
   m_Layer: 6
   m_Name: Diwata n32
   m_TagString: Enemy
@@ -650,6 +651,25 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &7006518731394738114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835382408267739349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d58df23526db510449f30b8668ae1af1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  coinPrefab: {fileID: 8805015260375165595, guid: b2c7eb0b090457142b40d43133ef839f, type: 3}
+  minCoins: 10
+  maxCoins: 12
+  scatterRadius: 0.6
 --- !u!1 &1858122984573298185
 GameObject:
   m_ObjectHideFlags: 0
