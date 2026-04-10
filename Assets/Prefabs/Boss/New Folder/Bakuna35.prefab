@@ -465,9 +465,15 @@ MonoBehaviour:
   animationTriggerName: TidalBite
   requiresMovementLock: 0
   damage: 50
-  attackDuration: 1.5
-  damageDelay: 0.6
-  aoeRadius: 30
+  lungeForce: 7
+  lungeDuration: 0.3
+  attackFullDuration: 1.2
+  mouthPoint: {fileID: 5802132384995923093}
+  aoeRadius: 10
+  aoeOffsetForward: 3
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &417550526651189157
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -512,8 +518,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   spawnPointCountToUse: 5
-  bubbleDamage: 15
-  bubbleExplosionRadius: 2.5
+  bubbleDamage: 25
+  bubbleExplosionRadius: 4
   bubbleLifetime: 1.5
   phase1Bubbles: 6
   phase2Bubbles: 10
@@ -1277,6 +1283,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 4658595102156541735, guid: 01c1d15d1be9e30449f09cac77ee7ba8, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 4701602562746810000, guid: 01c1d15d1be9e30449f09cac77ee7ba8, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -1605,5 +1615,10 @@ PrefabInstance:
 --- !u!4 &2746660945950945216 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5471160224907400605, guid: 01c1d15d1be9e30449f09cac77ee7ba8, type: 3}
+  m_PrefabInstance: {fileID: 7922797868497386077}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5802132384995923093 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4428795481211727560, guid: 01c1d15d1be9e30449f09cac77ee7ba8, type: 3}
   m_PrefabInstance: {fileID: 7922797868497386077}
   m_PrefabAsset: {fileID: 0}

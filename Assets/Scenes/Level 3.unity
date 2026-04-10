@@ -96800,58 +96800,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: bubbleDamage
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: bubbleExplosionRadius
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: spawnPoints.Array.size
-      value: 18
-      objectReference: {fileID: 0}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[0]'
-      value: 
-      objectReference: {fileID: 1489784004}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[1]'
-      value: 
-      objectReference: {fileID: 726077838}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[2]'
-      value: 
-      objectReference: {fileID: 270739450}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[3]'
-      value: 
-      objectReference: {fileID: 798420307}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[4]'
-      value: 
-      objectReference: {fileID: 871895047}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[5]'
-      value: 
-      objectReference: {fileID: 650355596}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[6]'
-      value: 
-      objectReference: {fileID: 237381021}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[7]'
-      value: 
-      objectReference: {fileID: 1623169443}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[8]'
-      value: 
-      objectReference: {fileID: 853862749}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[9]'
-      value: 
-      objectReference: {fileID: 1616450186}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
       propertyPath: 'spawnOrigins.Array.data[0]'
       value: 
       objectReference: {fileID: 1489784004}
@@ -96891,38 +96839,6 @@ PrefabInstance:
       propertyPath: 'spawnOrigins.Array.data[9]'
       value: 
       objectReference: {fileID: 1616450186}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[10]'
-      value: 
-      objectReference: {fileID: 197961599}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[11]'
-      value: 
-      objectReference: {fileID: 1781991374}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[12]'
-      value: 
-      objectReference: {fileID: 522827991}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[13]'
-      value: 
-      objectReference: {fileID: 204270149}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[14]'
-      value: 
-      objectReference: {fileID: 1621112659}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[15]'
-      value: 
-      objectReference: {fileID: 1159077802}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[16]'
-      value: 
-      objectReference: {fileID: 1438172611}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: 'spawnPoints.Array.data[17]'
-      value: 
-      objectReference: {fileID: 623458596}
     - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
       propertyPath: 'spawnOrigins.Array.data[10]'
       value: 
@@ -97003,22 +96919,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bakuna35 (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 3266738378949293434, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: m_TagString
-      value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 6824881664659566388, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: aoeRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 6824881664659566388, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: mouthPoint
-      value: 
-      objectReference: {fileID: 970959201}
-    - target: {fileID: 6824881664659566388, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: aoeOffsetForward
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 8124586328903312479, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
       propertyPath: arenaCenter
       value: 
@@ -97036,11 +96936,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
---- !u!4 &970959201 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5802132384995923093, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-  m_PrefabInstance: {fileID: 970959200}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &971293811
 PrefabInstance:
   m_ObjectHideFlags: 0

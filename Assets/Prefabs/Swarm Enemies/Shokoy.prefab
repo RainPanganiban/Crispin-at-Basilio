@@ -682,8 +682,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1abc32df9e7461247b8fe409d45167e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthBar: {fileID: 0}
-  canvas: {fileID: 0}
+  healthBar: {fileID: 185671597324961541}
+  canvas: {fileID: 2368223458198920233}
   alwaysVisible: 0
   visibleDuration: 3
 --- !u!114 &5877367968290151215
