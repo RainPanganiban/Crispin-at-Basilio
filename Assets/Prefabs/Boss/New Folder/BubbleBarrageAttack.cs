@@ -7,7 +7,7 @@ public class BubbleBarrageAttack : BaseAttack
     public const string Event_FireBubbles = "FireBubbles";
 
     [Header("Bubble Settings")]
-    public ShokoyBubble bubblePrefab;
+    public BakunawaBubble bubblePrefab;
 
     [Tooltip("Dito ilalagay ang mga Transforms kung saan pwedeng lumabas ang bubbles.")]
     public List<Transform> spawnOrigins = new List<Transform>();
@@ -24,6 +24,9 @@ public class BubbleBarrageAttack : BaseAttack
     public float bubbleExplosionRadius = 2.5f;
     public float bubbleLifetime = 1.5f;
 
+    // BAGO: Gaano katagal bago mag-reset ang AI pagka-atake?
+    public float attackDuration = 2.5f;
+
     [Header("Phase Scaling")]
     public int phase1Bubbles = 6;
     public int phase2Bubbles = 10;
@@ -31,10 +34,12 @@ public class BubbleBarrageAttack : BaseAttack
 
     private BossPhaseManager phaseManager;
     private DiwataVulnerabilityManager vulnerabilityManager;
+    private BossController controller;
 
     public override void Initialize(BossController bossController)
     {
         base.Initialize(bossController);
+        controller = bossController;
         phaseManager = bossController != null ? bossController.GetComponent<BossPhaseManager>() : null;
         vulnerabilityManager = bossController != null ? bossController.GetComponent<DiwataVulnerabilityManager>() : null;
     }
@@ -47,6 +52,15 @@ public class BubbleBarrageAttack : BaseAttack
         if (targetPlayer != null)
         {
             float dist = Vector3.Distance(transform.position, targetPlayer.position);
+
+            // --- ETO ANG DETALYE ---
+            // Kung ang player ay masyadong malapit (halimbawa < 7 units), 
+            // mag-re-return tayo ng FALSE para mapilitan ang AI na piliin ang Tidal Bite.
+            if (dist < 7.0f)
+            {
+                return false;
+            }
+
             return dist <= maxRange;
         }
         return false;
@@ -58,6 +72,17 @@ public class BubbleBarrageAttack : BaseAttack
         {
             boss.Server_PlayTrigger(animationTriggerName);
         }
+
+        // BAGO: Simulan ang timer para i-reset ang AI
+        StopAllCoroutines();
+        StartCoroutine(AutoResetRoutine());
+    }
+
+    // BAGO: Maghihintay ito bago sabihan ang AI na "Tapos na ako!"
+    private System.Collections.IEnumerator AutoResetRoutine()
+    {
+        yield return new WaitForSeconds(attackDuration);
+        Server_Stop();
     }
 
     public override void Server_OnAnimationEvent(string eventName)
@@ -70,7 +95,6 @@ public class BubbleBarrageAttack : BaseAttack
             foreach (Transform origin in selectedOrigins)
             {
                 int bubblesPerPoint = totalBubbleCount / selectedOrigins.Count;
-                // Siguraduhin na "SpawnBubbles" ang itatawag mo dito:
                 SpawnBubbles(origin, bubblesPerPoint);
             }
 
@@ -85,24 +109,29 @@ public class BubbleBarrageAttack : BaseAttack
     }
 
     [Server]
-void SpawnBubbles(Transform origin, int count) // Sinigurado nating may parameters dito
-{
-    if (bubblePrefab == null) return;
-
-    for (int i = 0; i < count; i++)
+    void SpawnBubbles(Transform origin, int count)
     {
-        // Random offset para hindi magkakapatong ang bubbles
-        Vector3 randomOffset = new Vector3(Random.Range(-1.5f, 1.5f), 0, Random.Range(-1.5f, 1.5f));
-        Vector3 spawnPos = origin.position + randomOffset;
+        if (bubblePrefab == null) return;
 
-        ShokoyBubble bubble = Instantiate(bubblePrefab, spawnPos, Quaternion.identity);
+        for (int i = 0; i < count; i++)
+        {
+            Vector3 randomOffset = new Vector3(Random.Range(-1.5f, 1.5f), 0, Random.Range(-1.5f, 1.5f));
+            Vector3 spawnPos = origin.position + randomOffset;
 
-        // Siniguradong tumutugma sa Initialize ng ShokoyBubble mo
-        bubble.Initialize(boss != null ? boss.GetComponent<Collider>() : null);
+            BakunawaBubble bubble = Instantiate(bubblePrefab, spawnPos, Quaternion.identity);
 
-        NetworkServer.Spawn(bubble.gameObject);
+            bubble.Initialize(boss != null ? boss.GetComponent<Collider>() : null);
+
+            // --- BAGO: IPASA ANG DAMAGE PARA MAKABAWAS ---
+            // Kailangan may public variables na 'damage' at 'explosionRadius' sa ShokoyBubble.cs mo
+            // Kung iba ang pangalan ng variable doon, palitan mo lang ito.
+            bubble.damage = bubbleDamage;
+            // bubble.explosionRadius = bubbleExplosionRadius; // Uncomment kung meron
+
+            NetworkServer.Spawn(bubble.gameObject);
+        }
     }
-}
+
     List<Transform> Server_GetRandomSpawnPoints()
     {
         List<Transform> picked = new List<Transform>();
@@ -159,5 +188,23 @@ void SpawnBubbles(Transform origin, int count) // Sinigurado nating may paramete
         return best;
     }
 
-    public override void Server_Stop() { }
+    // --- BAGO: LALAGYAN NA NATIN NG LAMAN ITO PARA DI MAG-STUCK ---
+    public override void Server_Stop()
+    {
+        if (!isServer) return;
+
+        // Reset BossController
+        if (controller != null)
+        {
+            controller.Server_EndAttack();
+        }
+
+        // Reset Attack Manager
+        if (TryGetComponent<BossAttackManager>(out var attackManager))
+        {
+            attackManager.Server_OnAttackAnimationComplete();
+        }
+
+        Debug.Log("<color=yellow>[BubbleBarrage]</color> Attack Ended & AI Reset!");
+    }
 }

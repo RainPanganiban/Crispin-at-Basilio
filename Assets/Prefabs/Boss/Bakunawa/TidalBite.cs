@@ -19,9 +19,11 @@ public class TidalBite : BaseAttack
     private Animator animator;
     private NetworkAnimator networkAnimator;
     private BakunawaMovement movement;
+    private BossController bossController;
+
     private bool isExecuting = false;
-    private float attackStartTime;
     private bool damageDealt = false;
+    private float attackStartTime;
 
     private static readonly int AttackTrigger = Animator.StringToHash("TidalBite");
 
@@ -30,25 +32,24 @@ public class TidalBite : BaseAttack
         animator = GetComponentInChildren<Animator>();
         networkAnimator = GetComponent<NetworkAnimator>();
         movement = GetComponent<BakunawaMovement>();
+        bossController = GetComponent<BossController>();
     }
 
     [Server]
     public override void Server_Execute()
     {
-        if (isExecuting) return;
+        // Eto ang trigger para magsimula ang kagat
+        if (boss != null)
+        {
+            isExecuting = true;
+            damageDealt = false;
+            attackStartTime = Time.time;
 
-        isExecuting = true;
-        damageDealt = false;
-        attackStartTime = Time.time;
+            // I-play ang animation
+            boss.Server_PlayTrigger("TidalBite");
 
-        if (movement != null) movement.Server_SetMovementEnabled(false);
-
-        if (networkAnimator != null)
-            networkAnimator.SetTrigger(AttackTrigger);
-        else if (animator != null)
-            animator.SetTrigger(AttackTrigger);
-
-        StartCoroutine(LungeRoutine());
+            if (movement != null) movement.Server_SetMovementEnabled(false);
+        }
     }
 
     void Update()
@@ -57,11 +58,13 @@ public class TidalBite : BaseAttack
 
         float elapsed = Time.time - attackStartTime;
 
+        // Damage Timing
         if (!damageDealt && elapsed >= 0.6f)
         {
             DealBiteDamage();
         }
 
+        // Auto-End Attack
         if (elapsed >= attackFullDuration)
         {
             Server_Stop();
@@ -72,20 +75,35 @@ public class TidalBite : BaseAttack
     public override void Server_Stop()
     {
         if (!isExecuting) return;
+
         isExecuting = false;
-        StopAllCoroutines();
+        damageDealt = false;
+
         if (movement != null) movement.Server_SetMovementEnabled(true);
+        if (animator != null) animator.ResetTrigger(AttackTrigger);
+
+        // 1. I-reset ang BossController (Gawa na natin 'to)
+        if (bossController != null) bossController.Server_EndAttack();
+
+        // 2. ETO ANG BAGO: I-reset ang Attack Manager
+        // Para malaman ng manager na pwede na siyang pumili ng bagong attack
+        if (TryGetComponent<BossAttackManager>(out var attackManager))
+        {
+            attackManager.Server_OnAttackAnimationComplete();
+        }
+
+        Debug.Log("<color=cyan>[TidalBite]</color> Attack Finished and Manager Notified.");
     }
 
+    // Para mawala ang CS0534 Error
     public override void Server_OnAnimationEvent(string eventName)
     {
-        if (eventName.Contains("Damage") || eventName.Contains("Hit") || eventName.Contains("Deal"))
+        if (eventName.Contains("Damage") && !damageDealt)
         {
             DealBiteDamage();
         }
     }
 
-    // ETO YUNG NAWAWALA KAYA MAY ERROR:
     private IEnumerator LungeRoutine()
     {
         float timer = 0;
@@ -102,36 +120,38 @@ public class TidalBite : BaseAttack
     {
         if (damageDealt) return;
 
+        // Kunin ang CURRENT position (mahalaga dahil sa lunge)
         Vector3 basePos = mouthPoint != null ? mouthPoint.position : transform.position + (transform.forward * 2.0f);
         Vector3 aoeCenter = basePos + (transform.forward * aoeOffsetForward);
 
-        // Hanapin ang lahat ng colliders (kasama ang Character Controller)
+        // Scan for player
         Collider[] hits = Physics.OverlapSphere(aoeCenter, aoeRadius, playerLayer);
+
+        // Debug Log para makita kung may nasasagap ba ang sphere
+        Debug.Log($"<color=orange>[TidalBite]</color> Sphere Check: Found {hits.Length} objects in Layer.");
 
         foreach (Collider h in hits)
         {
             if (h.transform == transform) continue;
 
-            // Dahil Character Controller ang gamit mo, siguraduhin natin na makuha ang Stats
-            PlayerStatsManager stats = h.GetComponent<PlayerStatsManager>();
-
-            // Kung wala sa main object, baka nasa parent o child (safety check)
+            var stats = h.GetComponent<PlayerStatsManager>();
             if (stats == null) stats = h.GetComponentInParent<PlayerStatsManager>();
 
             if (stats != null)
             {
-                damageDealt = true; // Dito lang natin i-set para kung marami silang magkakatabi, lahat sila madadamage
+                damageDealt = true;
                 stats.TakeDamage(damage, transform);
-                Debug.Log($"<color=green>[TidalBite]</color> Successfully damaged: {h.name}");
+                Debug.Log("<color=green>[TidalBite]</color> SUCCESS! Damaged: " + h.name);
             }
         }
     }
 
+    // Visual helper sa Scene View
     private void OnDrawGizmosSelected()
     {
-        Vector3 basePos = mouthPoint != null ? mouthPoint.position : transform.position + (transform.forward * 4.0f);
+        Vector3 basePos = mouthPoint != null ? mouthPoint.position : transform.position + (transform.forward * 2.0f);
         Vector3 aoeCenter = basePos + (transform.forward * aoeOffsetForward);
-        Gizmos.color = new Color(1, 0, 0, 0.4f);
-        Gizmos.DrawSphere(aoeCenter, aoeRadius);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(aoeCenter, aoeRadius);
     }
 }

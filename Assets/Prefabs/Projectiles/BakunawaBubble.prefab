@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 5965120378751614293}
   - component: {fileID: 620971237340316791}
   - component: {fileID: 8202442983063597397}
-  - component: {fileID: 4508514338633947774}
+  - component: {fileID: 7317203837309433956}
   m_Layer: 0
-  m_Name: ShokoyBubble 1
+  m_Name: BakunawaBubble
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -161,7 +161,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4508514338633947774
+--- !u!114 &7317203837309433956
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -170,25 +170,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1321602652105065632}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe17170dd92115e4898304edaa22c1f7, type: 3}
+  m_Script: {fileID: 11500000, guid: d05847c0023282f4a89625e0e1677866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  damage: 25
-  explosionRadius: 4
+  damage: 30
+  explosionRadius: 5
   delayBeforeExplosion: 1.5
   targetLayer:
     serializedVersion: 2
     m_Bits: 256
-  bubbleLifetime: 0
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 0
   explosionVFXPrefab: {fileID: 0}
   floatSpeed: 3
   floatAmplitude: 0.2
   riseSpeed: 0.5
   popScaleMultiplier: 1.8
-  enlargementSpeed: 2
