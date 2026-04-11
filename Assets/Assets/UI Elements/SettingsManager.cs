@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Dagdag ito para sa TextMeshPro
+using TMPro; // Mahalaga para sa TextMeshPro
 
 public class SettingsManager : MonoBehaviour
 {
@@ -13,64 +13,79 @@ public class SettingsManager : MonoBehaviour
     public Slider bgmSlider;
     public Slider sfxSlider;
 
-    [Header("Value Labels")]
-    public TextMeshProUGUI sensitivityText; // Slot para sa text ng Sens
-    public TextMeshProUGUI bgmText;         // Slot para sa text ng BGM
-    public TextMeshProUGUI sfxText;         // Slot para sa text ng SFX
+    [Header("Value Labels (Optional)")]
+    public TextMeshProUGUI sensitivityText;
+    public TextMeshProUGUI bgmText;
+    public TextMeshProUGUI sfxText;
 
     private void Start()
     {
-        // Load settings
-        float savedSens = PlayerPrefs.GetFloat("MouseSensitivity", 120f);
+        // 1. Initial UI State (Hindi na natatago ang Main Menu)
+        if (settingsPanel != null) settingsPanel.SetActive(false);
+
+        // 2. Load settings (Sens default is 150 para mas ramdam)
+        float savedSens = PlayerPrefs.GetFloat("MouseSensitivity", 150f);
         float savedBGM = PlayerPrefs.GetFloat("BGMVolume", 0.7f);
         float savedSFX = PlayerPrefs.GetFloat("SFXVolume", 1f);
 
-        // Set slider values
-        sensitivitySlider.value = savedSens;
-        bgmSlider.value = savedBGM;
-        sfxSlider.value = savedSFX;
+        // 3. Set slider values
+        if (sensitivitySlider != null) sensitivitySlider.value = savedSens;
+        if (bgmSlider != null) bgmSlider.value = savedBGM;
+        if (sfxSlider != null) sfxSlider.value = savedSFX;
 
-        // I-apply at i-update ang text labels agad sa simula
+        // 4. Apply agad ang values sa simula
         ApplySensitivity(savedSens);
         ApplyBGM(savedBGM);
         ApplySFX(savedSFX);
 
-        // Listeners
-        sensitivitySlider.onValueChanged.AddListener(ApplySensitivity);
-        bgmSlider.onValueChanged.AddListener(ApplyBGM);
-        sfxSlider.onValueChanged.AddListener(ApplySFX);
+        // 5. Listeners para sa real-time updates
+        if (sensitivitySlider != null) sensitivitySlider.onValueChanged.AddListener(ApplySensitivity);
+        if (bgmSlider != null) bgmSlider.onValueChanged.AddListener(ApplyBGM);
+        if (sfxSlider != null) sfxSlider.onValueChanged.AddListener(ApplySFX);
     }
 
     public void OpenSettings()
     {
-        settingsPanel.SetActive(true);
+        if (settingsPanel != null) settingsPanel.SetActive(true);
     }
 
     public void CloseSettings()
     {
-        settingsPanel.SetActive(false);
+        if (settingsPanel != null) settingsPanel.SetActive(false);
         PlayerPrefs.Save();
     }
 
     public void ApplyBGM(float val)
     {
         if (SoundManager.Instance != null) SoundManager.Instance.MusicVolume = val;
-        bgmText.text = Mathf.RoundToInt(val * 100).ToString() + "%"; // Ginagawang percentage (e.g. 80%)
+
+        // I-update lang ang text kung may naka-assign sa slot
+        if (bgmText != null) bgmText.text = Mathf.RoundToInt(val * 100).ToString() + "%";
+
         PlayerPrefs.SetFloat("BGMVolume", val);
     }
 
     public void ApplySFX(float val)
     {
         if (SoundManager.Instance != null) SoundManager.Instance.SFXVolume = val;
-        sfxText.text = Mathf.RoundToInt(val * 100).ToString() + "%"; // Ginagawang percentage
+
+        if (sfxText != null) sfxText.text = Mathf.RoundToInt(val * 100).ToString() + "%";
+
         PlayerPrefs.SetFloat("SFXVolume", val);
     }
 
     public void ApplySensitivity(float val)
     {
-        sensitivityText.text = Mathf.RoundToInt(val).ToString(); // Pinapakita yung actual number (e.g. 120)
+        // Dito nagkaka-error kanina (Line 71). Ngayon safe na dahil sa if check.
+        if (sensitivityText != null) sensitivityText.text = Mathf.RoundToInt(val).ToString();
+
         PlayerPrefs.SetFloat("MouseSensitivity", val);
+
+        // Hanapin ang camera para i-apply ang bagong speed
         ThirdPersonCamera cam = FindFirstObjectByType<ThirdPersonCamera>();
-        if (cam != null) cam.sensitivity = val;
+        if (cam != null)
+        {
+            cam.sensitivity = val;
+        }
     }
 }

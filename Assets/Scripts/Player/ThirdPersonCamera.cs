@@ -10,19 +10,19 @@ public class ThirdPersonCamera : MonoBehaviour
     public float maxY = 60f;
     public float distance = 3f;
 
-    [Header("Smoothness Settings")]
-    [Tooltip("Mas mataas, mas smooth ang camera pero mas 'mabigat' ang feeling.")]
-    public float rotationSmoothTime = 0.12f;
-    [Tooltip("Pang-filter sa mabilis na mouse flick.")]
-    public float inputSmoothSpeed = 15f;
+    [Header("Valorant Feel Settings")]
+    [Tooltip("Bawasan ito para mas mabilis ang response (0.01 - 0.05). Gawing 0 para sa Pure Raw Input.")]
+    public float rotationSmoothTime = 0.03f;
+    [Tooltip("Taasan ito para mas sumunod agad ang camera sa galaw ng mouse.")]
+    public float inputSmoothSpeed = 25f;
 
     private float yawVelocity;
     private float pitchVelocity;
 
     [Header("Aiming System")]
-    public float aimSensitivity = 60f;
+    public float aimSensitivityMultiplier = 0.5f;
     public float zoomDistance = 1.5f;
-    public float zoomSpeed = 8f;
+    public float zoomSpeed = 10f;
 
     private Vector2 lookInput;
     private Vector2 smoothedLookInput;
@@ -32,7 +32,7 @@ public class ThirdPersonCamera : MonoBehaviour
     private float targetPitch;
 
     private bool isAiming;
-    private float currentSensitivity;
+    public float currentSensitivity;
     private float currentDistance;
 
     NetworkIdentity ownerIdentity;
@@ -42,7 +42,6 @@ public class ThirdPersonCamera : MonoBehaviour
     {
         ownerIdentity = GetComponentInParent<NetworkIdentity>();
 
-        // Setup para sa Local Player lang ang camera
         if (ownerIdentity == null || !ownerIdentity.isLocalPlayer)
         {
             Camera cam = GetComponent<Camera>();
@@ -52,63 +51,68 @@ public class ThirdPersonCamera : MonoBehaviour
             return;
         }
 
+        // Load saved sensitivity
+        sensitivity = PlayerPrefs.GetFloat("MouseSensitivity", 120f);
+        currentSensitivity = sensitivity;
+
         localStats = ownerIdentity.GetComponent<PlayerStatsManager>();
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        currentSensitivity = sensitivity;
         currentDistance = distance;
 
-        // Kunin ang initial rotation para hindi mag-snap ang camera sa simula
-        targetYaw = transform.eulerAngles.y;
-        targetPitch = transform.eulerAngles.x;
+        // Initialize angles correctly
+        Vector3 angles = transform.eulerAngles;
+        targetYaw = angles.y;
+        targetPitch = angles.x;
         yaw = targetYaw;
         pitch = targetPitch;
     }
 
-    // PUBLIC ito para ma-access ng RangedAttack.cs (Fix sa error mo)
     public void SetAiming(bool aiming)
     {
         isAiming = aiming;
-        currentSensitivity = aiming ? aimSensitivity : sensitivity;
+        float baseSens = PlayerPrefs.GetFloat("MouseSensitivity", sensitivity);
+        currentSensitivity = aiming ? baseSens * aimSensitivityMultiplier : baseSens;
     }
 
     public void OnLook(InputAction.CallbackContext context)
     {
-        // Check kung local player bago tanggapin ang input
         if (ownerIdentity != null && !ownerIdentity.isLocalPlayer) return;
+        // Gamit ang Delta para sa New Input System para sa raw movement
         lookInput = context.ReadValue<Vector2>();
     }
 
     void LateUpdate()
     {
         if (ownerIdentity == null || !ownerIdentity.isLocalPlayer) return;
-
         CheckSpectatorTarget();
         if (target == null) return;
 
-        // 1. INPUT SMOOTHING: Pinapakinis ang raw mouse input
+        // Real-time Sensitivity update from settings
+        if (!isAiming)
+        {
+            currentSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", sensitivity);
+        }
+
+        // VALORANT FEEL: Mas mabilis na Lerp para sa input
         smoothedLookInput = Vector2.Lerp(smoothedLookInput, lookInput, Time.deltaTime * inputSmoothSpeed);
 
-        // 2. FLICK PROTECTION: Nililimitahan ang bilis ng pag-ikot per frame para iwas jitter
-        float maxRotationStep = 15f;
-        float deltaYaw = Mathf.Clamp(smoothedLookInput.x * currentSensitivity * Time.deltaTime, -maxRotationStep, maxRotationStep);
-        float deltaPitch = Mathf.Clamp(smoothedLookInput.y * currentSensitivity * Time.deltaTime, -maxRotationStep, maxRotationStep);
-
-        targetYaw += deltaYaw;
-        targetPitch -= deltaPitch;
+        // Compute rotation without clamping steps too much (para sa flick shots)
+        targetYaw += smoothedLookInput.x * currentSensitivity * 0.01f; // Ginamitan ng 0.01f multiplier para mas madaling i-tune ang slider
+        targetPitch -= smoothedLookInput.y * currentSensitivity * 0.01f;
         targetPitch = Mathf.Clamp(targetPitch, minY, maxY);
 
-        // 3. ROTATION DAMPING: SmoothDamp para sa professional camera feel
+        // VALORANT FEEL: Sobrang liit na SmoothDamp o kaya direct Apply
         yaw = Mathf.SmoothDampAngle(yaw, targetYaw, ref yawVelocity, rotationSmoothTime);
         pitch = Mathf.SmoothDampAngle(pitch, targetPitch, ref pitchVelocity, rotationSmoothTime);
 
-        // 4. ZOOM LERP: Para sa smooth na pag-zoom kapag nag-a-aim
+        // Distance smoothing (Zoom)
         float targetDistance = isAiming ? zoomDistance : distance;
         currentDistance = Mathf.Lerp(currentDistance, targetDistance, zoomSpeed * Time.deltaTime);
 
-        // 5. FINAL POSITIONING
+        // Apply
         transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
         transform.position = target.position + transform.rotation * new Vector3(0, 0, -currentDistance);
     }

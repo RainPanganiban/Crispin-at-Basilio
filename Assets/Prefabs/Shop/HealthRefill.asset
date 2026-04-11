@@ -15,7 +15,7 @@ MonoBehaviour:
   id: HealthRefill
   displayName: Health Refill
   itemIcon: {fileID: -960957956, guid: 156acb369aef66843a245d1e0a851ca7, type: 3}
-  cost: 15
+  cost: 10
   type: 1
   statToUpgrade: 
   upgradeAmount: 0

@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: StaminaUpgrade
   m_EditorClassIdentifier: 
   id: MaxStamina_1
-  displayName: Stamina +15
+  displayName: Stamina +20
   itemIcon: {fileID: -2127204517, guid: 0ec359b1e3e27b649ac0d3e1a4478219, type: 3}
   cost: 15
   type: 0
   statToUpgrade: MaxStamina
-  upgradeAmount: 15
-  maxLevel: 9
+  upgradeAmount: 20
+  maxLevel: 20
   isRevive: 0
   isHealthRefill: 0

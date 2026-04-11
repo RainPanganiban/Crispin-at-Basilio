@@ -15,7 +15,7 @@ MonoBehaviour:
   id: Revive
   displayName: Revive Ally
   itemIcon: {fileID: 1098551068, guid: 6597dd0f12911b24a9bd5e70b296d645, type: 3}
-  cost: 25
+  cost: 20
   type: 1
   statToUpgrade: 
   upgradeAmount: 0
