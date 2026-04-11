@@ -948,13 +948,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 1285947279903484966}
-  sensitivity: 120
+  sensitivity: 15
   minY: -30
   maxY: 60
   distance: 3
   rotationSmoothTime: 0.1
-  inputSmoothSpeed: 20
-  aimSensitivity: 60
+  inputSmoothSpeed: 10
+  aimSensitivity: 15
   zoomDistance: 1.5
   zoomSpeed: 8
 --- !u!1 &4926412401895430512
