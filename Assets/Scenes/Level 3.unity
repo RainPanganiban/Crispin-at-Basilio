@@ -96800,18 +96800,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: cooldown
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: maxRange
-      value: 35
-      objectReference: {fileID: 0}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: bubblePrefab
-      value: 
-      objectReference: {fileID: 7317203837309433956, guid: e149b6e0e42df68408ff425b0353ab06, type: 3}
-    - target: {fileID: 417550526651189157, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
       propertyPath: 'spawnOrigins.Array.data[0]'
       value: 
       objectReference: {fileID: 1489784004}
@@ -96927,86 +96915,14 @@ PrefabInstance:
       propertyPath: sceneId
       value: 1049934574
       objectReference: {fileID: 0}
-    - target: {fileID: 2002542010998294982, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: phases.Array.data[1].movementSpeedMultiplier
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2002542010998294982, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: phases.Array.data[2].movementSpeedMultiplier
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2002542010998294982, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: phases.Array.data[0].allowedAttacks.Array.size
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2791082483734254363, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
       propertyPath: m_Name
       value: Bakuna35 (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 6824881664659566388, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: damage
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 6824881664659566388, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: cooldown
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 6824881664659566388, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: maxRange
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 6824881664659566388, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: aoeRadius
-      value: 5.65
-      objectReference: {fileID: 0}
-    - target: {fileID: 6824881664659566388, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: aoeOffsetForward
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 6983481088613702459, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: thinkInterval
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 7108596447552612385, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: m_Size.x
-      value: 4.560032
-      objectReference: {fileID: 0}
-    - target: {fileID: 7108596447552612385, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: m_Size.y
-      value: 30.761831
-      objectReference: {fileID: 0}
-    - target: {fileID: 7108596447552612385, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: m_Size.z
-      value: 48.7254
-      objectReference: {fileID: 0}
-    - target: {fileID: 7108596447552612385, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: m_Center.x
-      value: 0.07253052
-      objectReference: {fileID: 0}
-    - target: {fileID: 7108596447552612385, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: m_Center.y
-      value: -4.4107866
-      objectReference: {fileID: 0}
-    - target: {fileID: 7108596447552612385, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: m_Center.z
-      value: -16.347347
       objectReference: {fileID: 0}
     - target: {fileID: 8124586328903312479, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
       propertyPath: arenaCenter
       value: 
       objectReference: {fileID: 1247606721}
-    - target: {fileID: 8139790102183769979, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8139790102183769979, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8256071856327707340, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: globalCooldownBetweenAttacks
-      value: 0.2
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

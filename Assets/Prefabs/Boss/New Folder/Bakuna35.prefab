@@ -169,7 +169,7 @@ MonoBehaviour:
   canvasGroup: {fileID: 3218005454377141378}
   healthSlider: {fileID: 2720357510984507073}
   bossNameText: {fileID: 3759175493627142596}
-  activationRange: 20
+  activationRange: 50
   fadeSpeed: 2
   bossName: BAKUNAWA
 --- !u!1 &2791082483734254363
@@ -193,8 +193,11 @@ GameObject:
   - component: {fileID: 8124586328903312479}
   - component: {fileID: 6824881664659566388}
   - component: {fileID: 417550526651189157}
+  - component: {fileID: 6103537865452667483}
   - component: {fileID: 2738017064831012183}
   - component: {fileID: 7108596447552612385}
+  - component: {fileID: 3029712427041816016}
+  - component: {fileID: 3391241000244849483}
   m_Layer: 6
   m_Name: Bakuna35
   m_TagString: Enemy
@@ -314,7 +317,7 @@ MonoBehaviour:
   animationRelay: {fileID: 7972493391828926739}
   movement: {fileID: 8124586328903312479}
   animator: {fileID: 1568715064226506509}
-  thinkInterval: 0.75
+  thinkInterval: 0.25
 --- !u!114 &8256071856327707340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,7 +333,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  globalCooldownBetweenAttacks: 0.5
+  globalCooldownBetweenAttacks: 0.2
 --- !u!114 &7972493391828926739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -366,8 +369,7 @@ MonoBehaviour:
   phases:
   - enterAtHealthPercent: 0
     allowedAttacks:
-    - {fileID: 6824881664659566388}
-    - {fileID: 417550526651189157}
+    - {fileID: 3029712427041816016}
     transitionTriggerName: Bakunawa_Phase2
     transitionSFX: {fileID: 0}
     movementSpeedMultiplier: 0
@@ -376,9 +378,11 @@ MonoBehaviour:
     allowedAttacks:
     - {fileID: 6824881664659566388}
     - {fileID: 417550526651189157}
+    - {fileID: 6103537865452667483}
+    - {fileID: 6103537865452667483}
     transitionTriggerName: Bakunawa_Phase3
     transitionSFX: {fileID: 0}
-    movementSpeedMultiplier: 1.5
+    movementSpeedMultiplier: 1
     specialBehaviorFlag: 0
   - enterAtHealthPercent: 0.3
     allowedAttacks:
@@ -386,7 +390,7 @@ MonoBehaviour:
     - {fileID: 417550526651189157}
     transitionTriggerName: 
     transitionSFX: {fileID: 0}
-    movementSpeedMultiplier: 2
+    movementSpeedMultiplier: 1.5
     specialBehaviorFlag: 0
 --- !u!114 &1270841192502884439
 MonoBehaviour:
@@ -445,6 +449,7 @@ MonoBehaviour:
   stopDistance: 2
   arenaCenter: {fileID: 0}
   maxRangeFromCenter: 20
+  fixedYHeight: 2
 --- !u!114 &6824881664659566388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -461,22 +466,20 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   attackName: Attack
-  cooldown: 4
-  maxRange: 15
+  cooldown: 8
+  maxRange: 20
   animationTriggerName: TidalBite
   requiresMovementLock: 0
-  damage: 50
+  damage: 20
   lungeForce: 7
   lungeDuration: 0.3
   attackFullDuration: 1.2
   mouthPoint: {fileID: 7783090283658848457}
-  aoeRadius: 10
-  aoeOffsetForward: 3
+  aoeRadius: 5.65
+  aoeOffsetForward: 0.75
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
-  isExecuting: 0
-  damageDealt: 0
 --- !u!114 &417550526651189157
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,11 +496,11 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   attackName: FireBubbles
-  cooldown: 2
-  maxRange: 40
+  cooldown: 15
+  maxRange: 35
   animationTriggerName: BubbleAttack
   requiresMovementLock: 0
-  bubblePrefab: {fileID: 4508514338633947774, guid: e149b6e0e42df68408ff425b0353ab06, type: 3}
+  bubblePrefab: {fileID: 7317203837309433956, guid: e149b6e0e42df68408ff425b0353ab06, type: 3}
   spawnOrigins:
   - {fileID: 0}
   - {fileID: 0}
@@ -522,11 +525,43 @@ MonoBehaviour:
     m_Bits: 256
   spawnPointCountToUse: 5
   bubbleDamage: 25
-  bubbleExplosionRadius: 4
+  bubbleExplosionRadius: 8
   bubbleLifetime: 1.5
+  attackDuration: 2.5
   phase1Bubbles: 6
   phase2Bubbles: 10
   phase3Bubbles: 16
+--- !u!114 &6103537865452667483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2791082483734254363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7e594a601a8b0a4fb29bce8c26b9b3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attackName: Attack
+  cooldown: 3
+  maxRange: 30
+  animationTriggerName: TailSlam
+  requiresMovementLock: 0
+  damage: 2
+  slamRadius: 7.79
+  slamOffsetByParent: {x: 0, y: -9.1, z: 18.47}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  knockbackForce: 50
+  upwardForce: 100
+  damageDelay: 0.8
+  attackDuration: 2
+  slamVFXPrefab: {fileID: 0}
 --- !u!54 &2738017064831012183
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -573,8 +608,59 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.5600314, y: 30.761827, z: 48.249363}
-  m_Center: {x: 0.072530486, y: -4.4107823, z: -16.585371}
+  m_Size: {x: 4.560032, y: 30.761831, z: 48.7254}
+  m_Center: {x: 0.07253052, y: -4.4107866, z: -16.347347}
+--- !u!114 &3029712427041816016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2791082483734254363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52fb534d0b916e146a3d46bfa13991a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attackName: Attack
+  cooldown: 2
+  maxRange: 40
+  animationTriggerName: MouthLaser
+  requiresMovementLock: 0
+  laserBeamPrefab: {fileID: 7123666503054923054, guid: 32009cbea4930f748ad4d590b033ef45, type: 3}
+  mouthFirePoint: {fileID: 7783090283658848457}
+  laserDamage: 20
+  laserDistance: 40
+  laserLifetime: 3
+  laserWidth: 3
+  tickInterval: 0.2
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  initialTrackingSpeed: 10
+  trackingAcceleration: 20
+  targetVerticalOffset: 10
+  attackTrigger: MouthLaser
+--- !u!114 &3391241000244849483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2791082483734254363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  clientAuthority: 0
+  animator: {fileID: 8142003757348419002}
 --- !u!1 &5212258764840398784
 GameObject:
   m_ObjectHideFlags: 0
@@ -1654,5 +1740,10 @@ Transform:
 --- !u!4 &7783090283658848457 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 139745518938329748, guid: 01c1d15d1be9e30449f09cac77ee7ba8, type: 3}
+  m_PrefabInstance: {fileID: 7922797868497386077}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &8142003757348419002 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 2093430454721433575, guid: 01c1d15d1be9e30449f09cac77ee7ba8, type: 3}
   m_PrefabInstance: {fileID: 7922797868497386077}
   m_PrefabAsset: {fileID: 0}

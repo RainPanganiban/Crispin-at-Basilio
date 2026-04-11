@@ -177,7 +177,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   damage: 30
-  explosionRadius: 5
+  explosionRadius: 8
   delayBeforeExplosion: 1.5
   targetLayer:
     serializedVersion: 2
