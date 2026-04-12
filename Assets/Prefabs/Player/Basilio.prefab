@@ -4108,12 +4108,12 @@ MonoBehaviour:
   syncInterval: 0
   health:
     name: Health
-    maxValue: 100
-    currentValue: 100
+    maxValue: 250
+    currentValue: 250
   stamina:
     name: Stamina
-    maxValue: 100
-    currentValue: 100
+    maxValue: 150
+    currentValue: 150
   staminaRegenRate: 10
   healthRegenRate: 0
 --- !u!114 &1964418824019641932
@@ -4134,7 +4134,7 @@ MonoBehaviour:
   lightDamage: 15
   heavyDamage: 25
   attackRadius: 3
-  attackRange: 0.5
+  attackRange: 1
   hitLayers:
     serializedVersion: 2
     m_Bits: 64

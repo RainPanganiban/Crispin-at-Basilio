@@ -472,7 +472,7 @@ MonoBehaviour:
   maxRange: 20
   animationTriggerName: TidalBite
   requiresMovementLock: 0
-  damage: 20
+  damage: 14
   lungeForce: 7
   lungeDuration: 0.3
   attackFullDuration: 1.2
@@ -553,7 +553,7 @@ MonoBehaviour:
   maxRange: 30
   animationTriggerName: TailSlam
   requiresMovementLock: 0
-  damage: 2
+  damage: 10
   slamRadius: 7.79
   slamOffsetByParent: {x: 0, y: -9.1, z: 18.47}
   playerLayer:

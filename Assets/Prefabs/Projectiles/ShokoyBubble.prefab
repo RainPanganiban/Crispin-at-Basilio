@@ -176,7 +176,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  damage: 20
+  damage: 10
   explosionRadius: 2.5
   delayBeforeExplosion: 1.5
   targetLayer:

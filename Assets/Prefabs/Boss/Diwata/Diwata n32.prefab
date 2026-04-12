@@ -368,7 +368,7 @@ MonoBehaviour:
     m_Bits: 256
   spawnPointCountToUse: 5
   petalSpeed: 8
-  petalDamage: 20
+  petalDamage: 15
   petalLifetime: 5
   spiralSpread: 30
   phase1Petals: 6
@@ -471,7 +471,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   spawnPointCountToUse: 10
-  lanceDamage: 30
+  lanceDamage: 20
   lanceSpeed: 15
   lanceMaxDistance: 30
   phase2Lances: 8
