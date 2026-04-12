@@ -709,7 +709,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   attackName: Attack
-  cooldown: 2
+  cooldown: 3
   maxRange: 40
   animationTriggerName: Onglo_BoulderBarrage
   requiresMovementLock: 1

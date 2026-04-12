@@ -311842,6 +311842,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2124231710}
     m_Modifications:
+    - target: {fileID: 2917712239413616872, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
+      propertyPath: ringDamage
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 3082055868530467007, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
       propertyPath: m_Name
       value: Onglo (1)
@@ -311897,10 +311901,6 @@ PrefabInstance:
     - target: {fileID: 6556771931764059944, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7588404998804003397, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
-      propertyPath: cooldown
-      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

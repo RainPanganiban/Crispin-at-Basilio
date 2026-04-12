@@ -422,7 +422,7 @@ MonoBehaviour:
   syncInterval: 0
   attackName: VineSnare
   cooldown: 3
-  maxRange: 20
+  maxRange: 25
   animationTriggerName: VineSnare
   requiresMovementLock: 0
   vineAttackPrefab: {fileID: 7347794123305069028, guid: c4a786ec34f321847bcb67ddc51563bb, type: 3}
@@ -670,7 +670,7 @@ MonoBehaviour:
   syncInterval: 0
   coinPrefab: {fileID: 8805015260375165595, guid: b2c7eb0b090457142b40d43133ef839f, type: 3}
   minCoins: 10
-  maxCoins: 12
+  maxCoins: 13
   scatterRadius: 0.6
 --- !u!1 &1858122984573298185
 GameObject:
