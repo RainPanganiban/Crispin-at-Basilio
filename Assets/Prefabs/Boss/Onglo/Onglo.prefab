@@ -677,8 +677,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   attackName: Attack
-  cooldown: 2
-  maxRange: 20
+  cooldown: 4
+  maxRange: 14
   animationTriggerName: Onglo_GroundSplit
   requiresMovementLock: 1
   fissureOrigin: {fileID: 4231949332098844287}
@@ -710,7 +710,7 @@ MonoBehaviour:
   syncInterval: 0
   attackName: Attack
   cooldown: 2
-  maxRange: 25
+  maxRange: 40
   animationTriggerName: Onglo_BoulderBarrage
   requiresMovementLock: 1
   boulderSpawnPoints:

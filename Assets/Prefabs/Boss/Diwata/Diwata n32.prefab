@@ -368,7 +368,7 @@ MonoBehaviour:
     m_Bits: 256
   spawnPointCountToUse: 5
   petalSpeed: 8
-  petalDamage: 25
+  petalDamage: 20
   petalLifetime: 5
   spiralSpread: 30
   phase1Petals: 6
@@ -390,8 +390,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   attackName: SwarmCSummon
-  cooldown: 10
-  maxRange: 15
+  cooldown: 15
+  maxRange: 20
   animationTriggerName: SwarmSummon
   requiresMovementLock: 0
   tyanakPrefab: {fileID: 3060605970339348292, guid: d2be532c84583984e95079a2946b8271, type: 3}
@@ -403,8 +403,8 @@ MonoBehaviour:
   - {fileID: 0}
   phase1SpawnCount: 0
   phase2SpawnCount: 1
-  phase3SpawnCount: 2
-  spawnRadius: 2
+  phase3SpawnCount: 1
+  spawnRadius: 4
 --- !u!114 &4605829407600288029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -434,6 +434,8 @@ MonoBehaviour:
   telegraphDuration: 1.2
   vineCount: 3
   spawnOffsetRadius: 2
+  maxAttackRange: 15
+  startFromPhaseIndex: 1
 --- !u!114 &2260300378793522656
 MonoBehaviour:
   m_ObjectHideFlags: 0

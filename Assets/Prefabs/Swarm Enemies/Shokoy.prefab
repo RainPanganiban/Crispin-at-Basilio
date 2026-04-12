@@ -720,11 +720,11 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  cooldown: 2
+  cooldown: 6
   duration: 1
   attackSound: {fileID: 0}
   waterProjectilePrefab: {fileID: 3216240422717333500, guid: c987039422dd8d94d828059f05310362, type: 3}
-  directDamage: 15
+  directDamage: 5
   projectileSpeed: 10
   arcHeight: 3
   projectilesToFire: 3
@@ -747,7 +747,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  cooldown: 2
+  cooldown: 5
   duration: 1
   attackSound: {fileID: 0}
   bubblePrefab: {fileID: 1321602652105065632, guid: 91dac709119a0774ea1fe728fa65a79e, type: 3}

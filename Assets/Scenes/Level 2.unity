@@ -20398,6 +20398,10 @@ PrefabInstance:
       propertyPath: sceneId
       value: 3180583885
       objectReference: {fileID: 0}
+    - target: {fileID: 4605829407600288029, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: maxRange
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 4812855404122033223, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: 'spawnOrigins.Array.data[0]'
       value: 
