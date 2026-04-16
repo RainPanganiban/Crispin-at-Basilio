@@ -432,7 +432,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 50
+  maxHealth: 80
 --- !u!114 &8941641839441396838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -500,7 +500,8 @@ MonoBehaviour:
   syncInterval: 0
   cooldown: 2
   duration: 1
-  damage: 10
+  attackSound: {fileID: 8300000, guid: 8dd1ddb7048e5ab42b3aab7d937b0b69, type: 3}
+  damage: 20
   leapSpeed: 15
   leapDistance: 5
   hitRadius: 1.5
@@ -529,7 +530,8 @@ MonoBehaviour:
   syncInterval: 0
   cooldown: 2
   duration: 1
-  damage: 5
+  attackSound: {fileID: 8300000, guid: 8dd1ddb7048e5ab42b3aab7d937b0b69, type: 3}
+  damage: 10
   hitRadius: 1.21
   playerLayer:
     serializedVersion: 2
@@ -551,9 +553,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkClip: {fileID: 0}
-  attackClip: {fileID: 0}
+  walkVolume: 1
+  attackVolume: 1
   hurtClip: {fileID: 0}
+  hurtVolume: 1
   deathClip: {fileID: 0}
+  deathVolume: 1
+  walkInterval: 0.5
+  ambientClips: []
+  ambientVolume: 0.7
+  minAmbientDelay: 5
+  maxAmbientDelay: 10
 --- !u!1 &4497798143143256255
 GameObject:
   m_ObjectHideFlags: 0

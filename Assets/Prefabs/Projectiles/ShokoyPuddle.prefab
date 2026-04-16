@@ -155,7 +155,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  damagePerTick: 2
+  damagePerTick: 5
   tickRate: 0.5
   lifetime: 4
   targetLayer:

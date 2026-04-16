@@ -354,7 +354,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   coinPrefab: {fileID: 8805015260375165595, guid: b2c7eb0b090457142b40d43133ef839f, type: 3}
-  minCoins: 1
+  minCoins: 3
   maxCoins: 5
   scatterRadius: 0.6
 --- !u!114 &9151451789103439053
@@ -374,10 +374,11 @@ MonoBehaviour:
   syncInterval: 0
   cooldown: 2
   duration: 1
+  attackSound: {fileID: 8300000, guid: 7a0e5955ead866a4ca03c9cb4d7df3e3, type: 3}
   laserBeamPrefab: {fileID: 7123666503054923054, guid: c7b7a3dbfcc368044a6d67caa02df621, type: 3}
   firePoint: {fileID: 1205468937126703889}
   laserDamage: 10
-  laserDistance: 30
+  laserDistance: 20
   laserLifetime: 2
   laserWidth: 0.3
   tickInterval: 0.25
@@ -403,9 +404,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkClip: {fileID: 0}
-  attackClip: {fileID: 0}
+  walkVolume: 1
+  attackVolume: 1
   hurtClip: {fileID: 0}
+  hurtVolume: 1
   deathClip: {fileID: 0}
+  deathVolume: 1
+  walkInterval: 0.5
+  ambientClips: []
+  ambientVolume: 0.7
+  minAmbientDelay: 5
+  maxAmbientDelay: 10
 --- !u!1 &4076794319947539418
 GameObject:
   m_ObjectHideFlags: 0

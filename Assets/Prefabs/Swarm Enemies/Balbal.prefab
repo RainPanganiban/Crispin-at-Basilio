@@ -607,7 +607,7 @@ MonoBehaviour:
   agent: {fileID: 5902952450574520546}
   aggroSystem: {fileID: 5505361307511859608}
   attackController: {fileID: 7433503286364869240}
-  attackRange: 2
+  attackRange: 3
   combatDistance: 2.5
   backOffDistance: 3
   repositionTimeout: 2
@@ -740,11 +740,11 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  cooldown: 2
+  cooldown: 6
   duration: 1
   attackSound: {fileID: 0}
   waveProjectilePrefab: {fileID: 3600918741046071812, guid: 30d0aa7cc56778c43a352fecf0818459, type: 3}
-  projectileDamage: 10
+  projectileDamage: 15
   projectileSpeed: 12
   projectileLifetime: 3
   waveSpawnPoint: {fileID: 657150596108968432}
@@ -765,7 +765,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  cooldown: 2
+  cooldown: 5
   duration: 1
   attackSound: {fileID: 0}
   directDamage: 10
@@ -801,6 +801,10 @@ MonoBehaviour:
   deathClip: {fileID: 0}
   deathVolume: 1
   walkInterval: 0.5
+  ambientClips: []
+  ambientVolume: 0.7
+  minAmbientDelay: 5
+  maxAmbientDelay: 10
 --- !u!1 &5751458865682228948
 GameObject:
   m_ObjectHideFlags: 0

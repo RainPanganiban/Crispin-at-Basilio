@@ -176,7 +176,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  damage: 15
+  damage: 10
   maxRadius: 4
   expansionSpeed: 8
   targetLayer:

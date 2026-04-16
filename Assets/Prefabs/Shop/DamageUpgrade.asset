@@ -15,10 +15,10 @@ MonoBehaviour:
   id: AttackDamage_1
   displayName: Attack +5
   itemIcon: {fileID: 1761716388, guid: 4d798b5d5f977404db394ae98e1ac4f0, type: 3}
-  cost: 20
+  cost: 15
   type: 0
   statToUpgrade: AttackDamage
   upgradeAmount: 5
-  maxLevel: 9
+  maxLevel: 20
   isRevive: 0
   isHealthRefill: 0

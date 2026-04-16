@@ -19,14 +19,18 @@ public class BossDeathHandler : NetworkBehaviour
     void Awake()
     {
         controller = GetComponent<BossController>();
-         bossColliders = GetComponentsInChildren<Collider>();
+        bossColliders = GetComponentsInChildren<Collider>();
     }
 
     [Server]
     public void Server_OnBossDeath()
     {
-        // Disable AI think loop via controller state (already handled by controller.state = Dead)
-        
+        // 1. Drop Coins (Idinagdag na logic)
+        if (TryGetComponent<EnemyCoinDrop>(out var coinDrop))
+        {
+            coinDrop.DropCoins();
+        }
+
         // Disable movement
         if (TryGetComponent<BossMovementBase>(out var movement))
         {

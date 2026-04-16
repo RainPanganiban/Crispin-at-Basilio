@@ -20,33 +20,56 @@ public class VineSnareAttack : BaseAttack
     public float vineRadius = 2.5f;
     public float telegraphDuration = 1.2f;
 
-    [Header("Spawn")]
+    [Header("Spawn & Range")]
     public int vineCount = 3;
     public float spawnOffsetRadius = 2f;
+    [Tooltip("Dapat pasok ang player sa range na ito bago lumabas ang vines.")]
+    public float maxAttackRange = 15f;
+
+    [Header("Phase Requirement")]
+    [Tooltip("I-set sa 1 para magsimulang lumitaw sa Phase 2 at Phase 3.")]
+    public int startFromPhaseIndex = 1;
 
     private DiwataVulnerabilityManager vulnerabilityManager;
+    private BossPhaseManager phaseManager;
 
     public override void Initialize(BossController bossController)
     {
         base.Initialize(bossController);
         vulnerabilityManager = bossController != null ? bossController.GetComponent<DiwataVulnerabilityManager>() : null;
+
+        // Kinukuha ang reference ng Phase Manager mula kay Diwata
+        phaseManager = bossController != null ? bossController.GetComponent<BossPhaseManager>() : null;
     }
 
     public override bool Server_CanExecute()
     {
-        // FIX: Idinagdag ang NetworkServer.active check para iwas error sa transition
         if (!isServer || boss == null || !NetworkServer.active) return false;
 
-        bool hasPlayers = false;
+        // --- PHASE CHECK ---
+        // Kung ang current phase ay mas mababa sa Phase 2 (Index 1), bawal umatake.
+        if (phaseManager != null)
+        {
+            if (phaseManager.GetCurrentPhaseIndex() < startFromPhaseIndex)
+                return false;
+        }
+
+        // --- DISTANCE CHECK ---
+        bool isAnyPlayerInRange = false;
         foreach (var conn in NetworkServer.connections.Values)
         {
             if (conn != null && conn.identity != null)
             {
-                hasPlayers = true;
-                break;
+                float distance = Vector3.Distance(transform.position, conn.identity.transform.position);
+                if (distance <= maxAttackRange)
+                {
+                    isAnyPlayerInRange = true;
+                    break;
+                }
             }
         }
-        return hasPlayers;
+
+        return isAnyPlayerInRange;
     }
 
     public override void Server_Execute()
@@ -59,8 +82,11 @@ public class VineSnareAttack : BaseAttack
 
     public override void Server_OnAnimationEvent(string eventName)
     {
-        // FIX: Sinigurado na server-only ang execution nito
         if (!isServer || !NetworkServer.active) return;
+
+        // Fail-safe para hindi mag-trigger sa Phase 1 (Index 0)
+        if (phaseManager != null && phaseManager.GetCurrentPhaseIndex() < startFromPhaseIndex)
+            return;
 
         if (eventName == Event_TriggerVineSnap || eventName == Event_SpawnVines)
         {
@@ -74,40 +100,33 @@ public class VineSnareAttack : BaseAttack
     [Server]
     void Server_SpawnVines()
     {
-        if (vineAttackPrefab == null)
-        {
-            Debug.LogWarning($"[VineSnare] Prefab missing on {gameObject.name}");
-            return;
-        }
+        if (vineAttackPrefab == null) return;
 
-        List<Vector3> playerPositions = new List<Vector3>();
+        List<Vector3> validTargets = new List<Vector3>();
         foreach (var conn in NetworkServer.connections.Values)
         {
             if (conn == null || conn.identity == null) continue;
-            playerPositions.Add(conn.identity.transform.position);
+
+            // Optional: I-target lang yung mga players na malapit kay Diwata
+            float dist = Vector3.Distance(transform.position, conn.identity.transform.position);
+            if (dist <= maxAttackRange + 10f)
+            {
+                validTargets.Add(conn.identity.transform.position);
+            }
         }
+
+        if (validTargets.Count == 0) return;
 
         for (int i = 0; i < vineCount; i++)
         {
-            Vector3 targetPos;
-            if (playerPositions.Count > 0)
-            {
-                // Pumili ng random na player para tubuan ng vines
-                targetPos = playerPositions[Random.Range(0, playerPositions.Count)];
-                Vector2 offset = Random.insideUnitCircle * spawnOffsetRadius;
-                targetPos += new Vector3(offset.x, 0f, offset.y);
-            }
-            else
-            {
-                // Fallback kung biglang nawala ang players
-                targetPos = transform.position + (Random.insideUnitSphere * 5f);
-            }
+            Vector3 targetPos = validTargets[Random.Range(0, validTargets.Count)];
+            Vector2 offset = Random.insideUnitCircle * spawnOffsetRadius;
+            targetPos += new Vector3(offset.x, 0f, offset.y);
 
             targetPos.y = GetGroundY(targetPos);
 
             DiwataVineSnare vine = Instantiate(vineAttackPrefab, targetPos, Quaternion.identity);
 
-            // Siguraduhin na ang vine prefab ay may Network Identity
             vine.Server_Initialize(
                 owner: boss != null ? boss.netIdentity : null,
                 damage: vineDamage,
@@ -122,7 +141,6 @@ public class VineSnareAttack : BaseAttack
 
     float GetGroundY(Vector3 position)
     {
-        // Raycast pababa para lumitaw ang vines sa floor (Dapat may Collider ang ground mo)
         if (Physics.Raycast(position + Vector3.up * 10f, Vector3.down, out RaycastHit hit, 20f))
             return hit.point.y;
         return position.y;

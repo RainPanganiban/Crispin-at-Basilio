@@ -8,8 +8,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: LaserBeam
-  m_Shader: {fileID: -6465566751694194690, guid: 555baf03c04a550478f43808078a8043, type: 3}
-  m_Parent: {fileID: -876546973899608171, guid: 555baf03c04a550478f43808078a8043, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: a47a36d718e19084588fbaa4621894ed, type: 3}
+  m_Parent: {fileID: 2100000, guid: 8c940c147aa57d842b8801a9af4f87e4, type: 2}
   m_ModifiedSerializedProperties: 4
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -23,15 +23,16 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _base_texture:
+        m_Texture: {fileID: 2800000, guid: 84b6bd16b9550c44f99d0fec6a735bad, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _GlowStrength: 100
-    - _PulseSpeed: 25
-    - _QueueControl: 0
+    - _edge_threshold: 1.31
     m_Colors:
-    - _EmmisionColor: {r: 1, g: 0, b: 0.020593166, a: 1}
-    - _NeonColor: {r: 1, g: 0, b: 0.03346157, a: 1}
+    - _glow_color: {r: 1.7834634, g: 0.06393523, b: 0.06393523, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &7556228808683719267

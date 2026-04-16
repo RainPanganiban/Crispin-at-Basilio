@@ -723,7 +723,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 50
+  maxHealth: 80
 --- !u!114 &2982564930930664331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -758,7 +758,7 @@ MonoBehaviour:
   cooldown: 5
   duration: 1
   attackSound: {fileID: 8300000, guid: 0573fd4586f303a499f2cdebef883071, type: 3}
-  damage: 3
+  damage: 5
   chargeTime: 0.5
   dashSpeed: 10
   dashDistance: 4
@@ -835,6 +835,10 @@ MonoBehaviour:
   deathClip: {fileID: 8300000, guid: 6660db17eae2eb845a519c34b42c9b20, type: 3}
   deathVolume: 1
   walkInterval: 0.5
+  ambientClips: []
+  ambientVolume: 0.7
+  minAmbientDelay: 5
+  maxAmbientDelay: 10
 --- !u!1 &7648058361784440064
 GameObject:
   m_ObjectHideFlags: 0
