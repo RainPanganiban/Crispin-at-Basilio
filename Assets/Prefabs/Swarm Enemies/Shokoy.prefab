@@ -724,7 +724,7 @@ MonoBehaviour:
   duration: 1
   attackSound: {fileID: 0}
   waterProjectilePrefab: {fileID: 3216240422717333500, guid: c987039422dd8d94d828059f05310362, type: 3}
-  directDamage: 5
+  directDamage: 20
   projectileSpeed: 10
   arcHeight: 3
   projectilesToFire: 3

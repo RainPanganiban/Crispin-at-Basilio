@@ -701,7 +701,7 @@ MonoBehaviour:
   cooldown: 1
   duration: 1
   attackSound: {fileID: 8300000, guid: ea95a45f7e3e04248968211289988a0b, type: 3}
-  damage: 3
+  damage: 30
   hitRadius: 1.5
   playerLayer:
     serializedVersion: 2
@@ -758,7 +758,7 @@ MonoBehaviour:
   cooldown: 5
   duration: 1
   attackSound: {fileID: 8300000, guid: 0573fd4586f303a499f2cdebef883071, type: 3}
-  damage: 5
+  damage: 30
   chargeTime: 0.5
   dashSpeed: 10
   dashDistance: 4

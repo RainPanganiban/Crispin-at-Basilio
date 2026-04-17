@@ -2004,6 +2004,7 @@ MonoBehaviour:
   minY: -30
   maxY: 60
   distance: 3
+  rotationSmoothTime: 0.03
   aimSensitivityMultiplier: 0.5
   zoomDistance: 1.5
   zoomSpeed: 8
@@ -4106,13 +4107,13 @@ MonoBehaviour:
   syncInterval: 0
   health:
     name: Health
-    maxValue: 250
-    currentValue: 250
+    maxValue: 200
+    currentValue: 200
   stamina:
     name: Stamina
-    maxValue: 150
-    currentValue: 150
-  staminaRegenRate: 10
+    maxValue: 100
+    currentValue: 100
+  staminaRegenRate: 12
   healthRegenRate: 0
 --- !u!114 &1964418824019641932
 MonoBehaviour:
@@ -4130,7 +4131,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   lightDamage: 15
-  heavyDamage: 25
+  heavyDamage: 20
   attackRadius: 3
   attackRange: 1
   hitLayers:

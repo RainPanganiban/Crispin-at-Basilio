@@ -744,7 +744,7 @@ MonoBehaviour:
   duration: 1
   attackSound: {fileID: 0}
   waveProjectilePrefab: {fileID: 3600918741046071812, guid: 30d0aa7cc56778c43a352fecf0818459, type: 3}
-  projectileDamage: 15
+  projectileDamage: 10
   projectileSpeed: 12
   projectileLifetime: 3
   waveSpawnPoint: {fileID: 657150596108968432}

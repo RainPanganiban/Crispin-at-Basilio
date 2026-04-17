@@ -2865,7 +2865,6 @@ MonoBehaviour:
   maxY: 60
   distance: 3
   rotationSmoothTime: 0.12
-  inputSmoothSpeed: 10
   aimSensitivityMultiplier: 0.5
   zoomDistance: 0.5
   zoomSpeed: 1
@@ -4237,12 +4236,12 @@ MonoBehaviour:
   syncInterval: 0
   health:
     name: Health
-    maxValue: 250
-    currentValue: 250
+    maxValue: 100
+    currentValue: 100
   stamina:
     name: Stamina
-    maxValue: 150
-    currentValue: 150
+    maxValue: 100
+    currentValue: 100
   staminaRegenRate: 10
   healthRegenRate: 0
 --- !u!114 &6217625082249385771
@@ -4266,12 +4265,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   maxChargeTime: 2
-  minDamage: 15
-  maxDamage: 30
+  minDamage: 20
+  maxDamage: 35
   minSpeed: 10
   maxSpeed: 30
   maxLifetime: 5
-  attackCooldown: 0.2
+  attackCooldown: 0.4
 --- !u!114 &7561837180419223251
 MonoBehaviour:
   m_ObjectHideFlags: 0

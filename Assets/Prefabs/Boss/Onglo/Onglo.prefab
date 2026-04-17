@@ -515,7 +515,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 1000
+  maxHealth: 10
 --- !u!114 &603692580051005797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -619,9 +619,9 @@ MonoBehaviour:
   tremorInterval: 1.1
   tremorRingPrefab: {fileID: 2652610187423935079, guid: 49561b5665331f444b7f107b34fb9e87, type: 3}
   tremorOrigin: {fileID: 8743233550772781628}
-  tremorDamage: 5
+  tremorDamage: 50
   tremorMaxRadius: 2.5
-  tremorExpandSpeed: 8
+  tremorExpandSpeed: 100
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -651,7 +651,7 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
-  ringDamage: 25
+  ringDamage: 100
   expandSpeed: 12
   maxRadius: 8
   phase1Rings: 1
@@ -687,7 +687,7 @@ MonoBehaviour:
   fissureMaxDistance: 12
   eruptDelay: 0.8
   eruptRadius: 2.5
-  damage: 35
+  damage: 100
   playerLayer:
     serializedVersion: 2
     m_Bits: 256

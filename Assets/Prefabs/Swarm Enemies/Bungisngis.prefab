@@ -290,7 +290,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 100
+  maxHealth: 150
 --- !u!114 &6407903552163877071
 MonoBehaviour:
   m_ObjectHideFlags: 0
