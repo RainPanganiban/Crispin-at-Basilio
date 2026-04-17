@@ -1,6 +1,10 @@
 using UnityEngine;
 using Mirror;
 
+/// <summary>
+/// A magical flower petal projectile that travels in a given direction.
+/// Used by PetalBarrageAttack and SacredSpiralAttack.
+/// </summary>
 [RequireComponent(typeof(SphereCollider))]
 public class DiwataPetal : NetworkBehaviour
 {
@@ -8,12 +12,12 @@ public class DiwataPetal : NetworkBehaviour
     public ParticleSystem psTrail;
     public ParticleSystem psImpact;
 
-    [Header("Sync Variables")]
+    [Header("Runtime (server initialized)")]
     [SyncVar] private float damage;
     [SyncVar] private float speed;
     [SyncVar] private float lifetime;
-    [SyncVar] private Vector3 direction; // Ginawang SyncVar para alam ng Client ang direksyon
 
+    private Vector3 direction;
     private float dieAt;
     private NetworkIdentity owner;
     private LayerMask playerLayer;
@@ -26,7 +30,14 @@ public class DiwataPetal : NetworkBehaviour
     }
 
     [Server]
-    public void Server_Initialize(NetworkIdentity owner, Vector3 direction, float speed, float damage, float lifetime, LayerMask playerLayer)
+    public void Server_Initialize(
+        NetworkIdentity owner,
+        Vector3 direction,
+        float speed,
+        float damage,
+        float lifetime,
+        LayerMask playerLayer
+    )
     {
         this.owner = owner;
         this.direction = direction.normalized;
@@ -37,13 +48,12 @@ public class DiwataPetal : NetworkBehaviour
         dieAt = Time.time + lifetime;
     }
 
-    // Inalis ang [ServerCallback] para gumalaw din sa side ng Client
+    [ServerCallback]
     void Update()
     {
         transform.position += direction * speed * Time.deltaTime;
 
-        // Server pa rin ang may hawak ng destruction logic
-        if (isServer && Time.time >= dieAt)
+        if (Time.time >= dieAt)
             NetworkServer.Destroy(gameObject);
     }
 
@@ -51,8 +61,6 @@ public class DiwataPetal : NetworkBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (other.isTrigger) return;
-
-        // Siguraduhin na ang playerLayer ay naka-sync o nase-set din sa client kung gagamitin sa client logic
         if (((1 << other.gameObject.layer) & playerLayer.value) == 0) return;
 
         if (other.TryGetComponent<IDamageable>(out var dmg))
@@ -75,7 +83,6 @@ public class DiwataPetal : NetworkBehaviour
         if (renderer != null) renderer.enabled = false;
     }
 
-    [Server]
     void DestroyPetal()
     {
         NetworkServer.Destroy(gameObject);
