@@ -70449,7 +70449,7 @@ MonoBehaviour:
     unlocksOnComplete: []
   - levelId: Optional 1
     sceneName: Optional 1
-    startUnlocked: 1
+    startUnlocked: 0
     isMainPath: 0
     isArena: 1
     unlocksOnComplete:
@@ -70457,15 +70457,13 @@ MonoBehaviour:
     - Optional 1
   - levelId: Optional 2
     sceneName: Optional 2
-    startUnlocked: 1
+    startUnlocked: 0
     isMainPath: 0
     isArena: 0
-    unlocksOnComplete:
-    - Optional 3
-    - Level 3
+    unlocksOnComplete: []
   - levelId: Optional 3
     sceneName: Optional 3
-    startUnlocked: 1
+    startUnlocked: 0
     isMainPath: 0
     isArena: 0
     unlocksOnComplete: []
