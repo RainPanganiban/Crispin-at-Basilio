@@ -4026,6 +4026,7 @@ MonoBehaviour:
   rotationSpeed: 10
   rollDistance: 5
   rollDuration: 0.3
+  rollCooldown: 0.8
   jumpHeight: 1
   gravity: -10.85
   fallMultiplier: 2.5
@@ -4113,7 +4114,7 @@ MonoBehaviour:
     name: Stamina
     maxValue: 100
     currentValue: 100
-  staminaRegenRate: 12
+  staminaRegenRate: 15
   healthRegenRate: 0
 --- !u!114 &1964418824019641932
 MonoBehaviour:

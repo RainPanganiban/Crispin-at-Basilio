@@ -43,17 +43,21 @@ public class Projectile : NetworkBehaviour
     [ServerCallback]
     private void OnTriggerEnter(Collider other)
     {
+        // 1. I-ignore ang sariling player
         if (other == ownerCollider) return;
+
+        // 2. BAGONG DAGDAG: I-ignore ang kahit anong Trigger (katulad ng Music Box mo)
+        // Kapag trigger ang tinamaan, huwag i-destroy ang projectile, hayaan lang siyang lumampas.
+        if (other.isTrigger) return;
 
         if (other.TryGetComponent<IDamageable>(out var target))
         {
-            // Friendly Fire Protection
+            // Friendly Fire Protection logic...
             bool isAttackerPlayer = ownerCollider != null && ownerCollider.GetComponent<PlayerMovement>() != null;
             bool isTargetPlayer = other.GetComponent<PlayerMovement>() != null;
 
             if (isAttackerPlayer && isTargetPlayer)
             {
-                // It's a player hitting another player, ignore the damage but destroy the projectile
                 NetworkServer.Destroy(gameObject);
                 return;
             }
@@ -62,6 +66,7 @@ public class Projectile : NetworkBehaviour
             target.TakeDamage(damage, attackerTransform);
         }
 
+        // Dito lang siya madedestroy kapag tumama sa solid objects (Wall, Enemy, etc.)
         NetworkServer.Destroy(gameObject);
     }
 }

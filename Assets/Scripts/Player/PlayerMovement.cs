@@ -11,12 +11,13 @@ public class PlayerMovement : NetworkBehaviour
     public float rotationSpeed = 10f;
     public float rollDistance = 5f;
     public float rollDuration = 0.3f;
+    public float rollCooldown = 0.8f; // Cooldown para hindi spam ang dash
 
     [Header("Jump & Physics (Bunny Hop)")]
     public float jumpHeight = 2.5f;
     public float gravity = -9.81f;
-    public float fallMultiplier = 2.5f; // Eto ang magpapabilis sa bagsak (para hindi lutang)
-    public float bhopSpeedMultiplier = 1.05f; // Dagdag bilis kada talon
+    public float fallMultiplier = 2.5f;
+    public float bhopSpeedMultiplier = 1.05f;
     public float maxBhopSpeed = 12f;
 
     [Header("Air Control & Momentum")]
@@ -36,6 +37,7 @@ public class PlayerMovement : NetworkBehaviour
 
     [SyncVar] private bool isRunning = false;
     private bool isRolling = false;
+    private float nextRollTime = 0f;
 
     [Header("Stamina Settings")]
     public float staminaCostPerSecondRunning = 15f;
@@ -80,7 +82,6 @@ public class PlayerMovement : NetworkBehaviour
     {
         cam = cameraTransform;
         if (cam != null) cam.gameObject.SetActive(true);
-
         combatHandler = GetComponent<ICombatHandler>();
     }
 
@@ -118,15 +119,17 @@ public class PlayerMovement : NetworkBehaviour
     public void OnJump(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
+
+        // Hindi pwedeng tumalon kung kasalukuyang nagro-roll
+        if (isRolling) return;
+
         if (context.performed && controller.isGrounded)
         {
-            // BUNNY HOP LOGIC: Kung mabilis na ang takbo, dagdagan pa natin pag tumalon
             if (currentHorizontalVelocity.magnitude > moveSpeed)
             {
                 currentHorizontalVelocity = Vector3.ClampMagnitude(currentHorizontalVelocity * bhopSpeedMultiplier, maxBhopSpeed);
             }
 
-            // Vertical force for jump
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             GetComponent<CharacterAnimationController>()?.PlayJump();
         }
@@ -136,11 +139,18 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
 
-        if (context.performed && !isRolling && statsManager.stamina.currentValue >= rollStaminaCost)
+        // Kunin ang lock status para hindi maka-dash habang umaatake
+        CharacterAnimationController animCtrl = GetComponent<CharacterAnimationController>();
+        bool isLocked = animCtrl != null && animCtrl.IsActionLocked;
+
+        if (context.performed && !isRolling && !isLocked && Time.time >= nextRollTime && statsManager.stamina.currentValue >= rollStaminaCost)
         {
+            nextRollTime = Time.time + rollCooldown;
             statsManager.CmdUseStamina(rollStaminaCost);
+
             GetComponent<CharacterAnimationController>()?.PlayRoll();
             if (soundManager != null) soundManager.PlayRoll();
+
             StartCoroutine(Roll());
         }
     }
@@ -148,6 +158,14 @@ public class PlayerMovement : NetworkBehaviour
     public void OnLightAttack(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
+
+        // Kung nag-click ng attack habang nagro-roll, i-cancel ang dash physics
+        if (context.performed && isRolling)
+        {
+            isRolling = false;
+        }
+
+        // Tawagin ang combat handler (walang context.performed check dito para sa buffer systems)
         combatHandler?.OnLightAttack(context);
     }
 
@@ -156,16 +174,16 @@ public class PlayerMovement : NetworkBehaviour
     void Update()
     {
         if (!isLocalPlayer) return;
+
+        // 1. Physics & Gravity - Dapat laging binabasa para hindi ma-delay ang Ground detection
+        HandleExternalForces();
+        ApplyGravityAndFinalMove();
+
+        // 2. Roll Lock - Dito ang harang para sa WASD movement lang
         if (isRolling) return;
 
-        // 1. External Forces (Knockback/Attack Steps)
-        HandleExternalForces();
-
-        // 2. Horizontal Movement (Momentum & Air Control)
+        // 3. Horizontal Movement (WASD)
         CalculateHorizontalMovement();
-
-        // 3. Vertical Movement (Gravity & Final Move)
-        ApplyGravityAndFinalMove();
     }
 
     private void CalculateHorizontalMovement()
@@ -175,6 +193,7 @@ public class PlayerMovement : NetworkBehaviour
 
         Vector3 targetMoveDir = Vector3.zero;
 
+        // Hindi makakagalaw kung "Locked" (halimbawa: nasa gitna ng attack animation)
         if (moveInput.sqrMagnitude > 0.01f && !isLocked)
         {
             Vector3 camForward = cam.forward;
@@ -188,29 +207,21 @@ public class PlayerMovement : NetworkBehaviour
 
         if (controller.isGrounded)
         {
-            // BHOP FIX: Gamit ang Lerp para hindi biglang hinto ang momentum paglapag sa lupa
             Vector3 desiredVelocity = targetMoveDir * targetSpeed;
             currentHorizontalVelocity = Vector3.Lerp(currentHorizontalVelocity, desiredVelocity, 15f * Time.deltaTime);
 
-            // Rotation
             if (targetMoveDir != Vector3.zero && !isAiming)
             {
                 Quaternion targetRot = Quaternion.LookRotation(targetMoveDir);
-                transform.rotation = Quaternion.Slerp(
-                    transform.rotation,
-                    targetRot,
-                    rotationSpeed * Time.deltaTime
-                );
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
             }
         }
         else
         {
-            // Air logic: Kontrol sa ere pero naitatabi ang momentum
             Vector3 airDir = targetMoveDir * targetSpeed;
             currentHorizontalVelocity = Vector3.Lerp(currentHorizontalVelocity, airDir, airControl * Time.deltaTime);
         }
 
-        // Apply Move
         controller.Move(currentHorizontalVelocity * Time.deltaTime);
     }
 
@@ -227,12 +238,12 @@ public class PlayerMovement : NetworkBehaviour
 
     private void ApplyGravityAndFinalMove()
     {
+        // Kung nasa lupa na, i-reset ang velocity at i-off ang isRolling logic if needed
         if (controller.isGrounded && velocity.y < 0)
         {
-            velocity.y = -2f;
+            velocity.y = -2f; // Small force para manatiling grounded
         }
 
-        // BAGSAK FIX: Mas mabilis ang gravity kapag pababa na ang character (Fall Multiplier)
         float currentGravity = gravity;
         if (velocity.y < 0)
         {
@@ -245,6 +256,24 @@ public class PlayerMovement : NetworkBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
+    private System.Collections.IEnumerator Roll()
+    {
+        isRolling = true;
+        Vector3 rollDir = transform.forward;
+        float elapsed = 0f;
+
+        while (elapsed < rollDuration)
+        {
+            // Pag naging false ito (dahil sa OnLightAttack), hihinto ang coroutine
+            if (!isRolling) yield break;
+
+            controller.Move(rollDir * (rollDistance / rollDuration) * Time.deltaTime);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        isRolling = false;
+    }
     private void HandleExternalForces()
     {
         if (knockbackTimer > 0)
@@ -260,21 +289,5 @@ public class PlayerMovement : NetworkBehaviour
             controller.Move(attackStepVelocity * Time.deltaTime);
             attackStepVelocity = Vector3.Lerp(attackStepVelocity, Vector3.zero, Time.deltaTime * 5f);
         }
-    }
-
-    private System.Collections.IEnumerator Roll()
-    {
-        isRolling = true;
-        Vector3 rollDir = transform.forward;
-        float elapsed = 0f;
-
-        while (elapsed < rollDuration)
-        {
-            controller.Move(rollDir * rollDistance / rollDuration * Time.deltaTime);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        isRolling = false;
     }
 }
