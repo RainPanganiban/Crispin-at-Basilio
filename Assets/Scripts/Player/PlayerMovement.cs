@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
+using System.Collections;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : NetworkBehaviour
@@ -11,7 +12,7 @@ public class PlayerMovement : NetworkBehaviour
     public float rotationSpeed = 10f;
     public float rollDistance = 5f;
     public float rollDuration = 0.3f;
-    public float rollCooldown = 0.8f; // Cooldown para hindi spam ang dash
+    public float rollCooldown = 0.8f;
 
     [Header("Jump & Physics (Bunny Hop)")]
     public float jumpHeight = 2.5f;
@@ -20,13 +21,18 @@ public class PlayerMovement : NetworkBehaviour
     public float bhopSpeedMultiplier = 1.05f;
     public float maxBhopSpeed = 12f;
 
+    [Header("Jump Polish (The Fix)")]
+    public float jumpBufferTime = 0.2f; // Window para sa maagang pindot
+    private float jumpBufferCounter;
+    public float coyoteTime = 0.15f;    // Window para sa huling hirit na talon
+    private float coyoteTimeCounter;
+
     [Header("Air Control & Momentum")]
     [Range(0, 1)] public float airControl = 0.4f;
     private Vector3 currentHorizontalVelocity;
 
     [Header("Combat Rotation")]
     public bool isAiming;
-
     [SerializeField] private Transform cameraTransform;
 
     private CharacterController controller;
@@ -55,21 +61,8 @@ public class PlayerMovement : NetworkBehaviour
 
     private Vector3 knockbackVelocity;
     private float knockbackTimer;
-
     private Vector3 attackStepVelocity;
     private float attackStepTimer;
-
-    public void ApplyKnockback(Vector3 force, float duration)
-    {
-        knockbackVelocity = force;
-        knockbackTimer = duration;
-    }
-
-    public void ApplyAttackStep(Vector3 velocity, float duration)
-    {
-        attackStepVelocity = velocity;
-        attackStepTimer = duration;
-    }
 
     void Awake()
     {
@@ -98,7 +91,7 @@ public class PlayerMovement : NetworkBehaviour
         if (!isLocalPlayer) return;
 
         bool runInput = context.ReadValueAsButton();
-        if (statsManager.stamina.currentValue > 0f)
+        if (statsManager != null && statsManager.stamina.currentValue > 0f)
         {
             isRunning = runInput;
             CmdSetRunning(runInput);
@@ -111,27 +104,15 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     [Command]
-    void CmdSetRunning(bool state)
-    {
-        isRunning = state;
-    }
+    void CmdSetRunning(bool state) => isRunning = state;
 
     public void OnJump(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
 
-        // Hindi pwedeng tumalon kung kasalukuyang nagro-roll
-        if (isRolling) return;
-
-        if (context.performed && controller.isGrounded)
+        if (context.performed)
         {
-            if (currentHorizontalVelocity.magnitude > moveSpeed)
-            {
-                currentHorizontalVelocity = Vector3.ClampMagnitude(currentHorizontalVelocity * bhopSpeedMultiplier, maxBhopSpeed);
-            }
-
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            GetComponent<CharacterAnimationController>()?.PlayJump();
+            jumpBufferCounter = jumpBufferTime; // Itatala na pinindot ang jump
         }
     }
 
@@ -139,7 +120,6 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
 
-        // Kunin ang lock status para hindi maka-dash habang umaatake
         CharacterAnimationController animCtrl = GetComponent<CharacterAnimationController>();
         bool isLocked = animCtrl != null && animCtrl.IsActionLocked;
 
@@ -147,10 +127,8 @@ public class PlayerMovement : NetworkBehaviour
         {
             nextRollTime = Time.time + rollCooldown;
             statsManager.CmdUseStamina(rollStaminaCost);
-
-            GetComponent<CharacterAnimationController>()?.PlayRoll();
+            animCtrl?.PlayRoll();
             if (soundManager != null) soundManager.PlayRoll();
-
             StartCoroutine(Roll());
         }
     }
@@ -158,14 +136,7 @@ public class PlayerMovement : NetworkBehaviour
     public void OnLightAttack(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
-
-        // Kung nag-click ng attack habang nagro-roll, i-cancel ang dash physics
-        if (context.performed && isRolling)
-        {
-            isRolling = false;
-        }
-
-        // Tawagin ang combat handler (walang context.performed check dito para sa buffer systems)
+        if (context.performed && isRolling) isRolling = false;
         combatHandler?.OnLightAttack(context);
     }
 
@@ -175,15 +146,60 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
 
-        // 1. Physics & Gravity - Dapat laging binabasa para hindi ma-delay ang Ground detection
+        // 1. Physics Timers
+        HandleTimers();
         HandleExternalForces();
-        ApplyGravityAndFinalMove();
 
-        // 2. Roll Lock - Dito ang harang para sa WASD movement lang
+        // 2. Vertical Movement & Jump Check
+        ApplyGravityAndFinalMove();
+        CheckForJump();
+
+        // 3. Movement Lock
         if (isRolling) return;
 
-        // 3. Horizontal Movement (WASD)
+        // 4. WASD Movement
         CalculateHorizontalMovement();
+    }
+
+    private void HandleTimers()
+    {
+        // Jump Buffer Timer
+        if (jumpBufferCounter > 0) jumpBufferCounter -= Time.deltaTime;
+
+        // Coyote Time Timer
+        if (controller.isGrounded)
+        {
+            coyoteTimeCounter = coyoteTime;
+        }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
+        }
+    }
+
+    private void CheckForJump()
+    {
+        // Kung may buffer (pinindot) at may coyote (nasa lupa or kaka-alis lang)
+        if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f && !isRolling)
+        {
+            ExecuteJump();
+        }
+    }
+
+    private void ExecuteJump()
+    {
+        // Bunny Hop logic
+        if (currentHorizontalVelocity.magnitude > moveSpeed)
+        {
+            currentHorizontalVelocity = Vector3.ClampMagnitude(currentHorizontalVelocity * bhopSpeedMultiplier, maxBhopSpeed);
+        }
+
+        velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        GetComponent<CharacterAnimationController>()?.PlayJump();
+
+        // I-clear ang timers para hindi mag-double jump
+        jumpBufferCounter = 0;
+        coyoteTimeCounter = 0;
     }
 
     private void CalculateHorizontalMovement()
@@ -193,7 +209,6 @@ public class PlayerMovement : NetworkBehaviour
 
         Vector3 targetMoveDir = Vector3.zero;
 
-        // Hindi makakagalaw kung "Locked" (halimbawa: nasa gitna ng attack animation)
         if (moveInput.sqrMagnitude > 0.01f && !isLocked)
         {
             Vector3 camForward = cam.forward;
@@ -238,25 +253,19 @@ public class PlayerMovement : NetworkBehaviour
 
     private void ApplyGravityAndFinalMove()
     {
-        // Kung nasa lupa na, i-reset ang velocity at i-off ang isRolling logic if needed
         if (controller.isGrounded && velocity.y < 0)
         {
-            velocity.y = -2f; // Small force para manatiling grounded
+            velocity.y = -2f;
         }
 
         float currentGravity = gravity;
-        if (velocity.y < 0)
-        {
-            currentGravity *= fallMultiplier;
-        }
+        if (velocity.y < 0) currentGravity *= fallMultiplier;
 
         velocity.y += currentGravity * Time.deltaTime;
-
-        // Final move call for vertical velocity
         controller.Move(velocity * Time.deltaTime);
     }
 
-    private System.Collections.IEnumerator Roll()
+    private IEnumerator Roll()
     {
         isRolling = true;
         Vector3 rollDir = transform.forward;
@@ -264,16 +273,14 @@ public class PlayerMovement : NetworkBehaviour
 
         while (elapsed < rollDuration)
         {
-            // Pag naging false ito (dahil sa OnLightAttack), hihinto ang coroutine
             if (!isRolling) yield break;
-
             controller.Move(rollDir * (rollDistance / rollDuration) * Time.deltaTime);
             elapsed += Time.deltaTime;
             yield return null;
         }
-
         isRolling = false;
     }
+
     private void HandleExternalForces()
     {
         if (knockbackTimer > 0)
@@ -289,5 +296,17 @@ public class PlayerMovement : NetworkBehaviour
             controller.Move(attackStepVelocity * Time.deltaTime);
             attackStepVelocity = Vector3.Lerp(attackStepVelocity, Vector3.zero, Time.deltaTime * 5f);
         }
+    }
+
+    public void ApplyKnockback(Vector3 force, float duration)
+    {
+        knockbackVelocity = force;
+        knockbackTimer = duration;
+    }
+
+    public void ApplyAttackStep(Vector3 velocity, float duration)
+    {
+        attackStepVelocity = velocity;
+        attackStepTimer = duration;
     }
 }
