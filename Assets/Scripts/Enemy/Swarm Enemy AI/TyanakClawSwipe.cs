@@ -4,21 +4,25 @@ using Mirror;
 public class TyanakClawSwipe : EnemyAttack
 {
     [Header("Claw Settings")]
-    public float damage = 5f; 
+    public float damage = 5f;
     public float hitRadius = 1.2f;
     public LayerMask playerLayer;
-    [Tooltip("Vertical offset for the damage check to target the player's body instead of their feet")]
     public float targetVerticalOffset = 1.0f;
-    [Tooltip("How far in front of the Tyanak the hit sphere should be centered")]
     public float hitForwardOffset = 1.0f;
 
+    [Header("Audio Settings")]
+    [Tooltip("I-assign dito ang swipe o slash sound.")]
+    public AudioClip swipeSound;
+    private EnemySoundManager soundManager;
+
     [Header("Animation")]
-    public NetworkAnimator networkAnimator; 
+    public NetworkAnimator networkAnimator;
     public string attackTrigger = "ClawSwipe";
 
     void Awake()
     {
-        if (networkAnimator == null) 
+        soundManager = GetComponent<EnemySoundManager>();
+        if (networkAnimator == null)
         {
             networkAnimator = GetComponent<NetworkAnimator>();
             if (networkAnimator == null) networkAnimator = GetComponentInParent<NetworkAnimator>();
@@ -27,9 +31,11 @@ public class TyanakClawSwipe : EnemyAttack
 
     protected override void OnExecute()
     {
+        if (!isServer) return;
+
         Debug.Log($"[TyanakClawSwipe] Executing Claw Swipe on {name}");
 
-        // Stop movement during swipe
+        // Patigilin ang movement
         UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         if (agent != null && agent.isOnNavMesh)
         {
@@ -39,35 +45,35 @@ public class TyanakClawSwipe : EnemyAttack
 
         if (networkAnimator != null)
         {
-            networkAnimator.SetTrigger(attackTrigger); 
+            networkAnimator.SetTrigger(attackTrigger);
         }
-        else
+
+        // I-sync ang sound sa lahat ng clients
+        RpcPlaySwipeSound();
+    }
+
+    [ClientRpc]
+    private void RpcPlaySwipeSound()
+    {
+        if (soundManager == null) soundManager = GetComponent<EnemySoundManager>();
+
+        if (soundManager != null && swipeSound != null)
         {
-            Debug.LogError($"[TyanakClawSwipe] NetworkAnimator missing on {name}!");
+            // PlayOneShot style attack sound
+            soundManager.PlaySpecificAttack(swipeSound);
         }
     }
 
     [ServerCallback]
     public void ClawHitEvent()
     {
-        // Calculate hit position: height offset + forward offset
         Vector3 checkPos = transform.position + transform.forward * hitForwardOffset + Vector3.up * targetVerticalOffset;
 
-        Collider[] hits = Physics.OverlapSphere(
-            checkPos,
-            hitRadius,
-            playerLayer
-        );
-
-        if (hits.Length > 0)
-        {
-            Debug.Log($"[TyanakClawSwipe] {name} hit {hits.Length} potential targets!");
-        }
+        Collider[] hits = Physics.OverlapSphere(checkPos, hitRadius, playerLayer);
 
         foreach (Collider hit in hits)
         {
             IDamageable damageable = hit.GetComponent<IDamageable>();
-            
             if (damageable != null)
             {
                 damageable.TakeDamage(damage, transform);
@@ -77,7 +83,7 @@ public class TyanakClawSwipe : EnemyAttack
 
     void OnDrawGizmosSelected()
     {
-        Gizmos.color = new Color(1, 0, 0, 0.5f); 
+        Gizmos.color = new Color(1, 0, 0, 0.5f);
         Vector3 checkPos = transform.position + transform.forward * hitForwardOffset + Vector3.up * targetVerticalOffset;
         Gizmos.DrawSphere(checkPos, hitRadius);
     }

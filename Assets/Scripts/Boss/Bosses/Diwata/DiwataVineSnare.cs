@@ -6,11 +6,17 @@ using Mirror;
 /// then erupts dealing AoE damage to players in radius.
 /// </summary>
 [RequireComponent(typeof(SphereCollider))]
+[RequireComponent(typeof(AudioSource))] // --- DAGDAG: Para sa local sound effects ---
 public class DiwataVineSnare : NetworkBehaviour
 {
     [Header("Visuals")]
     public ParticleSystem psTelegraph;
     public ParticleSystem psErupt;
+
+    [Header("Audio Settings")] // --- DAGDAG: Sound Setup ---
+    [SerializeField] private AudioClip telegraphClip; // Tunog habang nag-te-telegraph (e.g., Low Rumble)
+    [SerializeField] private AudioClip eruptClip;     // Tunog pagputok (e.g., Earth Shatter / Vine Whip)
+    [Range(0f, 1f)] public float volume = 0.7f;
 
     [Header("Runtime (server initialized)")]
     [SyncVar] private float damage;
@@ -22,12 +28,16 @@ public class DiwataVineSnare : NetworkBehaviour
     private float eruptAt;
     private bool erupted;
     private SphereCollider trigger;
+    private AudioSource audioSource; // --- DAGDAG ---
 
     void Awake()
     {
         trigger = GetComponent<SphereCollider>();
         trigger.isTrigger = true;
-        trigger.enabled = false; // Disabled until eruption
+        trigger.enabled = false;
+
+        audioSource = GetComponent<AudioSource>();
+        ConfigureAudioSource();
     }
 
     [Server]
@@ -56,6 +66,14 @@ public class DiwataVineSnare : NetworkBehaviour
     void Rpc_ShowTelegraph()
     {
         if (psTelegraph != null) psTelegraph.Play();
+
+        // --- DAGDAG: Play Telegraph Sound ---
+        if (telegraphClip != null && audioSource != null)
+        {
+            audioSource.clip = telegraphClip;
+            audioSource.loop = true; // Naka-loop habang naghihintay pumutok
+            audioSource.Play();
+        }
     }
 
     [ServerCallback]
@@ -92,6 +110,26 @@ public class DiwataVineSnare : NetworkBehaviour
     {
         if (psTelegraph != null) psTelegraph.Stop();
         if (psErupt != null) psErupt.Play();
+
+        // --- DAGDAG: Play Erupt Sound ---
+        if (audioSource != null)
+        {
+            audioSource.Stop(); // Itigil ang telegraph rumble
+            if (eruptClip != null)
+            {
+                audioSource.pitch = Random.Range(0.85f, 1.15f);
+                audioSource.PlayOneShot(eruptClip, volume);
+            }
+        }
+    }
+
+    private void ConfigureAudioSource()
+    {
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 1f; // 3D Sound
+        audioSource.minDistance = 3f;
+        audioSource.maxDistance = 20f;
+        audioSource.rolloffMode = AudioRolloffMode.Logarithmic;
     }
 
     void DestroySnare()

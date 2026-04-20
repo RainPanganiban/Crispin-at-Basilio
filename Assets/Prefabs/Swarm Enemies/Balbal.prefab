@@ -748,6 +748,7 @@ MonoBehaviour:
   projectileSpeed: 12
   projectileLifetime: 3
   waveSpawnPoint: {fileID: 657150596108968432}
+  clawSlashSFX: {fileID: 8300000, guid: d4336c2bd814e7646a8478964b62bd70, type: 3}
   networkAnimator: {fileID: 1813071343954641655}
   attackTrigger: ClawFrenzy
 --- !u!114 &2456394784830394735
@@ -778,6 +779,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   targetVerticalOffset: 1
+  pounceRoarSFX: {fileID: 8300000, guid: 64afd788f32101048820fdda67a1db3d, type: 3}
+  leapSFX: {fileID: 8300000, guid: 8efee17b6ddec234facb96c71e6e9fd5, type: 3}
+  landingSFX: {fileID: 8300000, guid: 0812bd0401098e344aa7ad862aeb936f, type: 3}
   shockwavePrefab: {fileID: 7820272838627847145, guid: 3d6b06fc2d28c614b97cfa6a6825e82a, type: 3}
   networkAnimator: {fileID: 1813071343954641655}
   leapTrigger: Pounce
@@ -796,8 +800,8 @@ MonoBehaviour:
   walkClip: {fileID: 0}
   walkVolume: 1
   attackVolume: 1
-  hurtClip: {fileID: 0}
-  hurtVolume: 1
+  hurtClip: {fileID: 8300000, guid: d440d9f9ae8f33c46a28eda2113a8897, type: 3}
+  hurtVolume: 0.98
   deathClip: {fileID: 0}
   deathVolume: 1
   walkInterval: 0.5

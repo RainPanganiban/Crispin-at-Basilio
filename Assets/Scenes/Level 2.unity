@@ -20398,6 +20398,14 @@ PrefabInstance:
       propertyPath: sceneId
       value: 3180583885
       objectReference: {fileID: 0}
+    - target: {fileID: 4605829407600288029, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: vineSnapClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 95b9bbe03421d664181bf706213498ec, type: 3}
+    - target: {fileID: 4605829407600288029, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: vineTelegraphClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 95b9bbe03421d664181bf706213498ec, type: 3}
     - target: {fileID: 4812855404122033223, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: 'spawnOrigins.Array.data[0]'
       value: 
@@ -20451,6 +20459,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6155749117630386765, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: summonMagicClip
+      value: 
+      objectReference: {fileID: 8300000, guid: e979222d78c8b974ab8c264da2805eae, type: 3}
+    - target: {fileID: 6155749117630386765, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: summonVoiceClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 95b9bbe03421d664181bf706213498ec, type: 3}
+    - target: {fileID: 6155749117630386765, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: 'swarmSpawnPoints.Array.data[0]'
       value: 
       objectReference: {fileID: 789355349}
@@ -20466,6 +20482,18 @@ PrefabInstance:
       propertyPath: 'swarmSpawnPoints.Array.data[3]'
       value: 
       objectReference: {fileID: 595169823}
+    - target: {fileID: 9154938173037259198, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: phases.Array.data[0].transitionSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: f03802bb392cef944b9b8be411d10434, type: 3}
+    - target: {fileID: 9154938173037259198, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: phases.Array.data[1].transitionSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: f03802bb392cef944b9b8be411d10434, type: 3}
+    - target: {fileID: 9154938173037259198, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: phases.Array.data[2].transitionSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: f03802bb392cef944b9b8be411d10434, type: 3}
     - target: {fileID: 9160949605170733101, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13.02
@@ -30203,6 +30231,38 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3265004294379793388, guid: 4ca7b8bd2dd03374bb5be15fe6040f51, type: 3}
   m_PrefabInstance: {fileID: 472409273}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &472889402
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 472889403}
+  m_Layer: 11
+  m_Name: TriggerBoxMusic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &472889403
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472889402}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 66.4, y: 24.63, z: -4.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1098965473}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &474907079
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -70137,6 +70197,72 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3321273416401869350, guid: 8eeba76698e2eb74aa4f432b82a80a3e, type: 3}
   m_PrefabInstance: {fileID: 1098810603}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1098965472
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1098965473}
+  - component: {fileID: 1098965475}
+  - component: {fileID: 1098965474}
+  m_Layer: 11
+  m_Name: BossZoneMusic (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1098965473
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098965472}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.08130067, z: -0, w: 0.9966896}
+  m_LocalPosition: {x: -64.897, y: -37.4, z: 221.1}
+  m_LocalScale: {x: 1.3914, y: 1, z: 1.5306853}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 472889403}
+  m_LocalEulerAnglesHint: {x: 0, y: -9.327, z: 0}
+--- !u!114 &1098965474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098965472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0c1aec7b078676459db0d837d825b57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!65 &1098965475
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098965472}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 86.32028, y: 31.760582, z: 74.317894}
+  m_Center: {x: 9.008248, y: 6.771847, z: 13.035675}
 --- !u!1001 &1099036628
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -138326,3 +138452,4 @@ SceneRoots:
   - {fileID: 1791938904}
   - {fileID: 1634536471}
   - {fileID: 1241004106}
+  - {fileID: 472889403}

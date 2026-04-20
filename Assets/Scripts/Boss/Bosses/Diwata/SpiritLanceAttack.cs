@@ -12,9 +12,12 @@ public class SpiritLanceAttack : BaseAttack
     public Transform arenaCenter;
     public LayerMask playerLayer;
 
-    // PINALITAN: List para sa maraming spawn points
     [Tooltip("Dito ilalagay ang mga Transforms kung saan magsisimula ang lances.")]
     public List<Transform> spawnOrigins = new List<Transform>();
+
+    [Header("Sound Effects")] // --- DAGDAG: Sound Clips ---
+    [SerializeField] private AudioClip spawnLancesClip;
+    [SerializeField] private AudioClip fireLancesClip;
 
     [Header("Spawn Logic")]
     [Tooltip("Ilang spawn points ang gagamitin nang sabay-sabay?")]
@@ -32,19 +35,23 @@ public class SpiritLanceAttack : BaseAttack
 
     private BossPhaseManager phaseManager;
     private DiwataVulnerabilityManager vulnerabilityManager;
+    private EnemySoundManager soundManager; // --- DAGDAG: Reference ---
 
     public override void Initialize(BossController bossController)
     {
         base.Initialize(bossController);
         phaseManager = bossController != null ? bossController.GetComponent<BossPhaseManager>() : null;
         vulnerabilityManager = bossController != null ? bossController.GetComponent<DiwataVulnerabilityManager>() : null;
+
+        // Kunin ang SoundManager mula sa boss
+        soundManager = bossController != null ? bossController.GetComponent<EnemySoundManager>() : null;
     }
 
-    // FIX: Dinagdagan ng check para hindi umatake kung malayo o kung hindi active ang server
     public override bool Server_CanExecute()
     {
         if (!isServer || boss == null || !NetworkServer.active) return false;
 
+        // Gagamit na ito ng Server_FindClosestPlayer mula sa BaseAttack (No more warning!)
         Transform targetPlayer = Server_FindClosestPlayer();
         if (targetPlayer != null)
         {
@@ -64,12 +71,17 @@ public class SpiritLanceAttack : BaseAttack
 
     public override void Server_OnAnimationEvent(string eventName)
     {
-        // FIX: Siniguro na server-only at active ang network bago mag-fire
         if (!isServer || !NetworkServer.active) return;
 
+        // Pag-spawn ng lances (visual preparation)
+        if (eventName == Event_SpawnLances)
+        {
+            Rpc_PlaySpawnSound();
+        }
+
+        // Pag-fire na ng lances
         if (eventName == Event_FireLances)
         {
-            // Pumili ng random spawn points mula sa listahan
             List<Transform> selectedOrigins = Server_GetRandomSpawnPoints();
 
             foreach (Transform origin in selectedOrigins)
@@ -77,10 +89,9 @@ public class SpiritLanceAttack : BaseAttack
                 Server_SpawnLanceAtPoint(origin);
             }
 
-            // FIX: Guard for ClientRpc
             if (NetworkServer.active)
             {
-                Rpc_OnLancesFired();
+                Rpc_OnLancesFired(); // Dito tutunog ang fire sound
             }
 
             if (vulnerabilityManager != null)
@@ -88,7 +99,6 @@ public class SpiritLanceAttack : BaseAttack
         }
     }
 
-    // Logic para pumili ng random points sa listahan
     List<Transform> Server_GetRandomSpawnPoints()
     {
         List<Transform> picked = new List<Transform>();
@@ -119,9 +129,8 @@ public class SpiritLanceAttack : BaseAttack
 
         Vector3 center = arenaCenter != null ? arenaCenter.position : transform.position;
 
-        // Ang direction ay laging papunta sa center mula sa spawn point
         Vector3 direction = (center - origin.position).normalized;
-        direction.y = 0f; // Panatilihing horizontal ang lipad
+        direction.y = 0f;
 
         DiwataSpiritLance lance = Instantiate(lancePrefab, origin.position, Quaternion.identity);
         lance.Server_Initialize(
@@ -136,29 +145,25 @@ public class SpiritLanceAttack : BaseAttack
         NetworkServer.Spawn(lance.gameObject);
     }
 
+    // --- AUDIO RPCs ---
+
+    [ClientRpc]
+    void Rpc_PlaySpawnSound()
+    {
+        if (soundManager != null && spawnLancesClip != null)
+        {
+            soundManager.PlaySpecificAttack(spawnLancesClip);
+        }
+    }
+
     [ClientRpc]
     void Rpc_OnLancesFired()
     {
-        Debug.Log("[SpiritLance] Lances fired from selected spawn points!");
-    }
-
-    // Helper para mahanap ang pinakamalapit na player para sa distance check
-    Transform Server_FindClosestPlayer()
-    {
-        Transform best = null;
-        float bestSqr = float.PositiveInfinity;
-
-        foreach (var conn in NetworkServer.connections.Values)
+        Debug.Log("[SpiritLance] Lances fired!");
+        if (soundManager != null && fireLancesClip != null)
         {
-            if (conn == null || conn.identity == null) continue;
-            float d = (conn.identity.transform.position - transform.position).sqrMagnitude;
-            if (d < bestSqr)
-            {
-                bestSqr = d;
-                best = conn.identity.transform;
-            }
+            soundManager.PlaySpecificAttack(fireLancesClip);
         }
-        return best;
     }
 
     public override void Server_Stop() { }

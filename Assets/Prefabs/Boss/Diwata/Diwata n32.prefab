@@ -32,6 +32,7 @@ GameObject:
   - component: {fileID: 6057249891288276911}
   - component: {fileID: 5747106931141218594}
   - component: {fileID: 7006518731394738114}
+  - component: {fileID: 5119494018095282226}
   m_Layer: 6
   m_Name: Diwata n32
   m_TagString: Enemy
@@ -168,7 +169,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 10
+  maxHealth: 1500
 --- !u!114 &9154938173037259198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -366,6 +367,8 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
+  spawnPetalsClip: {fileID: 0}
+  firePetalsClip: {fileID: 8300000, guid: ea8ff89009663254a813f63b4e06e4bc, type: 3}
   spawnPointCountToUse: 5
   petalSpeed: 8
   petalDamage: 15
@@ -470,6 +473,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  spawnLancesClip: {fileID: 0}
+  fireLancesClip: {fileID: 8300000, guid: ea8ff89009663254a813f63b4e06e4bc, type: 3}
   spawnPointCountToUse: 10
   lanceDamage: 20
   lanceSpeed: 15
@@ -672,6 +677,30 @@ MonoBehaviour:
   minCoins: 10
   maxCoins: 13
   scatterRadius: 0.6
+--- !u!114 &5119494018095282226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835382408267739349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b1004b98b2f72d4ca41c9a6150a49f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkClip: {fileID: 0}
+  walkVolume: 1
+  attackVolume: 1
+  hurtClip: {fileID: 0}
+  hurtVolume: 1
+  deathClip: {fileID: 0}
+  deathVolume: 1
+  walkInterval: 0.5
+  ambientClips: []
+  ambientVolume: 0.7
+  minAmbientDelay: 5
+  maxAmbientDelay: 10
 --- !u!1 &1858122984573298185
 GameObject:
   m_ObjectHideFlags: 0

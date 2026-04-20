@@ -8,8 +8,12 @@ public class EnemyProjectile : NetworkBehaviour
     [SyncVar] public float maxLifetime = 5f;
     [SyncVar] public int damage = 20;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip impactSFX; // Tunog kapag tumama
+    [Range(0f, 1f)][SerializeField] private float volume = 0.8f;
+
     private float lifetime;
-    private NetworkIdentity ownerIdentity; // Who fired this projectile
+    private NetworkIdentity ownerIdentity;
     private Vector3 moveDirection;
     private Collider ownerCollider;
 
@@ -21,7 +25,7 @@ public class EnemyProjectile : NetworkBehaviour
         maxLifetime = life;
         moveDirection = direction.normalized;
         ownerCollider = ownerCol;
-        ownerIdentity = ownerId; // store the attacker
+        ownerIdentity = ownerId;
         lifetime = 0f;
     }
 
@@ -45,6 +49,9 @@ public class EnemyProjectile : NetworkBehaviour
     {
         if (other == ownerCollider) return;
 
+        // Sabihan ang lahat ng clients na patugtugin ang sound bago ma-destroy ang object
+        RpcPlayImpactSound();
+
         // Do not damage other enemies
         if (other.GetComponent<EnemyHealth>() != null)
         {
@@ -60,5 +67,23 @@ public class EnemyProjectile : NetworkBehaviour
 
         NetworkServer.Destroy(gameObject);
     }
-}
 
+    // CORRECTED RPC: Wala na itong AudioClip parameter para iwas error sa Mirror
+    [ClientRpc]
+    private void RpcPlayImpactSound()
+    {
+        if (impactSFX != null)
+        {
+            // Gagamit ng transform.position ng projectile sa oras ng impact
+            AudioSource.PlayClipAtPoint(impactSFX, transform.position, GetEffectiveVolume());
+        }
+    }
+
+    private float GetEffectiveVolume()
+    {
+        if (SoundManager.Instance != null)
+            return SoundManager.Instance.EffectiveSFXVolume * volume;
+
+        return volume;
+    }
+}

@@ -179,6 +179,9 @@ MonoBehaviour:
   syncInterval: 0
   psTelegraph: {fileID: 0}
   psErupt: {fileID: 0}
+  telegraphClip: {fileID: 8300000, guid: e979222d78c8b974ab8c264da2805eae, type: 3}
+  eruptClip: {fileID: 8300000, guid: 83b06c52c30b1ed48a0d01a9a7c83f16, type: 3}
+  volume: 0.7
 --- !u!114 &741787315493890413
 MonoBehaviour:
   m_ObjectHideFlags: 0

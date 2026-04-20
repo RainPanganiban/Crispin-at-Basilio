@@ -831,7 +831,7 @@ MonoBehaviour:
   walkVolume: 0.516
   attackVolume: 0.85
   hurtClip: {fileID: 8300000, guid: aab155c21b7d7b4459350691a4312053, type: 3}
-  hurtVolume: 0.472
+  hurtVolume: 0.487
   deathClip: {fileID: 8300000, guid: 6660db17eae2eb845a519c34b42c9b20, type: 3}
   deathVolume: 1
   walkInterval: 0.5

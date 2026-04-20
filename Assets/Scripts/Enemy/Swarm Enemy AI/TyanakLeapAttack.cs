@@ -11,13 +11,15 @@ public class TyanakLeapAttack : EnemyAttack
     public float leapSpeed = 15f;
     public float leapDistance = 5f;
     public float hitRadius = 1.5f;
-    [Tooltip("Extra distance to travel past the player's position to ensure we 'jump through' them")]
     public float pounceOvershoot = 2.5f;
-    [Tooltip("Time to wait (telegraph) before the physical jump starts. Use this to sync with your animation.")]
     public float leapTelegraphDuration = 0.2f;
     public LayerMask playerLayer;
-    [Tooltip("Vertical offset to aim the leap at the player's body instead of their feet")]
     public float targetVerticalOffset = 1.0f;
+
+    [Header("Audio Settings")]
+    [Tooltip("I-assign dito ang sound ng pagtalon o pounce.")]
+    public AudioClip leapSound;
+    private EnemySoundManager soundManager;
 
     [Header("Animation")]
     public NetworkAnimator networkAnimator;
@@ -30,7 +32,9 @@ public class TyanakLeapAttack : EnemyAttack
     void Awake()
     {
         ownerCollider = GetComponent<Collider>();
-        if (networkAnimator == null) 
+        soundManager = GetComponent<EnemySoundManager>(); // Kunin ang Sound Manager
+
+        if (networkAnimator == null)
         {
             networkAnimator = GetComponent<NetworkAnimator>();
             if (networkAnimator == null) networkAnimator = GetComponentInParent<NetworkAnimator>();
@@ -47,13 +51,25 @@ public class TyanakLeapAttack : EnemyAttack
         {
             networkAnimator.SetTrigger(leapTrigger);
         }
-        else
-        {
-            Debug.LogError($"[TyanakLeapAttack] NetworkAnimator missing on {name}!");
-        }
+
+        // I-sync ang sound sa lahat ng players kapag nagsimula ang attack
+        RpcPlayLeapSound();
 
         hitTargets.Clear();
         StartCoroutine(LeapRoutine());
+    }
+
+    [ClientRpc]
+    private void RpcPlayLeapSound()
+    {
+        // Reference check para sa Client side
+        if (soundManager == null) soundManager = GetComponent<EnemySoundManager>();
+
+        if (soundManager != null && leapSound != null)
+        {
+            // Gagamitin ang PlaySpecificAttack dahil hindi ito looping sound
+            soundManager.PlaySpecificAttack(leapSound);
+        }
     }
 
     [ServerCallback]
@@ -74,22 +90,20 @@ public class TyanakLeapAttack : EnemyAttack
 
         Vector3 dashDirection = transform.forward.normalized;
         float actualLeapDistance = leapDistance;
-        
+
         EnemyAggro aggro = GetComponent<EnemyAggro>();
         Transform targetTransform = aggro != null ? aggro.GetCurrentTarget() : null;
-        
+
         if (targetTransform != null)
         {
-            // Aim at the player's body center, not feet
             Vector3 targetCenter = targetTransform.position + Vector3.up * targetVerticalOffset;
             Vector3 diff = targetCenter - transform.position;
             float distToTarget = new Vector3(diff.x, 0, diff.z).magnitude;
-            
-            // Set leap distance to go past the player
+
             actualLeapDistance = distToTarget + pounceOvershoot;
-            
+
             Vector3 targetDir = diff.normalized;
-            targetDir.y = 0f; 
+            targetDir.y = 0f;
 
             if (targetDir.sqrMagnitude > 0.0001f)
             {
@@ -98,14 +112,11 @@ public class TyanakLeapAttack : EnemyAttack
             }
         }
 
-        // Brief telegraph (crouch) before launching
         yield return new WaitForSeconds(leapTelegraphDuration);
-        
+
         float travelled = 0f;
         isLeaping = true;
-        Debug.Log($"[TyanakLeapAttack] {name} launching pounce! Passing through player.");
-        
-        // Temporarily make collider a trigger so we pass through the player
+
         if (ownerCollider != null) ownerCollider.isTrigger = true;
 
         while (travelled < actualLeapDistance)
@@ -125,16 +136,12 @@ public class TyanakLeapAttack : EnemyAttack
             }
 
             ApplyLeapDamage();
-
             yield return null;
         }
 
-        // Restore collider
         if (ownerCollider != null) ownerCollider.isTrigger = false;
-
         isLeaping = false;
 
-        // Brief recovery
         yield return new WaitForSeconds(0.2f);
 
         if (agent != null && agent.isOnNavMesh)
@@ -145,14 +152,9 @@ public class TyanakLeapAttack : EnemyAttack
 
     private void ApplyLeapDamage()
     {
-        // Use the vertical offset for the damage sphere too
         Vector3 checkPos = transform.position + Vector3.up * targetVerticalOffset;
 
-        Collider[] hits = Physics.OverlapSphere(
-            checkPos,
-            hitRadius,
-            playerLayer
-        );
+        Collider[] hits = Physics.OverlapSphere(checkPos, hitRadius, playerLayer);
 
         foreach (Collider hit in hits)
         {
@@ -161,7 +163,6 @@ public class TyanakLeapAttack : EnemyAttack
             IDamageable damageable = hit.GetComponent<IDamageable>();
             if (damageable != null)
             {
-                Debug.Log($"[TyanakLeapAttack] {name} hit {hit.gameObject.name} during leap!");
                 hitTargets.Add(hit.gameObject);
                 damageable.TakeDamage(damage, transform);
             }
@@ -173,7 +174,5 @@ public class TyanakLeapAttack : EnemyAttack
         Vector3 checkPos = transform.position + Vector3.up * (targetVerticalOffset != 0 ? targetVerticalOffset : 1.0f);
         Gizmos.color = new Color(1, 0.5f, 0, 0.5f);
         Gizmos.DrawSphere(checkPos, hitRadius);
-        Gizmos.color = new Color(1, 0.5f, 0);
-        Gizmos.DrawWireSphere(checkPos, hitRadius);
     }
 }
