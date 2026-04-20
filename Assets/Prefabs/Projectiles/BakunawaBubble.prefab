@@ -183,6 +183,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   explosionVFXPrefab: {fileID: 0}
+  risingLoopSFX: {fileID: 8300000, guid: d2a01c335292e8340951a3c88dd5fe41, type: 3}
+  popSFX: {fileID: 8300000, guid: 64afd788f32101048820fdda67a1db3d, type: 3}
+  volume: 0.515
   floatSpeed: 3
   floatAmplitude: 0.2
   riseSpeed: 0.5

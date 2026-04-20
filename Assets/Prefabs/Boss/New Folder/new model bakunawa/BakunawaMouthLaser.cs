@@ -17,7 +17,11 @@ public class BakunawaMouthLaser : BaseAttack
     [Header("Tracking Settings")]
     public float initialTrackingSpeed = 15f;
     public float trackingAcceleration = 25f;
-    public float targetVerticalOffset = 1.8f; // Itaas ito para tumama sa dibdib ng player
+    public float targetVerticalOffset = 1.8f;
+
+    [Header("Sound Effects")] // --- DAGDAG: Sound Setup ---
+    [SerializeField] private AudioClip laserStartSFX; // Tunog ng pag-charge o pagbuga sa simula
+    [SerializeField] private AudioClip laserLoopSFX;  // (Optional) Kung gusto mo ng loop sound sa prefab mismo
 
     [Header("Animation & Logic")]
     public string attackTrigger = "MouthLaser";
@@ -25,6 +29,7 @@ public class BakunawaMouthLaser : BaseAttack
     private BossController bossController;
     private BakunawaMovement movement;
     private NetworkAnimator networkAnimator;
+    private EnemySoundManager soundManager; // --- DAGDAG: Reference ---
     private GameObject activeLaser;
     private bool isExecuting = false;
 
@@ -33,12 +38,14 @@ public class BakunawaMouthLaser : BaseAttack
         bossController = GetComponent<BossController>();
         movement = GetComponent<BakunawaMovement>();
         networkAnimator = GetComponent<NetworkAnimator>();
+        soundManager = GetComponent<EnemySoundManager>();
     }
 
     public override void Initialize(BossController controller)
     {
         base.Initialize(controller);
         this.bossController = controller;
+        this.soundManager = controller.GetComponent<EnemySoundManager>();
     }
 
     [Server]
@@ -55,6 +62,9 @@ public class BakunawaMouthLaser : BaseAttack
     public void FireLaser() // Tinatawag ng Animation Event (Start)
     {
         if (!isServer || activeLaser != null || mouthFirePoint == null) return;
+
+        // --- AUDIO: Patunugin ang laser start sound sa lahat ---
+        RpcPlayLaserSound();
 
         EnemyAggro aggro = GetComponent<EnemyAggro>();
         Vector3 initialDir = mouthFirePoint.forward;
@@ -90,7 +100,6 @@ public class BakunawaMouthLaser : BaseAttack
         Server_Stop();
     }
 
-    // ISA LANG DAPAT ITO. Burahin yung ibang version nito sa script.
     private IEnumerator UpdateLaserPosition()
     {
         EnemyAggro aggro = GetComponent<EnemyAggro>();
@@ -118,6 +127,16 @@ public class BakunawaMouthLaser : BaseAttack
                 }
             }
             yield return null;
+        }
+    }
+
+    // --- AUDIO RPC ---
+    [ClientRpc]
+    private void RpcPlayLaserSound()
+    {
+        if (soundManager != null && laserStartSFX != null)
+        {
+            soundManager.PlaySpecificAttack(laserStartSFX);
         }
     }
 

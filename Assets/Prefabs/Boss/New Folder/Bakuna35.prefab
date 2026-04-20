@@ -199,6 +199,7 @@ GameObject:
   - component: {fileID: 3029712427041816016}
   - component: {fileID: 3391241000244849483}
   - component: {fileID: 1666221685344154738}
+  - component: {fileID: 8723461215334729890}
   m_Layer: 6
   m_Name: Bakuna35
   m_TagString: Enemy
@@ -427,7 +428,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 2000
+  maxHealth: 3000
 --- !u!114 &8124586328903312479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -472,11 +473,10 @@ MonoBehaviour:
   maxRange: 20
   animationTriggerName: TidalBite
   requiresMovementLock: 0
-  damage: 14
-  lungeForce: 7
-  lungeDuration: 0.3
+  damage: 30
   attackFullDuration: 1.2
   mouthPoint: {fileID: 7783090283658848457}
+  biteSFX: {fileID: 8300000, guid: bd5dc697fe166c94281826801e1750b7, type: 3}
   aoeRadius: 5.65
   aoeOffsetForward: 0.75
   playerLayer:
@@ -525,6 +525,7 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
+  bubbleSpawnSFX: {fileID: 8300000, guid: 5228efb2ebc519a41a9ff1251d9b9a8d, type: 3}
   spawnPointCountToUse: 5
   bubbleDamage: 25
   bubbleExplosionRadius: 8
@@ -553,7 +554,7 @@ MonoBehaviour:
   maxRange: 30
   animationTriggerName: TailSlam
   requiresMovementLock: 0
-  damage: 10
+  damage: 15
   slamRadius: 7.79
   slamOffsetByParent: {x: 0, y: -9.1, z: 18.47}
   playerLayer:
@@ -564,6 +565,7 @@ MonoBehaviour:
   damageDelay: 0.8
   attackDuration: 2
   slamVFXPrefab: {fileID: 0}
+  slamSFX: {fileID: 8300000, guid: 98d8623ac466d5f418b28f02b3c68fca, type: 3}
 --- !u!54 &2738017064831012183
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -645,6 +647,8 @@ MonoBehaviour:
   initialTrackingSpeed: 10
   trackingAcceleration: 20
   targetVerticalOffset: 10
+  laserStartSFX: {fileID: 8300000, guid: aa4449fdabbc2e443b3f0f7aeb673e94, type: 3}
+  laserLoopSFX: {fileID: 8300000, guid: aa4449fdabbc2e443b3f0f7aeb673e94, type: 3}
   attackTrigger: MouthLaser
 --- !u!114 &3391241000244849483
 MonoBehaviour:
@@ -682,6 +686,30 @@ MonoBehaviour:
   minCoins: 13
   maxCoins: 15
   scatterRadius: 0.6
+--- !u!114 &8723461215334729890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2791082483734254363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b1004b98b2f72d4ca41c9a6150a49f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkClip: {fileID: 0}
+  walkVolume: 1
+  attackVolume: 1
+  hurtClip: {fileID: 0}
+  hurtVolume: 1
+  deathClip: {fileID: 0}
+  deathVolume: 1
+  walkInterval: 0.5
+  ambientClips: []
+  ambientVolume: 0.7
+  minAmbientDelay: 5
+  maxAmbientDelay: 10
 --- !u!1 &5212258764840398784
 GameObject:
   m_ObjectHideFlags: 0

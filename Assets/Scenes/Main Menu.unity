@@ -6351,7 +6351,7 @@ MonoBehaviour:
   - levelName: Optional 1
     backgroundMusic: {fileID: 8300000, guid: a1d15337bb714b747af00e926e433a30, type: 3}
   masterVolume: 1
-  musicVolume: 0.25
+  musicVolume: 0.294
   sfxVolume: 0.483
   fadeDuration: 1.5
 --- !u!4 &1313726899

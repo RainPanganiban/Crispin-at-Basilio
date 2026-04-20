@@ -3,33 +3,39 @@ using Mirror;
 
 public class SkipCutscene : NetworkBehaviour
 {
-    [Tooltip("Pangalan ng scene (hal. Overworld)")]
     public string nextSceneName = "Overworld";
 
-    // Naka-sync ito sa lahat ng players. 
-    // Kapag nagbago ito sa server, mag-uupdate din sa clients.
     [SyncVar]
     private int skipVotes = 0;
-
-    // Listahan para masiguradong isang beses lang makaka-vote ang bawat player
     private bool hasVoted = false;
+
+    void Start()
+    {
+        // 1. Locally mute lahat ng sound (BGM at SFX) pagpasok sa scene na ito.
+        AudioListener.volume = 0f;
+        Debug.Log("Audio Muted locally for Cutscene.");
+    }
+
+    // 2. ITO ANG PINAKA-IMPORTANTE:
+    // Kapag ang scene na ito ay na-unload (skip o tapos na),
+    // automatic na ibabalik ang volume sa normal (1.0).
+    void OnDestroy()
+    {
+        AudioListener.volume = 1f;
+        Debug.Log("Audio Restored locally as Cutscene scene was unloaded.");
+    }
 
     public void Skip()
     {
-        if (hasVoted) return; // Bawal na ulit mag-click kung nakaboto na
-
+        if (hasVoted) return;
         hasVoted = true;
         CmdSubmitSkipVote();
-        Debug.Log("Vote submitted. Waiting for others...");
     }
 
     [Command(requiresAuthority = false)]
     void CmdSubmitSkipVote()
     {
         skipVotes++;
-        Debug.Log($"Votes: {skipVotes} / {NetworkServer.connections.Count}");
-
-        // I-check kung ang bilang ng boto ay kapantay o sobra sa bilang ng players
         if (skipVotes >= NetworkServer.connections.Count)
         {
             ProceedToNextScene();
@@ -39,11 +45,10 @@ public class SkipCutscene : NetworkBehaviour
     [Server]
     void ProceedToNextScene()
     {
-        Debug.Log("All players voted. Changing scene...");
+        // Gagamit ang NetworkManager ng ServerChangeScene para lumipat
         NetworkManager.singleton.ServerChangeScene(nextSceneName);
     }
 
-    // Optional: I-display sa UI kung ilan na ang nag-vote
     void OnGUI()
     {
         if (skipVotes > 0)
