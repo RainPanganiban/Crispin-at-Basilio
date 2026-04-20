@@ -558,6 +558,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8076329196129536826, guid: 22a01c03374d6df49866119dfe8d1cba, type: 3}
+      propertyPath: maxHealth
+      value: 1500
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1413,6 +1417,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bakuna35 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3236054133159534273, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
+      propertyPath: maxHealth
+      value: 3000
+      objectReference: {fileID: 0}
     - target: {fileID: 8139790102183769979, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1994,6 +2002,10 @@ PrefabInstance:
       propertyPath: 'swarmSpawnPoints.Array.data[3]'
       value: 
       objectReference: {fileID: 2023417473}
+    - target: {fileID: 7168334085329538488, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: maxHealth
+      value: 2500
+      objectReference: {fileID: 0}
     - target: {fileID: 9160949605170733101, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: m_LocalPosition.x
       value: -13.9

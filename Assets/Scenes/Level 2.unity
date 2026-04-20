@@ -20466,6 +20466,10 @@ PrefabInstance:
       propertyPath: 'swarmSpawnPoints.Array.data[3]'
       value: 
       objectReference: {fileID: 595169823}
+    - target: {fileID: 7168334085329538488, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
+      propertyPath: maxHealth
+      value: 2500
+      objectReference: {fileID: 0}
     - target: {fileID: 9160949605170733101, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13.02
