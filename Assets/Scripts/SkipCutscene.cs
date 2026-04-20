@@ -9,20 +9,31 @@ public class SkipCutscene : NetworkBehaviour
     private int skipVotes = 0;
     private bool hasVoted = false;
 
-    void Start()
+    // Tinatawag ito sa lahat (Host at Client) kapag handa na ang network object
+    public override void OnStartClient()
     {
-        // 1. Locally mute lahat ng sound (BGM at SFX) pagpasok sa scene na ito.
-        AudioListener.volume = 0f;
-        Debug.Log("Audio Muted locally for Cutscene.");
+        base.OnStartClient();
+        MuteSystem();
     }
 
-    // 2. ITO ANG PINAKA-IMPORTANTE:
-    // Kapag ang scene na ito ay na-unload (skip o tapos na),
-    // automatic na ibabalik ang volume sa normal (1.0).
+    // Para sigurado, sa Start din para sa local logic
+    void Start()
+    {
+        MuteSystem();
+    }
+
+    void MuteSystem()
+    {
+        // Gagamit tayo ng pause para mas "forceful" kaysa sa volume
+        AudioListener.pause = true;
+        Debug.Log("Audio Paused for " + (isServer ? "Host" : "Client"));
+    }
+
+    // Kapag lumipat na ng scene at na-destroy itong script, ibalik ang tunog
     void OnDestroy()
     {
-        AudioListener.volume = 1f;
-        Debug.Log("Audio Restored locally as Cutscene scene was unloaded.");
+        AudioListener.pause = false;
+        Debug.Log("Audio Restored.");
     }
 
     public void Skip()
@@ -36,6 +47,7 @@ public class SkipCutscene : NetworkBehaviour
     void CmdSubmitSkipVote()
     {
         skipVotes++;
+        // Bilangin ang players base sa actual connections sa server
         if (skipVotes >= NetworkServer.connections.Count)
         {
             ProceedToNextScene();
@@ -45,7 +57,6 @@ public class SkipCutscene : NetworkBehaviour
     [Server]
     void ProceedToNextScene()
     {
-        // Gagamit ang NetworkManager ng ServerChangeScene para lumipat
         NetworkManager.singleton.ServerChangeScene(nextSceneName);
     }
 

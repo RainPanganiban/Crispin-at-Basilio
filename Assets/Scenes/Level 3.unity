@@ -97051,10 +97051,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bakuna35 (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 3236054133159534273, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
-      propertyPath: maxHealth
-      value: 2500
-      objectReference: {fileID: 0}
     - target: {fileID: 8124586328903312479, guid: 80504e9f03b5c8f4ab989e9c3d71bff5, type: 3}
       propertyPath: arenaCenter
       value: 

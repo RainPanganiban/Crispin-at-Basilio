@@ -20398,18 +20398,6 @@ PrefabInstance:
       propertyPath: sceneId
       value: 3180583885
       objectReference: {fileID: 0}
-    - target: {fileID: 4605829407600288029, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
-      propertyPath: vineSnapClip
-      value: 
-      objectReference: {fileID: 8300000, guid: 95b9bbe03421d664181bf706213498ec, type: 3}
-    - target: {fileID: 4605829407600288029, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
-      propertyPath: vineTelegraphClip
-      value: 
-      objectReference: {fileID: 8300000, guid: 95b9bbe03421d664181bf706213498ec, type: 3}
-    - target: {fileID: 4812855404122033223, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
-      propertyPath: petalDamage
-      value: 20
-      objectReference: {fileID: 0}
     - target: {fileID: 4812855404122033223, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: 'spawnOrigins.Array.data[0]'
       value: 
@@ -20463,14 +20451,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6155749117630386765, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
-      propertyPath: summonMagicClip
-      value: 
-      objectReference: {fileID: 8300000, guid: e979222d78c8b974ab8c264da2805eae, type: 3}
-    - target: {fileID: 6155749117630386765, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
-      propertyPath: summonVoiceClip
-      value: 
-      objectReference: {fileID: 8300000, guid: 95b9bbe03421d664181bf706213498ec, type: 3}
-    - target: {fileID: 6155749117630386765, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: 'swarmSpawnPoints.Array.data[0]'
       value: 
       objectReference: {fileID: 789355349}
@@ -20486,22 +20466,6 @@ PrefabInstance:
       propertyPath: 'swarmSpawnPoints.Array.data[3]'
       value: 
       objectReference: {fileID: 595169823}
-    - target: {fileID: 7168334085329538488, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
-      propertyPath: maxHealth
-      value: 2000
-      objectReference: {fileID: 0}
-    - target: {fileID: 9154938173037259198, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
-      propertyPath: phases.Array.data[0].transitionSFX
-      value: 
-      objectReference: {fileID: 8300000, guid: f03802bb392cef944b9b8be411d10434, type: 3}
-    - target: {fileID: 9154938173037259198, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
-      propertyPath: phases.Array.data[1].transitionSFX
-      value: 
-      objectReference: {fileID: 8300000, guid: f03802bb392cef944b9b8be411d10434, type: 3}
-    - target: {fileID: 9154938173037259198, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
-      propertyPath: phases.Array.data[2].transitionSFX
-      value: 
-      objectReference: {fileID: 8300000, guid: f03802bb392cef944b9b8be411d10434, type: 3}
     - target: {fileID: 9160949605170733101, guid: 95e4dd0476dd94649babd68f929698c0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13.02

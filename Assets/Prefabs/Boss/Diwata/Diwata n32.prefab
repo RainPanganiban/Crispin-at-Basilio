@@ -169,7 +169,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 1500
+  maxHealth: 2000
 --- !u!114 &9154938173037259198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,7 +191,7 @@ MonoBehaviour:
     - {fileID: 2260300378793522656}
     - {fileID: 4812855404122033223}
     transitionTriggerName: Diwata_Phase2
-    transitionSFX: {fileID: 0}
+    transitionSFX: {fileID: 8300000, guid: f03802bb392cef944b9b8be411d10434, type: 3}
     movementSpeedMultiplier: 0
     specialBehaviorFlag: 0
   - enterAtHealthPercent: 0.7
@@ -200,7 +200,7 @@ MonoBehaviour:
     - {fileID: 4605829407600288029}
     - {fileID: 6155749117630386765}
     transitionTriggerName: Diwata_Phase3
-    transitionSFX: {fileID: 0}
+    transitionSFX: {fileID: 8300000, guid: f03802bb392cef944b9b8be411d10434, type: 3}
     movementSpeedMultiplier: 1.5
     specialBehaviorFlag: 0
   - enterAtHealthPercent: 0.35
@@ -210,7 +210,7 @@ MonoBehaviour:
     - {fileID: 4605829407600288029}
     - {fileID: 2260300378793522656}
     transitionTriggerName: 
-    transitionSFX: {fileID: 0}
+    transitionSFX: {fileID: 8300000, guid: f03802bb392cef944b9b8be411d10434, type: 3}
     movementSpeedMultiplier: 2
     specialBehaviorFlag: 1
 --- !u!114 &5441020707308498628
@@ -371,7 +371,7 @@ MonoBehaviour:
   firePetalsClip: {fileID: 8300000, guid: ea8ff89009663254a813f63b4e06e4bc, type: 3}
   spawnPointCountToUse: 5
   petalSpeed: 8
-  petalDamage: 15
+  petalDamage: 20
   petalLifetime: 5
   spiralSpread: 30
   phase1Petals: 6
@@ -404,6 +404,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  summonVoiceClip: {fileID: 8300000, guid: 95b9bbe03421d664181bf706213498ec, type: 3}
+  summonMagicClip: {fileID: 8300000, guid: e979222d78c8b974ab8c264da2805eae, type: 3}
   phase1SpawnCount: 0
   phase2SpawnCount: 1
   phase3SpawnCount: 1
@@ -438,6 +440,8 @@ MonoBehaviour:
   vineCount: 3
   spawnOffsetRadius: 2
   maxAttackRange: 15
+  vineTelegraphClip: {fileID: 8300000, guid: 95b9bbe03421d664181bf706213498ec, type: 3}
+  vineSnapClip: {fileID: 8300000, guid: 95b9bbe03421d664181bf706213498ec, type: 3}
   startFromPhaseIndex: 1
 --- !u!114 &2260300378793522656
 MonoBehaviour:
