@@ -2,23 +2,20 @@ using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
 
-/// <summary>
-/// Diwata summons swarm enemies to pressure ranged players.
-/// Spawns Tyanak (Phase 1-2) or Bungisngis (Phase 2-3) enemies at spawn points.
-/// Registers spawned enemies with DiwataVulnerabilityManager for kill tracking.
-/// </summary>
 public class SwarmSummonAttack : BaseAttack
 {
     public const string Event_SpawnSwarm = "SpawnSwarm";
 
     [Header("Swarm Prefabs")]
-    [Tooltip("Tyanak enemy prefab (Phase 1-2 swarm type)")]
     public GameObject tyanakPrefab;
-    [Tooltip("Bungisngis enemy prefab (Phase 2-3 swarm type)")]
     public GameObject bungisngisAnimrefab;
 
     [Header("Spawn Points")]
     public List<Transform> swarmSpawnPoints = new List<Transform>();
+
+    [Header("Sound Effects")] // --- DAGDAG: Sound Clips ---
+    [SerializeField] private AudioClip summonVoiceClip; // Sigaw ni Diwata (e.g., "Sugod!")
+    [SerializeField] private AudioClip summonMagicClip; // Magic effect sound (e.g., Dark Poof/Portal)
 
     [Header("Phase Scaling")]
     public int phase1SpawnCount = 4;
@@ -30,20 +27,19 @@ public class SwarmSummonAttack : BaseAttack
 
     private BossPhaseManager phaseManager;
     private DiwataVulnerabilityManager vulnerabilityManager;
+    private EnemySoundManager soundManager; // --- DAGDAG: Reference ---
 
     public override void Initialize(BossController bossController)
     {
         base.Initialize(bossController);
         phaseManager = bossController != null ? bossController.GetComponent<BossPhaseManager>() : null;
         vulnerabilityManager = bossController != null ? bossController.GetComponent<DiwataVulnerabilityManager>() : null;
+        soundManager = bossController != null ? bossController.GetComponent<EnemySoundManager>() : null;
     }
 
     public override bool Server_CanExecute()
     {
-        // FIX: Added NetworkServer.active check
         if (!isServer || boss == null || !NetworkServer.active) return false;
-
-        // Siguraduhin na may player muna bago mag-summon ng minions
         return Server_HasActivePlayers();
     }
 
@@ -57,12 +53,14 @@ public class SwarmSummonAttack : BaseAttack
 
     public override void Server_OnAnimationEvent(string eventName)
     {
-        // FIX: Guard for server execution
         if (!isServer || !NetworkServer.active) return;
 
         if (eventName == Event_SpawnSwarm)
         {
             Server_SpawnSwarmEnemies();
+
+            // I-play ang sound sa lahat ng clients
+            Rpc_PlaySummonSounds();
         }
     }
 
@@ -73,26 +71,19 @@ public class SwarmSummonAttack : BaseAttack
         int count = Server_GetSpawnCount(phaseIndex);
         GameObject prefab = Server_GetPrefabForPhase(phaseIndex);
 
-        if (prefab == null)
-        {
-            Debug.LogWarning("[SwarmSummon] No swarm enemy prefab assigned!");
-            return;
-        }
+        if (prefab == null) return;
 
         for (int i = 0; i < count; i++)
         {
             Vector3 spawnPos = Server_GetSpawnPosition(i);
             GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
 
-            // FIX: Spawn using Mirror networking
             NetworkServer.Spawn(enemy);
 
-            // Register with vulnerability manager for kill tracking
             if (vulnerabilityManager != null)
             {
                 vulnerabilityManager.Server_RegisterSwarmEnemy(enemy);
 
-                // Hook into the enemy's death
                 if (enemy.TryGetComponent<EnemyHealth>(out var enemyHealth))
                 {
                     var manager = vulnerabilityManager;
@@ -105,12 +96,29 @@ public class SwarmSummonAttack : BaseAttack
             }
         }
 
-        // FIX: RPC Guard
         if (NetworkServer.active)
         {
             Rpc_OnSwarmSummoned(count);
         }
     }
+
+    // --- AUDIO RPC ---
+    [ClientRpc]
+    void Rpc_PlaySummonSounds()
+    {
+        if (soundManager != null)
+        {
+            // Play voice clip kung meron (e.g. Diwata's shout)
+            if (summonVoiceClip != null)
+                soundManager.PlaySpecificAttack(summonVoiceClip);
+
+            // Play magic effect (e.g. spell sound)
+            if (summonMagicClip != null)
+                soundManager.PlaySpecificAttack(summonMagicClip);
+        }
+    }
+
+    // ... (Keep other helper methods like Server_HasActivePlayers, Server_GetSpawnCount, etc. the same)
 
     bool Server_HasActivePlayers()
     {
@@ -147,7 +155,7 @@ public class SwarmSummonAttack : BaseAttack
         {
             Transform point = swarmSpawnPoints[index % swarmSpawnPoints.Count];
             Vector2 offset = Random.insideUnitCircle * spawnRadius;
-            return point.position + new Vector3(offset.x, 0.1f, offset.y); // Bahagyang angat sa floor
+            return point.position + new Vector3(offset.x, 0.1f, offset.y);
         }
 
         float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;

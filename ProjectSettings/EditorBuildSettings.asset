@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Lobby.unity
     guid: e1767258c7a53354cb7f96eff5c8160e
   - enabled: 1
+    path: Assets/Scenes/IntroCutscene.unity
+    guid: c041724bf5f482f44a53a4b625c03775
+  - enabled: 1
     path: Assets/Scenes/Overworld.unity
     guid: 3cc2201ec561c274ab2b1aa7ee430674
   - enabled: 1

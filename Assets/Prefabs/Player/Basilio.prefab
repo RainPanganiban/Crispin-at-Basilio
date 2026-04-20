@@ -2004,8 +2004,7 @@ MonoBehaviour:
   minY: -30
   maxY: 60
   distance: 3
-  rotationSmoothTime: 0.1
-  inputSmoothSpeed: 10
+  rotationSmoothTime: 0.03
   aimSensitivityMultiplier: 0.5
   zoomDistance: 1.5
   zoomSpeed: 8
@@ -4027,11 +4026,14 @@ MonoBehaviour:
   rotationSpeed: 10
   rollDistance: 5
   rollDuration: 0.3
+  rollCooldown: 0.6
   jumpHeight: 1
   gravity: -10.85
   fallMultiplier: 2.5
   bhopSpeedMultiplier: 1.05
   maxBhopSpeed: 12
+  jumpBufferTime: 0.2
+  coyoteTime: 0.15
   airControl: 0.5
   isAiming: 0
   cameraTransform: {fileID: 7300475583470436408}
@@ -4108,13 +4110,13 @@ MonoBehaviour:
   syncInterval: 0
   health:
     name: Health
-    maxValue: 250
-    currentValue: 250
+    maxValue: 200
+    currentValue: 200
   stamina:
     name: Stamina
-    maxValue: 150
-    currentValue: 150
-  staminaRegenRate: 10
+    maxValue: 100
+    currentValue: 100
+  staminaRegenRate: 15
   healthRegenRate: 0
 --- !u!114 &1964418824019641932
 MonoBehaviour:
@@ -4132,7 +4134,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   lightDamage: 15
-  heavyDamage: 25
+  heavyDamage: 20
   attackRadius: 3
   attackRange: 1
   hitLayers:

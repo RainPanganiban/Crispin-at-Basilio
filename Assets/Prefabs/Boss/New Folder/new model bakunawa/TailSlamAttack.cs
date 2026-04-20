@@ -14,9 +14,7 @@ public class TailSlamAttack : BaseAttack
     public LayerMask playerLayer;
 
     [Header("Knockback Settings")]
-    [Tooltip("Lakas ng talsik paatras.")]
     public float knockbackForce = 25f;
-    [Tooltip("Lakas ng talsik pataas. Dahil mabigat si Basilio, subukan ang 50-80.")]
     public float upwardForce = 60f;
 
     [Header("Timing & Visuals")]
@@ -24,9 +22,13 @@ public class TailSlamAttack : BaseAttack
     public float attackDuration = 2.0f;
     public GameObject slamVFXPrefab;
 
+    [Header("Sound Effects")] // --- DAGDAG: Sound Setup ---
+    [SerializeField] private AudioClip slamSFX; // Ang malakas na "THUD" o paghampas
+
     private BossController bossController;
     private BakunawaMovement movement;
     private NetworkAnimator networkAnimator;
+    private EnemySoundManager soundManager; // --- DAGDAG: Reference ---
     private bool isExecuting = false;
 
     void Awake()
@@ -34,12 +36,14 @@ public class TailSlamAttack : BaseAttack
         bossController = GetComponent<BossController>();
         movement = GetComponent<BakunawaMovement>();
         networkAnimator = GetComponent<NetworkAnimator>();
+        soundManager = GetComponent<EnemySoundManager>(); // Kunin ang SoundManager
     }
 
     public override void Initialize(BossController controller)
     {
         base.Initialize(controller);
         this.bossController = controller;
+        this.soundManager = controller.GetComponent<EnemySoundManager>();
     }
 
     [Server]
@@ -69,36 +73,52 @@ public class TailSlamAttack : BaseAttack
             NetworkServer.Spawn(vfx);
         }
 
-        // --- HIT DETECTION & KNOCKBACK OVERRIDE ---
+        // --- AUDIO: Patunugin ang Slam SFX sa lahat ---
+        RpcPlaySlamSFX();
+
+        // --- HIT DETECTION & KNOCKBACK ---
         Collider[] hits = Physics.OverlapSphere(slamPos, slamRadius, playerLayer);
 
         foreach (Collider hit in hits)
         {
-            // 1. Damage
-            var stats = hit.GetComponent<PlayerStatsManager>();
-            if (stats == null) stats = hit.GetComponentInParent<PlayerStatsManager>();
-            if (stats != null) stats.TakeDamage(damage, transform);
+            if (hit.transform == transform) continue;
 
-            // 2. Knockback Logic (Direct to Basilio's script)
+            // 1. Damage gamit ang IDamageable (Standard para sa boss scripts mo)
+            if (hit.TryGetComponent<IDamageable>(out var dmg))
+            {
+                dmg.TakeDamage(damage, transform);
+            }
+            else if (hit.TryGetComponent<PlayerStatsManager>(out var stats))
+            {
+                stats.TakeDamage(damage, transform);
+            }
+
+            // 2. Knockback Logic
             var playerMove = hit.GetComponent<PlayerMovement>();
             if (playerMove != null)
             {
-                // Kalkulahin ang direksyon palayo sa boss
                 Vector3 pushDir = (hit.transform.position - transform.position).normalized;
-                pushDir.y = 0; // Horizontal base
-
-                // Gagawa tayo ng "Super Force" vector para malabanan ang -2f gravity lock ni Basilio
+                pushDir.y = 0;
                 Vector3 finalForce = (pushDir * knockbackForce) + (Vector3.up * upwardForce);
 
-                // Tinatawag natin yung existing function sa PlayerMovement.cs mo
                 playerMove.ApplyKnockback(finalForce, 0.5f);
-
-                Debug.Log($"<color=yellow>[TailSlam]</color> Uppercut applied to {hit.name} with {upwardForce} vertical force.");
+                Debug.Log($"<color=yellow>[TailSlam]</color> Uppercut applied to {hit.name}");
             }
         }
 
         yield return new WaitForSeconds(attackDuration - damageDelay);
         Server_Stop();
+    }
+
+    // --- AUDIO RPC ---
+    [ClientRpc]
+    private void RpcPlaySlamSFX()
+    {
+        // Gagamitin ang soundManager ng boss para sa 3D spatial sound
+        if (soundManager != null && slamSFX != null)
+        {
+            soundManager.PlaySpecificAttack(slamSFX);
+        }
     }
 
     [Server]

@@ -4,7 +4,11 @@ using Mirror;
 public class ShokoyWaterProjectile : NetworkBehaviour
 {
     public GameObject hazardPuddlePrefab;
-    
+
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip impactSFX; // I-drag dito ang "Splash" o "Water Hit" sound
+    [Range(0f, 1f)][SerializeField] private float volume = 0.8f;
+
     private Vector3 startPos;
     private Vector3 targetPos;
     private float arcHeight;
@@ -12,7 +16,7 @@ public class ShokoyWaterProjectile : NetworkBehaviour
     private float damage;
     private Collider ownerCollider;
     private NetworkIdentity ownerIdentity;
-    
+
     private float progress = 0f;
     private System.Collections.Generic.HashSet<IDamageable> damagedTargets = new System.Collections.Generic.HashSet<IDamageable>();
 
@@ -36,37 +40,38 @@ public class ShokoyWaterProjectile : NetworkBehaviour
         if (totalDist < 0.001f) totalDist = 1f;
 
         progress += speed * Time.deltaTime / totalDist;
-        
+
         Vector3 currentPos = Vector3.Lerp(startPos, targetPos, progress);
-        
+
         // Add arc
         float yOffset = Mathf.Sin(progress * Mathf.PI) * arcHeight;
         currentPos.y += yOffset;
-        
+
         transform.position = currentPos;
 
-        // If we missed or went past target without hitting anything, destroy after some time
         if (progress >= 2.0f)
         {
             NetworkServer.Destroy(gameObject);
         }
     }
-    
+
     [ServerCallback]
     void OnTriggerEnter(Collider other)
     {
-        if(other == ownerCollider) return;
-        
+        if (other == ownerCollider) return;
+
         bool isGrounded = other.CompareTag("Ground") || other.gameObject.layer == LayerMask.NameToLayer("Ground");
-        
+
         if (other.TryGetComponent<IDamageable>(out var hitTarget))
         {
             if (!damagedTargets.Contains(hitTarget))
             {
                 hitTarget.TakeDamage(damage, ownerIdentity != null ? ownerIdentity.transform : null);
                 damagedTargets.Add(hitTarget);
+
+                // MAG-PLAY NG SOUND KAPAG TUMAMA SA PLAYER
+                RpcPlayImpactSound(transform.position);
             }
-            // Do NOT SpawnPuddleAndDestroy here, let it continue to ground
         }
         else if (isGrounded)
         {
@@ -77,28 +82,45 @@ public class ShokoyWaterProjectile : NetworkBehaviour
     [Server]
     private void SpawnPuddleAndDestroy()
     {
+        // PATUGTUGIN ANG SOUND SA LAHAT NG CLIENTS BAGO MA-DESTROY
+        RpcPlayImpactSound(transform.position);
+
         if (hazardPuddlePrefab != null)
         {
             Vector3 spawnPos = transform.position;
-            
-            // Cast a ray from slightly above the projectile straight down 
-            // This is more robust than relying single point collision with thin meshes
             if (Physics.Raycast(transform.position + Vector3.up * 2f, Vector3.down, out RaycastHit hit, 10f))
             {
-                // Place puddle slightly above the hit point to prevent z-fighting
                 spawnPos = hit.point + Vector3.up * 0.05f;
             }
             else
             {
-                // Fallback: spawn at the projectile's current height (approx ground level if it trigger hit)
-                spawnPos.y = 0.05f; 
+                spawnPos.y = 0.05f;
             }
-            
+
             GameObject puddle = Instantiate(hazardPuddlePrefab, spawnPos, Quaternion.identity);
             NetworkServer.Spawn(puddle);
         }
-        
-        // Always destroy the projectile
+
         NetworkServer.Destroy(gameObject);
+    }
+
+    [ClientRpc]
+    private void RpcPlayImpactSound(Vector3 position)
+    {
+        if (impactSFX != null)
+        {
+            // Ang PlayClipAtPoint ay gumagawa ng temporary AudioSource sa world space
+            // para kahit ma-destroy itong projectile, tuloy pa rin ang tunog.
+            AudioSource.PlayClipAtPoint(impactSFX, position, GetEffectiveVolume());
+        }
+    }
+
+    private float GetEffectiveVolume()
+    {
+        // Kung meron kang SoundManager na nag-handle ng global volume
+        if (SoundManager.Instance != null)
+            return SoundManager.Instance.EffectiveSFXVolume * volume;
+
+        return volume;
     }
 }

@@ -188,7 +188,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 2000
+  maxHealth: 2500
 --- !u!114 &7671506956600284580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,6 +211,7 @@ MonoBehaviour:
     - {fileID: 8542820687180936648}
     - {fileID: 3754177926930371036}
     transitionTriggerName: 
+    transitionSFX: {fileID: 0}
     movementSpeedMultiplier: 0
     specialBehaviorFlag: 0
   - enterAtHealthPercent: 0.7
@@ -219,6 +220,7 @@ MonoBehaviour:
     - {fileID: 8682163624340012642}
     - {fileID: 3754177926930371036}
     transitionTriggerName: 
+    transitionSFX: {fileID: 0}
     movementSpeedMultiplier: 1
     specialBehaviorFlag: 0
   - enterAtHealthPercent: 0.35
@@ -228,6 +230,7 @@ MonoBehaviour:
     - {fileID: 3798965447748796455}
     - {fileID: 3754177926930371036}
     transitionTriggerName: 
+    transitionSFX: {fileID: 0}
     movementSpeedMultiplier: 1.5
     specialBehaviorFlag: 1
 --- !u!114 &8934656448057782840
@@ -315,6 +318,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  activationDistance: 12
   hoverHeight: 6
   hoverBobAmplitude: 0.3
   hoverBobFrequency: 1.2
@@ -368,10 +372,11 @@ MonoBehaviour:
   animationTriggerName: 
   requiresMovementLock: 0
   petalPrefab: {fileID: 1361365814092637503, guid: 6e5cf2eb15937254f95a34ec32277789, type: 3}
-  spawnOrigin: {fileID: 4933477418656660600}
+  spawnOrigins: []
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
+  spawnPointCountToUse: 1
   petalSpeed: 8
   petalDamage: 12
   petalLifetime: 5
@@ -408,6 +413,8 @@ MonoBehaviour:
   telegraphDuration: 1.2
   vineCount: 3
   spawnOffsetRadius: 2
+  maxAttackRange: 15
+  startFromPhaseIndex: 1
 --- !u!114 &1413133698108565249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -433,8 +440,8 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
-  arenaEdgeRadius: 14
-  spawnHeight: 2
+  spawnOrigins: []
+  spawnPointCountToUse: 4
   lanceDamage: 25
   lanceSpeed: 15
   lanceMaxDistance: 30
@@ -467,7 +474,7 @@ MonoBehaviour:
   orbitRadius: 3
   orbitHeight: 1
   orbitSpeed: 180
-  wispDamage: 15
+  wispDamage: 40
   wispProjectileSpeed: 12
   wispLifetime: 6
   phase2Wisps: 5
@@ -498,7 +505,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   arenaRadius: 12
-  beamDamage: 30
+  beamDamage: 50
   beamRadius: 3
   telegraphDuration: 1.5
   phase3Beams: 5
@@ -529,7 +536,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   petalSpeed: 10
-  petalDamage: 10
+  petalDamage: 40
   petalLifetime: 4
   fireInterval: 0.15
   rotationSpeed: 90
@@ -561,7 +568,7 @@ MonoBehaviour:
     m_Bits: 256
   spawnHeight: 8
   spawnSpread: 3
-  spearDamage: 30
+  spearDamage: 50
   spearSpeed: 18
   lockOnDuration: 1.2
   maxDistance: 30

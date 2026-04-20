@@ -46,12 +46,14 @@ public class LobbyUIManager : MonoBehaviour
         }
     }
 
+    // Hanapin ang function na ito sa loob ng LobbyUIManager.cs
     public void StartGame()
     {
-        if (!NetworkServer.active) return; // only host can start
-        NetworkManager.singleton.ServerChangeScene("Overworld");
-    }
+        if (!NetworkServer.active) return; // Host lang ang pwedeng mag-trigger
 
+        // Mula "Overworld", palitan natin papuntang "IntroCutscene"
+        NetworkManager.singleton.ServerChangeScene("IntroCutscene");
+    }
     // FUNCTION PARA SA BACK BUTTON
     public void BackToMainMenu()
     {

@@ -606,22 +606,22 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  chaseSpeed: 3.5
+  chaseSpeed: 4
   chaseStopDistance: 3
   chaseStartDistance: 8
   arenaCenter: {fileID: 0}
   preferredRadius: 4
-  walkSpeed: 1.2
-  burstSpeed: 4.5
+  walkSpeed: 2
+  burstSpeed: 5
   burstDuration: 0.8
   burstCooldown: 6
   enableFootstepTremor: 1
   tremorInterval: 1.1
   tremorRingPrefab: {fileID: 2652610187423935079, guid: 49561b5665331f444b7f107b34fb9e87, type: 3}
   tremorOrigin: {fileID: 8743233550772781628}
-  tremorDamage: 5
+  tremorDamage: 50
   tremorMaxRadius: 2.5
-  tremorExpandSpeed: 8
+  tremorExpandSpeed: 100
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -643,7 +643,7 @@ MonoBehaviour:
   syncInterval: 0
   attackName: Attack
   cooldown: 2
-  maxRange: 8
+  maxRange: 10
   animationTriggerName: Onglo_Stomp
   requiresMovementLock: 1
   ringOrigin: {fileID: 422022761598987747}
@@ -651,7 +651,7 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
-  ringDamage: 25
+  ringDamage: 5
   expandSpeed: 12
   maxRadius: 8
   phase1Rings: 1
@@ -659,7 +659,7 @@ MonoBehaviour:
   phase3Rings: 2
   ringInterval: 0.18
   shakeIntensity: 10
-  shakeDuration: 0.5
+  shakeDuration: 1
   stompClip: {fileID: 8300000, guid: ef844b9a75f172c469e9fec6714b0855, type: 3}
 --- !u!114 &3413062229324071752
 MonoBehaviour:
@@ -678,7 +678,7 @@ MonoBehaviour:
   syncInterval: 0
   attackName: Attack
   cooldown: 4
-  maxRange: 14
+  maxRange: 20
   animationTriggerName: Onglo_GroundSplit
   requiresMovementLock: 1
   fissureOrigin: {fileID: 4231949332098844287}
@@ -686,8 +686,8 @@ MonoBehaviour:
   fissureSpeed: 8
   fissureMaxDistance: 12
   eruptDelay: 0.8
-  eruptRadius: 2.5
-  damage: 35
+  eruptRadius: 4
+  damage: 40
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -710,7 +710,7 @@ MonoBehaviour:
   syncInterval: 0
   attackName: Attack
   cooldown: 3
-  maxRange: 40
+  maxRange: 50
   animationTriggerName: Onglo_BoulderBarrage
   requiresMovementLock: 1
   boulderSpawnPoints:
@@ -724,9 +724,9 @@ MonoBehaviour:
     m_Bits: 256
   boulderDamage: 35
   impactRadius: 2.5
-  gravity: 18
+  gravity: 20
   lifetime: 6
-  forwardSpeed: 10
+  forwardSpeed: 20
   upSpeed: 9
   throwShakeIntensity: 2
   phase1Throws: 3

@@ -119,7 +119,8 @@ public class CustomNetworkManager : NetworkManager
 
         // Handle all gameplay scenes (not just overworld)
         // Skip Lobby scene (players are already spawned there)
-        if (sceneName == "Lobby")
+        // ADDED: Skip IntroCutscene para hindi mag-spawn ang player visual habang nanonood
+        if (sceneName == "Lobby" || sceneName == "IntroCutscene")
             return;
 
         foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)

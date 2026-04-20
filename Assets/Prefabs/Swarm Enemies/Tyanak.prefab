@@ -500,8 +500,8 @@ MonoBehaviour:
   syncInterval: 0
   cooldown: 2
   duration: 1
-  attackSound: {fileID: 8300000, guid: 8dd1ddb7048e5ab42b3aab7d937b0b69, type: 3}
-  damage: 20
+  attackSound: {fileID: 8300000, guid: 83295234e2ba7664797d53f61212fd36, type: 3}
+  damage: 50
   leapSpeed: 15
   leapDistance: 5
   hitRadius: 1.5
@@ -511,6 +511,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   targetVerticalOffset: 1
+  leapSound: {fileID: 0}
   networkAnimator: {fileID: 6069244397733546888}
   leapTrigger: LeapPounce
 --- !u!114 &7399111249922438580
@@ -531,13 +532,14 @@ MonoBehaviour:
   cooldown: 2
   duration: 1
   attackSound: {fileID: 8300000, guid: 8dd1ddb7048e5ab42b3aab7d937b0b69, type: 3}
-  damage: 10
+  damage: 50
   hitRadius: 1.21
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
   targetVerticalOffset: 1
   hitForwardOffset: 1.56
+  swipeSound: {fileID: 0}
   networkAnimator: {fileID: 6069244397733546888}
   attackTrigger: ClawSwipe
 --- !u!114 &3627367901116228669
@@ -555,8 +557,8 @@ MonoBehaviour:
   walkClip: {fileID: 0}
   walkVolume: 1
   attackVolume: 1
-  hurtClip: {fileID: 0}
-  hurtVolume: 1
+  hurtClip: {fileID: 8300000, guid: aab155c21b7d7b4459350691a4312053, type: 3}
+  hurtVolume: 0.688
   deathClip: {fileID: 0}
   deathVolume: 1
   walkInterval: 0.5

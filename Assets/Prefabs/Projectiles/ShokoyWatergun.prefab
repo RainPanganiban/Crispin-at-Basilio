@@ -177,3 +177,5 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   hazardPuddlePrefab: {fileID: 8245016986133987482, guid: 844c9a133f89e784c83ec3cdee2dd722, type: 3}
+  impactSFX: {fileID: 8300000, guid: d2a01c335292e8340951a3c88dd5fe41, type: 3}
+  volume: 0.8

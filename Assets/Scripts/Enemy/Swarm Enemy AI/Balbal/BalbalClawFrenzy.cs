@@ -9,14 +9,20 @@ public class BalbalClawFrenzy : EnemyAttack
     public float projectileSpeed = 12f;
     public float projectileLifetime = 3f;
     public Transform waveSpawnPoint;
-    
+
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip clawSlashSFX; // Tunog ng pag-slash ng kuko
+    private EnemySoundManager soundManager;
+
     [Header("Animation")]
-    public NetworkAnimator networkAnimator; 
+    public NetworkAnimator networkAnimator;
     public string attackTrigger = "ClawFrenzy";
 
     void Awake()
     {
-        if (networkAnimator == null) 
+        soundManager = GetComponent<EnemySoundManager>();
+
+        if (networkAnimator == null)
         {
             networkAnimator = GetComponent<NetworkAnimator>();
             if (networkAnimator == null) networkAnimator = GetComponentInParent<NetworkAnimator>();
@@ -34,7 +40,7 @@ public class BalbalClawFrenzy : EnemyAttack
 
         if (networkAnimator != null)
         {
-            networkAnimator.SetTrigger(attackTrigger); 
+            networkAnimator.SetTrigger(attackTrigger);
         }
     }
 
@@ -42,12 +48,24 @@ public class BalbalClawFrenzy : EnemyAttack
     public void FireWave1Event()
     {
         SpawnWave();
+        RpcPlaySlashSound(); // Play sound sa unang slash
     }
 
     [ServerCallback]
     public void FireWave2Event()
     {
         SpawnWave();
+        RpcPlaySlashSound(); // Play sound sa pangalawang slash
+    }
+
+    [ClientRpc]
+    private void RpcPlaySlashSound()
+    {
+        if (soundManager != null && clawSlashSFX != null)
+        {
+            // Gagamitin ang PlaySpecificAttack para sa consistent na volume
+            soundManager.PlaySpecificAttack(clawSlashSFX);
+        }
     }
 
     [Server]
@@ -58,16 +76,16 @@ public class BalbalClawFrenzy : EnemyAttack
         Vector3 spawnPos = waveSpawnPoint != null ? waveSpawnPoint.position : transform.position + transform.forward + Vector3.up;
 
         GameObject wave = Instantiate(waveProjectilePrefab, spawnPos, transform.rotation);
-        
+
         EnemyProjectile proj = wave.GetComponent<EnemyProjectile>();
         if (proj != null)
         {
             proj.Initialize(
-                Mathf.RoundToInt(projectileDamage), 
-                projectileSpeed, 
-                projectileLifetime, 
-                transform.forward, 
-                GetComponent<Collider>(), 
+                Mathf.RoundToInt(projectileDamage),
+                projectileSpeed,
+                projectileLifetime,
+                transform.forward,
+                GetComponent<Collider>(),
                 GetComponent<NetworkIdentity>()
             );
         }

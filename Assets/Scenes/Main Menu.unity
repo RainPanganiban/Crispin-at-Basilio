@@ -1479,7 +1479,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0.5921569}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3062,9 +3062,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0.8980392}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4004,7 +4004,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_TargetDisplay: 0
 --- !u!224 &901058293
 RectTransform:
@@ -5027,7 +5027,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -6338,7 +6338,7 @@ MonoBehaviour:
   - levelName: Level 1
     explorationMusic: {fileID: 8300000, guid: 29c025307ed33d7499b2130d4537d2d2, type: 3}
     swarmMusic: {fileID: 8300000, guid: fc19ff77bf901bf44902dcc829cf22aa, type: 3}
-    bossMusic: {fileID: 8300000, guid: a2cff58bc8d8f654ca8cdb45bd8f7ef9, type: 3}
+    bossMusic: {fileID: 8300000, guid: 1309c2a7b536c4240af2c740b2f9bf1c, type: 3}
   - levelName: Level 2
     explorationMusic: {fileID: 8300000, guid: fd20e5393dc1a724d8ee73212fc25523, type: 3}
     swarmMusic: {fileID: 8300000, guid: c39e0e46db2a42c419d2088f3f6d6166, type: 3}
@@ -6351,8 +6351,8 @@ MonoBehaviour:
   - levelName: Optional 1
     backgroundMusic: {fileID: 8300000, guid: a1d15337bb714b747af00e926e433a30, type: 3}
   masterVolume: 1
-  musicVolume: 1
-  sfxVolume: 1
+  musicVolume: 0.294
+  sfxVolume: 0.483
   fadeDuration: 1.5
 --- !u!4 &1313726899
 Transform:
@@ -8248,7 +8248,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -9724,7 +9724,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!224 &1939753521
 RectTransform:

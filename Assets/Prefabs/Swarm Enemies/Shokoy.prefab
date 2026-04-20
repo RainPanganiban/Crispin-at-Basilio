@@ -722,14 +722,15 @@ MonoBehaviour:
   syncInterval: 0
   cooldown: 6
   duration: 1
-  attackSound: {fileID: 0}
+  attackSound: {fileID: 8300000, guid: 4b94b31b5373899449bfa25abea665da, type: 3}
   waterProjectilePrefab: {fileID: 3216240422717333500, guid: c987039422dd8d94d828059f05310362, type: 3}
-  directDamage: 5
+  directDamage: 20
   projectileSpeed: 10
   arcHeight: 3
   projectilesToFire: 3
   delayBetweenShots: 0.3
   firePoint: {fileID: 3281333441711823236}
+  waterSpitClip: {fileID: 8300000, guid: 4b94b31b5373899449bfa25abea665da, type: 3}
   networkAnimator: {fileID: 4618856311504026991}
   attackTrigger: WaterStream
 --- !u!114 &5083905385910614558
@@ -753,6 +754,8 @@ MonoBehaviour:
   bubblePrefab: {fileID: 1321602652105065632, guid: 91dac709119a0774ea1fe728fa65a79e, type: 3}
   bubbleCount: 5
   spawnRadius: 15
+  burstCastClip: {fileID: 8300000, guid: 64afd788f32101048820fdda67a1db3d, type: 3}
+  bubbleSpawnClip: {fileID: 8300000, guid: d2a01c335292e8340951a3c88dd5fe41, type: 3}
   networkAnimator: {fileID: 4618856311504026991}
   attackTrigger: BubbleBurst
 --- !u!114 &4144342522749034699
@@ -770,8 +773,8 @@ MonoBehaviour:
   walkClip: {fileID: 0}
   walkVolume: 1
   attackVolume: 1
-  hurtClip: {fileID: 0}
-  hurtVolume: 1
+  hurtClip: {fileID: 8300000, guid: d440d9f9ae8f33c46a28eda2113a8897, type: 3}
+  hurtVolume: 0.768
   deathClip: {fileID: 0}
   deathVolume: 1
   walkInterval: 0.5

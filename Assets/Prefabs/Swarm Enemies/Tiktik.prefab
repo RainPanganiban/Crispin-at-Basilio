@@ -612,7 +612,7 @@ MonoBehaviour:
   minDistanceFromPlayer: 4
   swoopTelegraphDuration: 0.4
   swoopSpeed: 18
-  swoopDamage: 10
+  swoopDamage: 40
   swoopCooldown: 5
   playerLayer:
     serializedVersion: 2
@@ -661,7 +661,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 30
+  maxHealth: 40
 --- !u!136 &2296910401929181882
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -721,7 +721,7 @@ MonoBehaviour:
   attackSound: {fileID: 8300000, guid: 1267a869685116e48b316baa5b40df0f, type: 3}
   projectilePrefab: {fileID: 4164222620869133773, guid: 6aa0c565168e7db42ba597a2162377d0, type: 3}
   firePoint: {fileID: 3420219565809902925}
-  damage: 10
+  damage: 40
   projectileSpeed: 15
   projectileLifetime: 5
   networkAnimator: {fileID: 5341141336446437376}
@@ -792,6 +792,10 @@ MonoBehaviour:
   deathClip: {fileID: 8300000, guid: 6660db17eae2eb845a519c34b42c9b20, type: 3}
   deathVolume: 1
   walkInterval: 0.5
+  ambientClips: []
+  ambientVolume: 0.7
+  minAmbientDelay: 5
+  maxAmbientDelay: 10
 --- !u!1 &7648058361784440064
 GameObject:
   m_ObjectHideFlags: 0

@@ -26,20 +26,24 @@ public class VineSnareAttack : BaseAttack
     [Tooltip("Dapat pasok ang player sa range na ito bago lumabas ang vines.")]
     public float maxAttackRange = 15f;
 
+    [Header("Sound Effects")] // --- DAGDAG: Sound Clips ---
+    [SerializeField] private AudioClip vineTelegraphClip; // Tunog bago lumabas (e.g., Ground Rumbling/Roots Growing)
+    [SerializeField] private AudioClip vineSnapClip;      // Tunog pag-erupt (e.g., Wood Snap/Dirt Explosion)
+
     [Header("Phase Requirement")]
     [Tooltip("I-set sa 1 para magsimulang lumitaw sa Phase 2 at Phase 3.")]
     public int startFromPhaseIndex = 1;
 
     private DiwataVulnerabilityManager vulnerabilityManager;
     private BossPhaseManager phaseManager;
+    private EnemySoundManager soundManager; // --- DAGDAG: Reference ---
 
     public override void Initialize(BossController bossController)
     {
         base.Initialize(bossController);
         vulnerabilityManager = bossController != null ? bossController.GetComponent<DiwataVulnerabilityManager>() : null;
-
-        // Kinukuha ang reference ng Phase Manager mula kay Diwata
         phaseManager = bossController != null ? bossController.GetComponent<BossPhaseManager>() : null;
+        soundManager = bossController != null ? bossController.GetComponent<EnemySoundManager>() : null;
     }
 
     public override bool Server_CanExecute()
@@ -47,7 +51,6 @@ public class VineSnareAttack : BaseAttack
         if (!isServer || boss == null || !NetworkServer.active) return false;
 
         // --- PHASE CHECK ---
-        // Kung ang current phase ay mas mababa sa Phase 2 (Index 1), bawal umatake.
         if (phaseManager != null)
         {
             if (phaseManager.GetCurrentPhaseIndex() < startFromPhaseIndex)
@@ -84,13 +87,21 @@ public class VineSnareAttack : BaseAttack
     {
         if (!isServer || !NetworkServer.active) return;
 
-        // Fail-safe para hindi mag-trigger sa Phase 1 (Index 0)
+        // Fail-safe para hindi mag-trigger sa Phase 1
         if (phaseManager != null && phaseManager.GetCurrentPhaseIndex() < startFromPhaseIndex)
             return;
 
-        if (eventName == Event_TriggerVineSnap || eventName == Event_SpawnVines)
+        // Visual/Audio preparation (Rumbling)
+        if (eventName == Event_SpawnVines)
+        {
+            Rpc_PlayTelegraphSound();
+        }
+
+        // Actual attack (Snapping)
+        if (eventName == Event_TriggerVineSnap)
         {
             Server_SpawnVines();
+            Rpc_PlaySnapSound();
 
             if (vulnerabilityManager != null)
                 vulnerabilityManager.Server_OnAttackCompleted();
@@ -107,7 +118,6 @@ public class VineSnareAttack : BaseAttack
         {
             if (conn == null || conn.identity == null) continue;
 
-            // Optional: I-target lang yung mga players na malapit kay Diwata
             float dist = Vector3.Distance(transform.position, conn.identity.transform.position);
             if (dist <= maxAttackRange + 10f)
             {
@@ -144,6 +154,26 @@ public class VineSnareAttack : BaseAttack
         if (Physics.Raycast(position + Vector3.up * 10f, Vector3.down, out RaycastHit hit, 20f))
             return hit.point.y;
         return position.y;
+    }
+
+    // --- AUDIO RPCs ---
+
+    [ClientRpc]
+    void Rpc_PlayTelegraphSound()
+    {
+        if (soundManager != null && vineTelegraphClip != null)
+        {
+            soundManager.PlaySpecificAttack(vineTelegraphClip);
+        }
+    }
+
+    [ClientRpc]
+    void Rpc_PlaySnapSound()
+    {
+        if (soundManager != null && vineSnapClip != null)
+        {
+            soundManager.PlaySpecificAttack(vineSnapClip);
+        }
     }
 
     public override void Server_Stop() { }

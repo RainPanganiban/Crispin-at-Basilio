@@ -290,7 +290,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 100
+  maxHealth: 150
 --- !u!114 &6407903552163877071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,6 +389,7 @@ MonoBehaviour:
   trackingAcceleration: 20
   initialAimOffsetAngle: 5
   targetVerticalOffset: 2
+  laserLoopClip: {fileID: 8300000, guid: 020f9c992e4beaa4c864e063649db926, type: 3}
   networkAnimator: {fileID: 7385062362227428125}
   attackTrigger: EyeLaser
 --- !u!114 &7333029554544196159
@@ -406,7 +407,7 @@ MonoBehaviour:
   walkClip: {fileID: 0}
   walkVolume: 1
   attackVolume: 1
-  hurtClip: {fileID: 0}
+  hurtClip: {fileID: 8300000, guid: c7d724c83e132c245a362b21c92416d8, type: 3}
   hurtVolume: 1
   deathClip: {fileID: 0}
   deathVolume: 1

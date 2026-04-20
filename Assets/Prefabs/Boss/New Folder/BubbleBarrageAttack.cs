@@ -8,11 +8,11 @@ public class BubbleBarrageAttack : BaseAttack
 
     [Header("Bubble Settings")]
     public BakunawaBubble bubblePrefab;
-
-    [Tooltip("Dito ilalagay ang mga Transforms kung saan pwedeng lumabas ang bubbles.")]
     public List<Transform> spawnOrigins = new List<Transform>();
-
     public LayerMask playerLayer;
+
+    [Header("Sound Effects")] // --- DAGDAG: Sound Setup ---
+    [SerializeField] private AudioClip bubbleSpawnSFX; // Tunog ng bula (e.g., Bubble Pop/Water Gurgle)
 
     [Header("Multi-Spawn Logic")]
     [Tooltip("Ilan sa mga spawn points ang gagamitin nang sabay-sabay?")]
@@ -23,8 +23,6 @@ public class BubbleBarrageAttack : BaseAttack
     public float bubbleDamage = 15f;
     public float bubbleExplosionRadius = 2.5f;
     public float bubbleLifetime = 1.5f;
-
-    // BAGO: Gaano katagal bago mag-reset ang AI pagka-atake?
     public float attackDuration = 2.5f;
 
     [Header("Phase Scaling")]
@@ -35,6 +33,7 @@ public class BubbleBarrageAttack : BaseAttack
     private BossPhaseManager phaseManager;
     private DiwataVulnerabilityManager vulnerabilityManager;
     private BossController controller;
+    private EnemySoundManager soundManager; // --- DAGDAG: Reference ---
 
     public override void Initialize(BossController bossController)
     {
@@ -42,6 +41,9 @@ public class BubbleBarrageAttack : BaseAttack
         controller = bossController;
         phaseManager = bossController != null ? bossController.GetComponent<BossPhaseManager>() : null;
         vulnerabilityManager = bossController != null ? bossController.GetComponent<DiwataVulnerabilityManager>() : null;
+
+        // Kunin ang SoundManager mula sa boss
+        soundManager = bossController != null ? bossController.GetComponent<EnemySoundManager>() : null;
     }
 
     public override bool Server_CanExecute()
@@ -53,13 +55,8 @@ public class BubbleBarrageAttack : BaseAttack
         {
             float dist = Vector3.Distance(transform.position, targetPlayer.position);
 
-            // --- ETO ANG DETALYE ---
-            // Kung ang player ay masyadong malapit (halimbawa < 7 units), 
-            // mag-re-return tayo ng FALSE para mapilitan ang AI na piliin ang Tidal Bite.
-            if (dist < 7.0f)
-            {
-                return false;
-            }
+            // AI Logic: Kung masyadong malapit, bawal ang bubbles (pilitin mag-Tidal Bite)
+            if (dist < 7.0f) return false;
 
             return dist <= maxRange;
         }
@@ -73,12 +70,10 @@ public class BubbleBarrageAttack : BaseAttack
             boss.Server_PlayTrigger(animationTriggerName);
         }
 
-        // BAGO: Simulan ang timer para i-reset ang AI
         StopAllCoroutines();
         StartCoroutine(AutoResetRoutine());
     }
 
-    // BAGO: Maghihintay ito bago sabihan ang AI na "Tapos na ako!"
     private System.Collections.IEnumerator AutoResetRoutine()
     {
         yield return new WaitForSeconds(attackDuration);
@@ -100,7 +95,7 @@ public class BubbleBarrageAttack : BaseAttack
 
             if (NetworkServer.active)
             {
-                Rpc_OnBubblesFired();
+                Rpc_OnBubblesFired(); // Dito tutunog ang bubbles
             }
 
             if (vulnerabilityManager != null)
@@ -119,18 +114,29 @@ public class BubbleBarrageAttack : BaseAttack
             Vector3 spawnPos = origin.position + randomOffset;
 
             BakunawaBubble bubble = Instantiate(bubblePrefab, spawnPos, Quaternion.identity);
-
             bubble.Initialize(boss != null ? boss.GetComponent<Collider>() : null);
 
-            // --- BAGO: IPASA ANG DAMAGE PARA MAKABAWAS ---
-            // Kailangan may public variables na 'damage' at 'explosionRadius' sa ShokoyBubble.cs mo
-            // Kung iba ang pangalan ng variable doon, palitan mo lang ito.
             bubble.damage = bubbleDamage;
-            // bubble.explosionRadius = bubbleExplosionRadius; // Uncomment kung meron
+            // bubble.explosionRadius = bubbleExplosionRadius; 
 
             NetworkServer.Spawn(bubble.gameObject);
         }
     }
+
+    // --- AUDIO RPC ---
+    [ClientRpc]
+    void Rpc_OnBubblesFired()
+    {
+        Debug.Log("[BubbleBarrage] Bubbles spawned and rising!");
+
+        // Patunugin ang bubble SFX sa pwesto ni Bakunawa (o mouth origins)
+        if (soundManager != null && bubbleSpawnSFX != null)
+        {
+            soundManager.PlaySpecificAttack(bubbleSpawnSFX);
+        }
+    }
+
+    // ... (Keep the rest of helper methods: Server_GetRandomSpawnPoints, Server_GetBubbleCount, Server_FindClosestPlayer)
 
     List<Transform> Server_GetRandomSpawnPoints()
     {
@@ -164,12 +170,6 @@ public class BubbleBarrageAttack : BaseAttack
         };
     }
 
-    [ClientRpc]
-    void Rpc_OnBubblesFired()
-    {
-        Debug.Log("[BubbleBarrage] Bubbles spawned and rising!");
-    }
-
     Transform Server_FindClosestPlayer()
     {
         Transform best = null;
@@ -188,23 +188,18 @@ public class BubbleBarrageAttack : BaseAttack
         return best;
     }
 
-    // --- BAGO: LALAGYAN NA NATIN NG LAMAN ITO PARA DI MAG-STUCK ---
     public override void Server_Stop()
     {
         if (!isServer) return;
 
-        // Reset BossController
         if (controller != null)
         {
             controller.Server_EndAttack();
         }
 
-        // Reset Attack Manager
         if (TryGetComponent<BossAttackManager>(out var attackManager))
         {
             attackManager.Server_OnAttackAnimationComplete();
         }
-
-        Debug.Log("<color=yellow>[BubbleBarrage]</color> Attack Ended & AI Reset!");
     }
 }
