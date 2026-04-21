@@ -70435,7 +70435,7 @@ MonoBehaviour:
     - Optional 2
   - levelId: Level 2
     sceneName: Level 2
-    startUnlocked: 0
+    startUnlocked: 1
     isMainPath: 1
     isArena: 0
     unlocksOnComplete:
@@ -70446,7 +70446,7 @@ MonoBehaviour:
     - Level 1
   - levelId: Level 3
     sceneName: Level 3
-    startUnlocked: 0
+    startUnlocked: 1
     isMainPath: 1
     isArena: 0
     unlocksOnComplete:
@@ -70459,7 +70459,7 @@ MonoBehaviour:
     - Level 3
   - levelId: Optional 1
     sceneName: Optional 1
-    startUnlocked: 0
+    startUnlocked: 1
     isMainPath: 0
     isArena: 1
     unlocksOnComplete:
@@ -70468,7 +70468,7 @@ MonoBehaviour:
     - Optional 2
   - levelId: Optional 2
     sceneName: Optional 2
-    startUnlocked: 0
+    startUnlocked: 1
     isMainPath: 0
     isArena: 1
     unlocksOnComplete:
@@ -70480,7 +70480,7 @@ MonoBehaviour:
     - Optional 1
   - levelId: Optional 3
     sceneName: Optional 3
-    startUnlocked: 0
+    startUnlocked: 1
     isMainPath: 0
     isArena: 1
     unlocksOnComplete:
@@ -70493,7 +70493,7 @@ MonoBehaviour:
     - Test Area
   - levelId: Test Area
     sceneName: Test Area
-    startUnlocked: 0
+    startUnlocked: 1
     isMainPath: 0
     isArena: 1
     unlocksOnComplete: []
