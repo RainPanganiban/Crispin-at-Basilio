@@ -21,10 +21,10 @@ public class PlayerMovement : NetworkBehaviour
     public float bhopSpeedMultiplier = 1.05f;
     public float maxBhopSpeed = 12f;
 
-    [Header("Jump Polish (The Fix)")]
-    public float jumpBufferTime = 0.2f; // Window para sa maagang pindot
+    [Header("Jump Polish")]
+    public float jumpBufferTime = 0.2f;
     private float jumpBufferCounter;
-    public float coyoteTime = 0.15f;    // Window para sa huling hirit na talon
+    public float coyoteTime = 0.15f;
     private float coyoteTimeCounter;
 
     [Header("Air Control & Momentum")]
@@ -39,7 +39,14 @@ public class PlayerMovement : NetworkBehaviour
     private Vector2 moveInput;
     private Vector3 velocity;
     private Transform cam;
+
+    // --- ITO YUNG MGA NAWALA NA IBINALIK KO ---
     public Transform PlayerCamera => cam;
+    public Vector2 MoveInput => moveInput;
+    public bool IsRunning => isRunning;
+    public bool IsGrounded => controller.isGrounded;
+    public bool IsRolling => isRolling;
+    // -----------------------------------------
 
     [SyncVar] private bool isRunning = false;
     private bool isRolling = false;
@@ -53,16 +60,10 @@ public class PlayerMovement : NetworkBehaviour
     private PlayerSoundManager soundManager;
     private ICombatHandler combatHandler;
 
-    [Header("Animation Parameters")]
-    public Vector2 MoveInput => moveInput;
-    public bool IsRunning => isRunning;
-    public bool IsGrounded => controller.isGrounded;
-    public bool IsRolling => isRolling;
-
-    private Vector3 knockbackVelocity;
     private float knockbackTimer;
-    private Vector3 attackStepVelocity;
+    private Vector3 knockbackVelocity;
     private float attackStepTimer;
+    private Vector3 attackStepVelocity;
 
     void Awake()
     {
@@ -89,7 +90,6 @@ public class PlayerMovement : NetworkBehaviour
     public void OnRun(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
-
         bool runInput = context.ReadValueAsButton();
         if (statsManager != null && statsManager.stamina.currentValue > 0f)
         {
@@ -109,34 +109,36 @@ public class PlayerMovement : NetworkBehaviour
     public void OnJump(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
-
-        if (context.performed)
-        {
-            jumpBufferCounter = jumpBufferTime; // Itatala na pinindot ang jump
-        }
+        if (context.performed) jumpBufferCounter = jumpBufferTime;
     }
 
     public void OnRoll(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
 
-        CharacterAnimationController animCtrl = GetComponent<CharacterAnimationController>();
-        bool isLocked = animCtrl != null && animCtrl.IsActionLocked;
-
-        if (context.performed && !isRolling && !isLocked && Time.time >= nextRollTime && statsManager.stamina.currentValue >= rollStaminaCost)
+        // Pwede mag-dash kahit locked (umaatake)
+        if (context.performed && !isRolling && Time.time >= nextRollTime && statsManager.stamina.currentValue >= rollStaminaCost)
         {
-            nextRollTime = Time.time + rollCooldown;
-            statsManager.CmdUseStamina(rollStaminaCost);
-            animCtrl?.PlayRoll();
-            if (soundManager != null) soundManager.PlayRoll();
-            StartCoroutine(Roll());
+            ExecuteRoll();
         }
+    }
+
+    private void ExecuteRoll()
+    {
+        CharacterAnimationController animCtrl = GetComponent<CharacterAnimationController>();
+
+        nextRollTime = Time.time + rollCooldown;
+        statsManager.CmdUseStamina(rollStaminaCost);
+
+        animCtrl?.PlayRoll();
+        if (soundManager != null) soundManager.PlayRoll();
+
+        StartCoroutine(RollRoutine());
     }
 
     public void OnLightAttack(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
-        if (context.performed && isRolling) isRolling = false;
         combatHandler?.OnLightAttack(context);
     }
 
@@ -146,40 +148,25 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
 
-        // 1. Physics Timers
         HandleTimers();
         HandleExternalForces();
-
-        // 2. Vertical Movement & Jump Check
         ApplyGravityAndFinalMove();
         CheckForJump();
 
-        // 3. Movement Lock
         if (isRolling) return;
 
-        // 4. WASD Movement
         CalculateHorizontalMovement();
     }
 
     private void HandleTimers()
     {
-        // Jump Buffer Timer
         if (jumpBufferCounter > 0) jumpBufferCounter -= Time.deltaTime;
-
-        // Coyote Time Timer
-        if (controller.isGrounded)
-        {
-            coyoteTimeCounter = coyoteTime;
-        }
-        else
-        {
-            coyoteTimeCounter -= Time.deltaTime;
-        }
+        if (controller.isGrounded) coyoteTimeCounter = coyoteTime;
+        else coyoteTimeCounter -= Time.deltaTime;
     }
 
     private void CheckForJump()
     {
-        // Kung may buffer (pinindot) at may coyote (nasa lupa or kaka-alis lang)
         if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f && !isRolling)
         {
             ExecuteJump();
@@ -188,7 +175,6 @@ public class PlayerMovement : NetworkBehaviour
 
     private void ExecuteJump()
     {
-        // Bunny Hop logic
         if (currentHorizontalVelocity.magnitude > moveSpeed)
         {
             currentHorizontalVelocity = Vector3.ClampMagnitude(currentHorizontalVelocity * bhopSpeedMultiplier, maxBhopSpeed);
@@ -197,7 +183,6 @@ public class PlayerMovement : NetworkBehaviour
         velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         GetComponent<CharacterAnimationController>()?.PlayJump();
 
-        // I-clear ang timers para hindi mag-double jump
         jumpBufferCounter = 0;
         coyoteTimeCounter = 0;
     }
@@ -207,25 +192,16 @@ public class PlayerMovement : NetworkBehaviour
         CharacterAnimationController animCtrl = GetComponent<CharacterAnimationController>();
         bool isLocked = animCtrl != null && animCtrl.IsActionLocked;
 
-        Vector3 targetMoveDir = Vector3.zero;
-
-        if (moveInput.sqrMagnitude > 0.01f && !isLocked)
-        {
-            Vector3 camForward = cam.forward;
-            Vector3 camRight = cam.right;
-            camForward.y = 0;
-            camRight.y = 0;
-            targetMoveDir = (camForward.normalized * moveInput.y + camRight.normalized * moveInput.x).normalized;
-        }
-
+        Vector3 targetMoveDir = GetCameraRelativeInput();
         float targetSpeed = GetCurrentSpeed();
 
         if (controller.isGrounded)
         {
-            Vector3 desiredVelocity = targetMoveDir * targetSpeed;
+            // Kung locked (umaatake), huwag gumalaw gamit ang WASD
+            Vector3 desiredVelocity = (isLocked) ? Vector3.zero : targetMoveDir * targetSpeed;
             currentHorizontalVelocity = Vector3.Lerp(currentHorizontalVelocity, desiredVelocity, 15f * Time.deltaTime);
 
-            if (targetMoveDir != Vector3.zero && !isAiming)
+            if (targetMoveDir != Vector3.zero && !isAiming && !isLocked)
             {
                 Quaternion targetRot = Quaternion.LookRotation(targetMoveDir);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
@@ -238,6 +214,17 @@ public class PlayerMovement : NetworkBehaviour
         }
 
         controller.Move(currentHorizontalVelocity * Time.deltaTime);
+    }
+
+    private Vector3 GetCameraRelativeInput()
+    {
+        if (moveInput.sqrMagnitude < 0.01f) return Vector3.zero;
+
+        Vector3 camForward = cam.forward;
+        Vector3 camRight = cam.right;
+        camForward.y = 0;
+        camRight.y = 0;
+        return (camForward.normalized * moveInput.y + camRight.normalized * moveInput.x).normalized;
     }
 
     private float GetCurrentSpeed()
@@ -253,24 +240,23 @@ public class PlayerMovement : NetworkBehaviour
 
     private void ApplyGravityAndFinalMove()
     {
-        if (controller.isGrounded && velocity.y < 0)
-        {
-            velocity.y = -2f;
-        }
+        if (controller.isGrounded && velocity.y < 0) velocity.y = -2f;
 
-        float currentGravity = gravity;
-        if (velocity.y < 0) currentGravity *= fallMultiplier;
-
+        float currentGravity = (velocity.y < 0) ? gravity * fallMultiplier : gravity;
         velocity.y += currentGravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
 
-    private IEnumerator Roll()
+    private IEnumerator RollRoutine()
     {
         isRolling = true;
-        Vector3 rollDir = transform.forward;
-        float elapsed = 0f;
 
+        Vector3 rollDir = GetCameraRelativeInput();
+        if (rollDir == Vector3.zero) rollDir = transform.forward;
+
+        transform.rotation = Quaternion.LookRotation(rollDir);
+
+        float elapsed = 0f;
         while (elapsed < rollDuration)
         {
             if (!isRolling) yield break;
@@ -278,6 +264,7 @@ public class PlayerMovement : NetworkBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
+
         isRolling = false;
     }
 
@@ -304,9 +291,9 @@ public class PlayerMovement : NetworkBehaviour
         knockbackTimer = duration;
     }
 
-    public void ApplyAttackStep(Vector3 velocity, float duration)
+    public void ApplyAttackStep(Vector3 vel, float duration)
     {
-        attackStepVelocity = velocity;
+        attackStepVelocity = vel;
         attackStepTimer = duration;
     }
 }
