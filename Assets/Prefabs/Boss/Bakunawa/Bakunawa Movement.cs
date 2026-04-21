@@ -4,6 +4,7 @@ using Mirror;
 /// <summary>
 /// Optimized Serpentine movement for Bakunawa.
 /// Fixed Y-axis dipping during Phase 2 and 3.
+/// Targets only living players.
 /// </summary>
 public class BakunawaMovement : BossMovementBase
 {
@@ -20,7 +21,7 @@ public class BakunawaMovement : BossMovementBase
     [Header("Arena Constraints")]
     public Transform arenaCenter;
     public float maxRangeFromCenter = 20f;
-    public float fixedYHeight = 2f; // I-set dito ang default na height ng Bakunawa
+    public float fixedYHeight = 2f;
 
     private bool movementEnabled = true;
     private float phaseMultiplier = 1f;
@@ -28,7 +29,6 @@ public class BakunawaMovement : BossMovementBase
 
     public override void OnStartServer()
     {
-        // I-set ang initial height base sa starting position kung hindi naka-manual set
         if (fixedYHeight == 0) fixedYHeight = transform.position.y;
 
         if (arenaCenter == null)
@@ -54,6 +54,7 @@ public class BakunawaMovement : BossMovementBase
     {
         Transform target = Server_FindClosestPlayer();
 
+        // Kung walang player o patay na lahat, bumalik sa gitna
         if (target == null)
         {
             Server_MoveTowards(arenaCenter != null ? arenaCenter.position : transform.position);
@@ -83,31 +84,24 @@ public class BakunawaMovement : BossMovementBase
     {
         waveTimer += Time.deltaTime * waveFrequency;
 
-        // 1. Kunin ang flat direction (XZ Plane lang)
         Vector3 direction = (targetPos - transform.position);
         direction.y = 0;
         direction.Normalize();
 
-        // 2. Kalkulahin ang Side-to-Side (S-Pattern) offset
-        // Gagamit ng Vector3.up para siguradong horizontal ang 'right' vector
         Vector3 right = Vector3.Cross(Vector3.up, direction);
         Vector3 offset = right * Mathf.Sin(waveTimer) * waveAmplitude;
 
-        // 3. Pagsamahin at i-apply ang speed multiplier
         Vector3 finalDirection = (direction + offset).normalized;
         float currentSpeed = moveSpeed * phaseMultiplier;
 
-        // 4. Movement Execution (Naka-lock ang Y position)
         Vector3 velocity = finalDirection * currentSpeed * Time.deltaTime;
 
-        // I-maintain ang fixed height para hindi lumubog
         transform.position = new Vector3(
             transform.position.x + velocity.x,
             fixedYHeight,
             transform.position.z + velocity.z
         );
 
-        // 5. Smooth Rotation
         if (finalDirection != Vector3.zero)
         {
             Quaternion targetRot = Quaternion.LookRotation(finalDirection);
@@ -121,7 +115,7 @@ public class BakunawaMovement : BossMovementBase
     void Server_FaceTarget(Vector3 targetPos)
     {
         Vector3 dir = (targetPos - transform.position).normalized;
-        dir.y = 0; // Lock rotation para hindi tumingala/yumuko
+        dir.y = 0;
 
         if (dir.sqrMagnitude > 0.001f)
         {
@@ -139,6 +133,7 @@ public class BakunawaMovement : BossMovementBase
         }
     }
 
+    // --- UPDATED: Chine-check na kung buhay ang player ---
     [Server]
     Transform Server_FindClosestPlayer()
     {
@@ -148,11 +143,19 @@ public class BakunawaMovement : BossMovementBase
         foreach (var conn in NetworkServer.connections.Values)
         {
             if (conn?.identity == null) continue;
-            float d = (conn.identity.transform.position - transform.position).sqrMagnitude;
+
+            // Kunin ang Health component (PlayerStatsManager)
+            PlayerStatsManager stats = conn.identity.GetComponent<PlayerStatsManager>();
+
+            // LALAKTAWAN kung patay na (health <= 0)
+            if (stats != null && stats.health.currentValue <= 0) continue;
+
+            Transform t = conn.identity.transform;
+            float d = (t.position - transform.position).sqrMagnitude;
             if (d < bestSqr)
             {
                 bestSqr = d;
-                best = conn.identity.transform;
+                best = t;
             }
         }
         return best;
@@ -170,12 +173,9 @@ public class BakunawaMovement : BossMovementBase
 
         if (phase.specialBehaviorFlag)
         {
-            // Bahagyang bilisan ang kumpas pero bawasan ang lawak (amplitude) 
-            // para hindi maging erratic ang galaw sa mataas na speed
             waveFrequency *= 1.3f;
             waveAmplitude *= 0.8f;
-
-            Debug.Log($"<color=red>[Bakunawa]</color> Phase Shift: Speed {phaseMultiplier}x | Freq {waveFrequency}");
+            Debug.Log($"<color=red>[Bakunawa]</color> Phase Shift Active.");
         }
     }
 }

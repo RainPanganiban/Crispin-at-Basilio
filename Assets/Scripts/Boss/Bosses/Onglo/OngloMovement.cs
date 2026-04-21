@@ -55,7 +55,7 @@ public class OngloMovement : BossMovementBase
         if (!movementEnabled)
         {
             syncedMovementSpeed = 0f;
-            if (animator != null && animator.runtimeAnimatorController != null) 
+            if (animator != null && animator.runtimeAnimatorController != null)
                 animator.SetFloat(SpeedHash, 0f);
             return;
         }
@@ -80,8 +80,8 @@ public class OngloMovement : BossMovementBase
     void Server_HandleStandardMovement()
     {
         Transform target = Server_FindClosestPlayer();
-        
-        // If no player, go home
+
+        // Kung walang buhay na player, babalik si Onglo sa gitna
         if (target == null)
         {
             isChasing = false;
@@ -91,54 +91,47 @@ public class OngloMovement : BossMovementBase
 
         float distToPlayer = Vector3.Distance(transform.position, target.position);
 
-        // State Machine: Chase vs Return to Center
         if (isChasing)
         {
-            // Chase logic: stay chasing until very close
             if (distToPlayer < chaseStopDistance)
             {
                 isChasing = false;
             }
             else
             {
-                // Chase player
                 Vector3 dir = (target.position - transform.position).normalized;
                 dir.y = 0f;
                 transform.position += dir * chaseSpeed * Time.deltaTime;
                 transform.forward = Vector3.Slerp(transform.forward, dir, 8f * Time.deltaTime);
-                
+
                 syncedMovementSpeed = chaseSpeed;
-                if (animator != null && animator.runtimeAnimatorController != null) 
+                if (animator != null && animator.runtimeAnimatorController != null)
                     animator.SetFloat(SpeedHash, chaseSpeed);
                 return;
             }
         }
         else
         {
-            // Territorial logic: If player enters chase range, prioritize them
             if (distToPlayer > chaseStartDistance && distToPlayer < (chaseStartDistance * 2f))
             {
                 isChasing = true;
-                return; 
+                return;
             }
-            
-            // If player is quite close (within chase/attack range zone), don't go back to center!
-            // Just look at the player and wait for attack manager to pick one.
+
             if (distToPlayer < chaseStartDistance)
             {
                 Vector3 lookDir = (target.position - transform.position).normalized;
                 lookDir.y = 0f;
                 if (lookDir.sqrMagnitude > 0.001f)
                     transform.forward = Vector3.Slerp(transform.forward, lookDir, 5f * Time.deltaTime);
-                
+
                 syncedMovementSpeed = 0f;
-                if (animator != null && animator.runtimeAnimatorController != null) 
+                if (animator != null && animator.runtimeAnimatorController != null)
                     animator.SetFloat(SpeedHash, 0f);
                 return;
             }
         }
 
-        // If player is very far away or target is null, return to center
         Server_HandleCenterControl();
     }
 
@@ -165,7 +158,7 @@ public class OngloMovement : BossMovementBase
         transform.position += dir * walkSpeed * Time.deltaTime;
 
         syncedMovementSpeed = walkSpeed;
-        if (animator != null && animator.runtimeAnimatorController != null) 
+        if (animator != null && animator.runtimeAnimatorController != null)
             animator.SetFloat(SpeedHash, walkSpeed);
 
         if (dir.sqrMagnitude > 0.001f)
@@ -191,33 +184,31 @@ public class OngloMovement : BossMovementBase
 
             Vector3 dir = toTarget.normalized;
             transform.position += dir * burstSpeed * Time.deltaTime;
-            
+
             syncedMovementSpeed = burstSpeed;
-            if (animator != null && animator.runtimeAnimatorController != null) 
+            if (animator != null && animator.runtimeAnimatorController != null)
                 animator.SetFloat(SpeedHash, burstSpeed);
-            
-            // Thrilling: Faster turn speed during enrage burst
+
             transform.forward = Vector3.Slerp(transform.forward, dir, 15f * Time.deltaTime);
             return;
         }
 
-        // Post-burst recovery delay
         if (Time.time < burstEndTime + 0.5f)
             return;
 
         burstEndTime = Time.time + burstDuration;
         nextBurstTime = Time.time + burstCooldown;
-        
+
         Rpc_OnBurstStarted();
     }
 
     [ClientRpc]
     void Rpc_OnBurstStarted()
     {
-        // Feedback: Dust clouds, screen rumble, etc.
         Debug.Log("[OngloMovement] Enrage burst started!");
     }
 
+    // --- UPDATED TARGET SELECTION LOGIC ---
     [Server]
     Transform Server_FindClosestPlayer()
     {
@@ -227,6 +218,13 @@ public class OngloMovement : BossMovementBase
         foreach (var conn in NetworkServer.connections.Values)
         {
             if (conn == null || conn.identity == null)
+                continue;
+
+            // Dito natin chinecheck kung buhay pa ang player
+            PlayerStatsManager stats = conn.identity.GetComponent<PlayerStatsManager>();
+
+            // LALAKTAWAN ang player kung patay na (health <= 0)
+            if (stats != null && stats.health.currentValue <= 0)
                 continue;
 
             Transform t = conn.identity.transform;
@@ -269,9 +267,6 @@ public class OngloMovement : BossMovementBase
     [Server]
     public override void Server_ApplyPhaseModifier(BossPhaseManager.BossPhase phase)
     {
-        // Phase 3 is expected to be the final phase in Onglo's setup.
-        // We infer it by the designer setting specialBehaviorFlag = true for phase 3.
         isPhase3 = phase != null && phase.specialBehaviorFlag;
     }
 }
-
